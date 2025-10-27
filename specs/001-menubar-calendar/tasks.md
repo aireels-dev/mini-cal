@@ -26,12 +26,12 @@ This is a macOS desktop application using Swift + SwiftUI:
 
 **Purpose**: Project initialization and basic Xcode structure
 
-- [ ] T001 Create Xcode project "MiniCal" in MiniCal/ directory with macOS App target
-- [ ] T002 Configure project settings: minimum deployment target macOS 11.0, Swift 5.9+
-- [ ] T003 Create project folder structure: MiniCal/App/, Views/, Models/, Services/, Resources/, Utilities/
-- [ ] T004 [P] Add Assets.xcassets in MiniCal/Resources/ with app icon placeholder
-- [ ] T005 [P] Create Info.plist configuration for menu bar app (LSUIElement = YES)
-- [ ] T006 [P] Setup .gitignore for Xcode project files
+- [X] T001 Create Xcode project "MiniCal" in MiniCal/ directory with macOS App target
+- [X] T002 Configure project settings: minimum deployment target macOS 11.0, Swift 5.9+
+- [X] T003 Create project folder structure: MiniCal/App/, Views/, Models/, Services/, Resources/, Utilities/
+- [X] T004 [P] Add Assets.xcassets in MiniCal/Resources/ with app icon placeholder
+- [X] T005 [P] Create Info.plist configuration for menu bar app (LSUIElement = YES)
+- [X] T006 [P] Setup .gitignore for Xcode project files
 
 ---
 
