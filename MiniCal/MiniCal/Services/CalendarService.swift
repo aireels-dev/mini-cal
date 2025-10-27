@@ -9,19 +9,21 @@ import Foundation
 
 class CalendarService {
     private let gregorianCalendar: Calendar
+    private let secondaryCalendarConverter: SecondaryCalendarConverter
 
-    init() {
+    init(secondaryCalendarConverter: SecondaryCalendarConverter = SecondaryCalendarConverter()) {
         var calendar = Calendar(identifier: .gregorian)
         calendar.locale = Locale(identifier: "zh_CN")
         calendar.timeZone = TimeZone.current
         self.gregorianCalendar = calendar
+        self.secondaryCalendarConverter = secondaryCalendarConverter
     }
 
     // MARK: - Month Generation
 
     /// 生成指定月份的日历数据
     func generateMonth(for date: Date, secondaryCalendar: CalendarType? = nil) -> [CalendarDate] {
-        var dates: [CalendarDate] = []
+        var dates: [Date] = []
 
         let monthStart = gregorianCalendar.firstDayOfMonth(for: date)
         let numberOfDaysInMonth = gregorianCalendar.numberOfDaysInMonth(for: date)
@@ -30,11 +32,12 @@ class CalendarService {
         // 计算需要显示的上个月的日期数量 (1=周日, 需要显示0天; 2=周一, 需要显示1天)
         let previousMonthDays = weekdayOfFirstDay - 1
 
+        // 收集所有需要显示的日期
         // 添加上个月的日期
         if previousMonthDays > 0, let previousMonthStart = gregorianCalendar.date(byAdding: .day, value: -previousMonthDays, to: monthStart) {
             for dayOffset in 0..<previousMonthDays {
                 if let dayDate = gregorianCalendar.date(byAdding: .day, value: dayOffset, to: previousMonthStart) {
-                    dates.append(createCalendarDate(from: dayDate, isCurrentMonth: false, secondaryCalendar: secondaryCalendar))
+                    dates.append(dayDate)
                 }
             }
         }
@@ -42,7 +45,7 @@ class CalendarService {
         // 添加当月的日期
         for day in 0..<numberOfDaysInMonth {
             if let dayDate = gregorianCalendar.date(byAdding: .day, value: day, to: monthStart) {
-                dates.append(createCalendarDate(from: dayDate, isCurrentMonth: true, secondaryCalendar: secondaryCalendar))
+                dates.append(dayDate)
             }
         }
 
@@ -53,66 +56,34 @@ class CalendarService {
             let nextMonthStart = gregorianCalendar.date(byAdding: .day, value: 1, to: lastDayOfMonth)!
             for dayOffset in 0..<remainingDays {
                 if let dayDate = gregorianCalendar.date(byAdding: .day, value: dayOffset, to: nextMonthStart) {
-                    dates.append(createCalendarDate(from: dayDate, isCurrentMonth: false, secondaryCalendar: secondaryCalendar))
+                    dates.append(dayDate)
                 }
             }
         }
 
-        return dates
-    }
-
-    // MARK: - Calendar Date Creation
-
-    private func createCalendarDate(from date: Date, isCurrentMonth: Bool, secondaryCalendar: CalendarType?) -> CalendarDate {
-        // 使用 CalendarDate 的默认初始化器
-        var calendarDate = CalendarDate(date: date, isCurrentMonth: isCurrentMonth)
-
-        // 添加副历信息
+        // 批量转换副日历信息（性能优化）
+        var secondaryInfoMap: [Date: SecondaryDateInfo] = [:]
         if let calendarType = secondaryCalendar {
-            calendarDate.secondaryDate = generateSecondaryDate(for: date, calendarType: calendarType)
+            secondaryInfoMap = secondaryCalendarConverter.batchConvert(dates: dates, to: calendarType)
         }
 
-        return calendarDate
-    }
+        // 创建 CalendarDate 对象
+        var calendarDates: [CalendarDate] = []
+        let currentMonthStart = gregorianCalendar.firstDayOfMonth(for: date)
 
-    // MARK: - Secondary Calendar
+        for dateValue in dates {
+            let isCurrentMonth = gregorianCalendar.isDate(dateValue, equalTo: currentMonthStart, toGranularity: .month)
+            var calendarDate = CalendarDate(date: dateValue, isCurrentMonth: isCurrentMonth)
 
-    private func generateSecondaryDate(for date: Date, calendarType: CalendarType) -> SecondaryDateInfo? {
-        guard let identifier = calendarType.identifier else { return nil }
-
-        var secondaryCalendar = Calendar(identifier: identifier)
-        secondaryCalendar.locale = Locale(identifier: "zh_CN")
-
-        let components = secondaryCalendar.dateComponents([.year, .month, .day], from: date)
-
-        let displayText: String
-        switch calendarType {
-        case .chinese:
-            // 农历显示格式
-            let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "zh_CN")
-            formatter.calendar = secondaryCalendar
-            formatter.dateFormat = "MMMd"
-            displayText = formatter.string(from: date)
-        case .islamic, .hebrew, .persian, .japanese, .buddhist:
-            // 其他日历简单显示月/日
-            if let month = components.month, let day = components.day {
-                displayText = "\(month)/\(day)"
-            } else {
-                displayText = ""
+            // 添加副历信息
+            if let secondaryInfo = secondaryInfoMap[dateValue] {
+                calendarDate.secondaryDate = secondaryInfo
             }
-        case .gregorian:
-            return nil
+
+            calendarDates.append(calendarDate)
         }
 
-        return SecondaryDateInfo(
-            calendarType: calendarType,
-            displayText: displayText,
-            year: components.year,
-            month: components.month,
-            day: components.day,
-            festival: nil
-        )
+        return calendarDates
     }
 
     // MARK: - Navigation Helpers

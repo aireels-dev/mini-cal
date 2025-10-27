@@ -23,10 +23,18 @@ struct CalendarDayCell: View {
 
                 // 副历日期或事件指示点
                 if let secondaryDate = date.secondaryDate {
-                    Text(secondaryDate.displayText)
-                        .font(.system(size: 9))
-                        .foregroundColor(themeColors.secondaryTextColor)
-                        .lineLimit(1)
+                    // 如果有节日，显示节日名称并高亮
+                    if let festival = secondaryDate.festival {
+                        Text(festival)
+                            .font(.system(size: 9, weight: .medium))
+                            .foregroundColor(Color.orange)
+                            .lineLimit(1)
+                    } else {
+                        Text(secondaryDate.displayText)
+                            .font(.system(size: 9))
+                            .foregroundColor(themeColors.secondaryTextColor)
+                            .lineLimit(1)
+                    }
                 } else if !date.events.isEmpty {
                     HStack(spacing: 2) {
                         ForEach(date.events.prefix(3)) { event in
