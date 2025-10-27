@@ -7,15 +7,23 @@
 
 import Cocoa
 import SwiftUI
+import Combine
 
 class MenuBarController: NSObject {
     private var statusItem: NSStatusItem!
     private var popover: NSPopover!
+    private var menuBarViewModel: MenuBarViewModel!
+    private var menuBarHostingView: NSHostingController<MenuBarView>?
 
     override init() {
         super.init()
+        setupViewModel()
         setupMenuBar()
         setupPopover()
+    }
+
+    private func setupViewModel() {
+        menuBarViewModel = MenuBarViewModel()
     }
 
     private func setupMenuBar() {
@@ -23,9 +31,14 @@ class MenuBarController: NSObject {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
         if let button = statusItem.button {
-            button.title = "Loading..."
+            // Set initial title from ViewModel
+            updateMenuBarTitle()
+
             button.action = #selector(togglePopover)
             button.target = self
+
+            // Observe ViewModel changes to update menu bar title
+            observeViewModelChanges()
         }
     }
 
@@ -34,6 +47,22 @@ class MenuBarController: NSObject {
         popover = NSPopover()
         popover.contentSize = NSSize(width: 300, height: 350)
         popover.behavior = .transient
+    }
+
+    private func updateMenuBarTitle() {
+        if let button = statusItem.button {
+            button.title = menuBarViewModel.displayText
+        }
+    }
+
+    private func observeViewModelChanges() {
+        // Observe displayText changes
+        menuBarViewModel.$displayText
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.updateMenuBarTitle()
+            }
+            .store(in: &menuBarViewModel.cancellables)
     }
 
     @objc func togglePopover() {
