@@ -43,10 +43,15 @@ class MenuBarController: NSObject {
     }
 
     private func setupPopover() {
-        // Create popover (will be configured later with calendar view)
+        // Create popover with calendar view
         popover = NSPopover()
-        popover.contentSize = NSSize(width: 300, height: 350)
+        popover.contentSize = NSSize(width: 320, height: 380)
         popover.behavior = .transient
+
+        // Set calendar view as popover content
+        let calendarView = CalendarView()
+        let hostingController = NSHostingController(rootView: calendarView)
+        popover.contentViewController = hostingController
     }
 
     private func updateMenuBarTitle() {
