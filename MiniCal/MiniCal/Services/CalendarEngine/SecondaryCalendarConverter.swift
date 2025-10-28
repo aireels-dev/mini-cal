@@ -96,44 +96,76 @@ class SecondaryCalendarConverter {
     // MARK: - Chinese Calendar Formatting
 
     private func formatChineseDate(date: Date, calendar: Calendar) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "zh_CN")
-        formatter.calendar = calendar
-        formatter.dateFormat = "MMMd" // 例如: "正月初一"
+        let components = calendar.dateComponents([.month, .day], from: date)
+        guard let day = components.day else { return "" }
 
-        let text = formatter.string(from: date)
+        // 如果是每月初一，显示月份
+        if day == 1 {
+            let monthFormatter = DateFormatter()
+            monthFormatter.locale = Locale(identifier: "zh_CN")
+            monthFormatter.calendar = calendar
+            monthFormatter.dateFormat = "MMM" // 月份：正月、二月...腊月
+            return monthFormatter.string(from: date)
+        }
 
-        // 简化显示：去除"月"字，保留关键信息
-        let simplified = text
-            .replacingOccurrences(of: "正月", with: "正")
-            .replacingOccurrences(of: "二月", with: "二")
-            .replacingOccurrences(of: "三月", with: "三")
-            .replacingOccurrences(of: "四月", with: "四")
-            .replacingOccurrences(of: "五月", with: "五")
-            .replacingOccurrences(of: "六月", with: "六")
-            .replacingOccurrences(of: "七月", with: "七")
-            .replacingOccurrences(of: "八月", with: "八")
-            .replacingOccurrences(of: "九月", with: "九")
-            .replacingOccurrences(of: "十月", with: "十")
-            .replacingOccurrences(of: "冬月", with: "冬")
-            .replacingOccurrences(of: "腊月", with: "腊")
+        // 其他日期转换为中文表达（初二、初三...廿九、三十）
+        return convertChineseDayToText(day: day)
+    }
 
-        return simplified
+    /// 将农历日期数字转换为中文表达
+    /// - Parameter day: 日期数字 (1-30)
+    /// - Returns: 中文表达（如：初一、初二、十一、廿一、三十）
+    private func convertChineseDayToText(day: Int) -> String {
+        switch day {
+        case 1...10:
+            // 初一到初十
+            let dayTexts = ["", "初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十"]
+            return dayTexts[day]
+        case 11...19:
+            // 十一到十九
+            let dayTexts = ["", "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九"]
+            return dayTexts[day - 10]
+        case 20:
+            return "二十"
+        case 21...29:
+            // 廿一到廿九
+            let dayTexts = ["", "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九"]
+            return dayTexts[day - 20]
+        case 30:
+            return "三十"
+        default:
+            return "\(day)"
+        }
     }
 
     private func formatIslamicDate(components: DateComponents) -> String {
-        guard let month = components.month, let day = components.day else { return "" }
-        return "\(month)/\(day)"
+        guard let day = components.day else { return "" }
+
+        // 每月初一显示月份名称，其他日期仅显示日期
+        if day == 1 {
+            return CalendarMonthNames.getIslamicMonthName(components.month, short: true)
+        }
+        return "\(day)"
     }
 
     private func formatHebrewDate(components: DateComponents) -> String {
-        guard let month = components.month, let day = components.day else { return "" }
-        return "\(month)/\(day)"
+        guard let day = components.day else { return "" }
+
+        // 每月初一显示月份名称，其他日期仅显示日期
+        if day == 1 {
+            return CalendarMonthNames.getHebrewMonthName(components.month, short: true)
+        }
+        return "\(day)"
     }
 
     private func formatPersianDate(components: DateComponents) -> String {
-        guard let month = components.month, let day = components.day else { return "" }
-        return "\(month)/\(day)"
+        guard let day = components.day else { return "" }
+
+        // 每月初一显示月份名称，其他日期仅显示日期
+        if day == 1 {
+            return CalendarMonthNames.getPersianMonthName(components.month, short: true)
+        }
+        return "\(day)"
     }
 
     private func formatJapaneseDate(components: DateComponents) -> String {

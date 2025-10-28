@@ -41,6 +41,12 @@ struct SettingsView: View {
 struct MenuBarSettingsView: View {
     @ObservedObject var settingsManager: SettingsManager
     @State private var isEditingCustomFormat = false
+    @State private var localSettings: UserSettings
+
+    init(settingsManager: SettingsManager) {
+        self.settingsManager = settingsManager
+        self._localSettings = State(initialValue: settingsManager.currentSettings)
+    }
 
     var body: some View {
         Form {
@@ -55,54 +61,78 @@ struct MenuBarSettingsView: View {
             }
 
             Section("显示格式") {
-                Picker("格式", selection: $settingsManager.currentSettings.menuBarFormat) {
+                Picker("格式", selection: $localSettings.menuBarFormat) {
                     ForEach(MenuBarFormat.allCases, id: \.self) { format in
                         Text(format.displayName).tag(format)
                     }
                 }
-                .onChange(of: settingsManager.currentSettings.menuBarFormat) { newValue in
+                .onChange(of: localSettings.menuBarFormat) { newValue in
                     // 切换到自定义格式时自动进入编辑态
                     if newValue == .custom {
                         isEditingCustomFormat = true
                     }
+                    settingsManager.updateMenuBarFormat(newValue)
                 }
 
                 // 自定义格式编辑组件
-                if settingsManager.currentSettings.menuBarFormat == .custom {
+                if localSettings.menuBarFormat == .custom {
                     CustomFormatEditor(
-                        customFormat: $settingsManager.currentSettings.customFormat,
-                        isEditing: $isEditingCustomFormat
+                        customFormat: $localSettings.customFormat,
+                        isEditing: $isEditingCustomFormat,
+                        onFormatChange: { newFormat in
+                            var updated = settingsManager.currentSettings
+                            updated.customFormat = newFormat
+                            settingsManager.saveSettings(updated)
+                        }
                     )
                 }
 
-                let isCustomFormat = settingsManager.currentSettings.menuBarFormat == .custom
+                let isCustomFormat = localSettings.menuBarFormat == .custom
 
-                Toggle("24小时制", isOn: $settingsManager.currentSettings.show24Hour)
+                Toggle("24小时制", isOn: $localSettings.show24Hour)
                     .disabled(isCustomFormat)
                     .foregroundColor(isCustomFormat ? .secondary : .primary)
+                    .onChange(of: localSettings.show24Hour) { newValue in
+                        settingsManager.updateShow24Hour(newValue)
+                    }
 
-                Toggle("显示星期", isOn: $settingsManager.currentSettings.showWeekday)
+                Toggle("显示星期", isOn: $localSettings.showWeekday)
                     .disabled(isCustomFormat)
                     .foregroundColor(isCustomFormat ? .secondary : .primary)
+                    .onChange(of: localSettings.showWeekday) { newValue in
+                        settingsManager.updateShowWeekday(newValue)
+                    }
 
-                Toggle("显示秒", isOn: $settingsManager.currentSettings.showSeconds)
+                Toggle("显示秒", isOn: $localSettings.showSeconds)
                     .disabled(isCustomFormat)
                     .foregroundColor(isCustomFormat ? .secondary : .primary)
+                    .onChange(of: localSettings.showSeconds) { newValue in
+                        var updated = settingsManager.currentSettings
+                        updated.showSeconds = newValue
+                        updated.lastUpdated = Date()
+                        settingsManager.saveSettings(updated)
+                    }
             }
 
             Section("鼠标悬浮展示日历") {
-                Toggle("启用悬浮展示", isOn: $settingsManager.currentSettings.hoverToShowEnabled)
+                Toggle("启用悬浮展示", isOn: $localSettings.hoverToShowEnabled)
+                    .onChange(of: localSettings.hoverToShowEnabled) { newValue in
+                        settingsManager.updateHoverSettings(enabled: newValue, delay: localSettings.hoverDelay)
+                    }
 
-                if settingsManager.currentSettings.hoverToShowEnabled {
+                if localSettings.hoverToShowEnabled {
                     VStack(alignment: .leading, spacing: 4) {
                         Slider(
-                            value: $settingsManager.currentSettings.hoverDelay,
+                            value: $localSettings.hoverDelay,
                             in: 0.1...2.0,
                             step: 0.1
                         ) {
                             Text("延迟时间")
                         }
-                        Text("延迟: \(String(format: "%.1f", settingsManager.currentSettings.hoverDelay))秒")
+                        .onChange(of: localSettings.hoverDelay) { newValue in
+                            settingsManager.updateHoverSettings(enabled: localSettings.hoverToShowEnabled, delay: newValue)
+                        }
+                        Text("延迟: \(String(format: "%.1f", localSettings.hoverDelay))秒")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -110,8 +140,11 @@ struct MenuBarSettingsView: View {
             }
         }
         .formStyle(.grouped)
+        .onAppear {
+            localSettings = settingsManager.currentSettings
+        }
         .onChange(of: settingsManager.currentSettings) { newValue in
-            settingsManager.saveSettings(newValue)
+            localSettings = newValue
         }
     }
 
@@ -132,6 +165,7 @@ struct MenuBarSettingsView: View {
 struct CustomFormatEditor: View {
     @Binding var customFormat: String
     @Binding var isEditing: Bool
+    let onFormatChange: (String) -> Void
     @FocusState private var isFocused: Bool
 
     var body: some View {
@@ -142,8 +176,9 @@ struct CustomFormatEditor: View {
                     .textFieldStyle(.roundedBorder)
                     .focused($isFocused)
                     .onSubmit {
-                        // 回车键切换到展示态
+                        // 回车键切换到展示态并保存
                         isEditing = false
+                        onFormatChange(customFormat)
                     }
                     .onAppear {
                         isFocused = true
@@ -249,31 +284,43 @@ struct FormatExampleView: View {
 
 struct CalendarSettingsView: View {
     @ObservedObject var settingsManager: SettingsManager
+    @State private var localSettings: UserSettings
+
+    init(settingsManager: SettingsManager) {
+        self.settingsManager = settingsManager
+        self._localSettings = State(initialValue: settingsManager.currentSettings)
+    }
 
     var body: some View {
         Form {
-            Section("副日历") {
-                Picker("副日历类型", selection: $settingsManager.currentSettings.secondaryCalendarType) {
-                    Text("无").tag(nil as CalendarType?)
+            Section("本地日历") {
+                Picker("历法类型", selection: $localSettings.secondaryCalendarType) {
+                    Text("不显示").tag(nil as CalendarType?)
                     ForEach(CalendarType.allCases.filter { $0 != .gregorian }, id: \.self) { type in
                         Text(type.displayName).tag(type as CalendarType?)
                     }
                 }
+                .onChange(of: localSettings.secondaryCalendarType) { newValue in
+                    settingsManager.updateSecondaryCalendar(newValue)
+                }
             }
 
             Section("说明") {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("副日历将显示在每个日期下方")
-                        .font(.caption)
-                    Text("支持: 农历、伊斯兰历、希伯来历、波斯历、和历、佛历")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
+                Text("在公历日期下方显示本地历法")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                Text("中国用户推荐选择「农历」")
+                    .font(.caption)
+                    .foregroundColor(.blue)
             }
         }
         .formStyle(.grouped)
+        .onAppear {
+            localSettings = settingsManager.currentSettings
+        }
         .onChange(of: settingsManager.currentSettings) { newValue in
-            settingsManager.saveSettings(newValue)
+            localSettings = newValue
         }
     }
 }
@@ -283,19 +330,26 @@ struct CalendarSettingsView: View {
 struct ThemeSettingsView: View {
     @ObservedObject var settingsManager: SettingsManager
     @ObservedObject private var themeManager = ThemeManager.shared
+    @State private var localSettings: UserSettings
+
+    init(settingsManager: SettingsManager) {
+        self.settingsManager = settingsManager
+        self._localSettings = State(initialValue: settingsManager.currentSettings)
+    }
 
     var body: some View {
         Form {
             Section("主题选择") {
                 // 动态加载所有可用主题
-                Picker("主题", selection: $settingsManager.currentSettings.themeId) {
+                Picker("主题", selection: $localSettings.themeId) {
                     ForEach(themeManager.availableThemes, id: \.id) { theme in
                         Text(theme.name).tag(theme.id)
                     }
                 }
-                .onChange(of: settingsManager.currentSettings.themeId) { newThemeId in
-                    // 当主题ID变化时，应用新主题
+                .onChange(of: localSettings.themeId) { newThemeId in
+                    // 当主题ID变化时，应用新主题并保存
                     themeManager.applyTheme(withId: newThemeId)
+                    settingsManager.updateTheme(newThemeId)
                 }
             }
 
@@ -304,10 +358,12 @@ struct ThemeSettingsView: View {
                 ForEach(themeManager.availableThemes, id: \.id) { theme in
                     ThemePreviewCard(
                         theme: theme,
-                        isSelected: settingsManager.currentSettings.themeId == theme.id
+                        isSelected: localSettings.themeId == theme.id
                     )
                     .onTapGesture {
-                        settingsManager.currentSettings.themeId = theme.id
+                        localSettings.themeId = theme.id
+                        themeManager.applyTheme(withId: theme.id)
+                        settingsManager.updateTheme(theme.id)
                     }
                 }
             }
@@ -322,8 +378,11 @@ struct ThemeSettingsView: View {
             }
         }
         .formStyle(.grouped)
+        .onAppear {
+            localSettings = settingsManager.currentSettings
+        }
         .onChange(of: settingsManager.currentSettings) { newValue in
-            settingsManager.saveSettings(newValue)
+            localSettings = newValue
         }
     }
 }

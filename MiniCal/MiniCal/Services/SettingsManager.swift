@@ -18,8 +18,34 @@ class SettingsManager: ObservableObject {
 
     private init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
-        self.currentSettings = UserSettings.default
-        self.currentSettings = loadSettings()
+
+        // 检查是否是首次启动（无保存的设置）
+        let isFirstLaunch = userDefaults.data(forKey: settingsKey) == nil
+
+        if isFirstLaunch {
+            // 首次启动：使用自动检测的默认设置
+            self.currentSettings = UserSettings.default
+            Logger.info("First launch detected, using auto-detected calendar defaults", category: Logger.settings)
+        } else {
+            // 非首次启动：从 UserDefaults 加载
+            if let data = userDefaults.data(forKey: settingsKey) {
+                do {
+                    let decoder = JSONDecoder()
+                    decoder.dateDecodingStrategy = .iso8601
+                    self.currentSettings = try decoder.decode(UserSettings.self, from: data)
+                } catch {
+                    Logger.error("Failed to decode settings on init", error: error, category: Logger.settings)
+                    self.currentSettings = UserSettings.default
+                }
+            } else {
+                self.currentSettings = UserSettings.default
+            }
+        }
+
+        // 首次启动时保存默认设置
+        if isFirstLaunch {
+            saveSettings(self.currentSettings)
+        }
     }
 
     // MARK: - Load Settings
@@ -31,6 +57,7 @@ class SettingsManager: ObservableObject {
 
         do {
             let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
             let settings = try decoder.decode(UserSettings.self, from: data)
             return settings
         } catch {
