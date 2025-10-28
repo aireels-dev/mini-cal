@@ -6,13 +6,8 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		834383DA2EAFA007008424E1 /* File.txt in Resources */ = {isa = PBXBuildFile; fileRef = 834383D92EAFA007008424E1 /* File.txt */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		834383B02EAF9ED8008424E1 /* MiniCal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MiniCal.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		834383D92EAFA007008424E1 /* File.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = File.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -37,7 +32,6 @@
 		834383A72EAF9ED8008424E1 = {
 			isa = PBXGroup;
 			children = (
-				834383D92EAFA007008424E1 /* File.txt */,
 				834383B22EAF9ED8008424E1 /* MiniCal */,
 				834383B12EAF9ED8008424E1 /* Products */,
 			);
@@ -115,7 +109,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				834383DA2EAFA007008424E1 /* File.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

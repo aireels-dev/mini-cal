@@ -71,7 +71,7 @@ class SecondaryCalendarConverter {
         case .buddhist:
             // 佛历 = 公历年 + 543
             if let year = components.year, let month = components.month, let day = components.day {
-                let buddhistYear = year + 543
+                let _ = year + 543  // buddhistYear计算保留用于未来扩展
                 return "\(month)/\(day)"
             }
             return ""

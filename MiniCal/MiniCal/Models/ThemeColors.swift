@@ -11,29 +11,32 @@ struct ThemeColors: Codable {
     let background: String
     let text: String
     let secondaryText: String
-    let accent: String
     let border: String
     let todayHighlight: String
     let weekendText: String
+    let selectedDate: String
+
+    // 兼容旧代码的accent属性
+    var accent: String { todayHighlight }
 
     static let light = ThemeColors(
         background: "#FFFFFF",
         text: "#000000",
-        secondaryText: "#8E8E93",
-        accent: "#007AFF",
-        border: "#E5E5EA",
-        todayHighlight: "#FFCC00",
-        weekendText: "#FF3B30"
+        secondaryText: "#666666",
+        border: "#E0E0E0",
+        todayHighlight: "#007AFF",
+        weekendText: "#FF3B30",
+        selectedDate: "#007AFF"
     )
 
     static let dark = ThemeColors(
         background: "#1C1C1E",
         text: "#FFFFFF",
-        secondaryText: "#8E8E93",
-        accent: "#0A84FF",
+        secondaryText: "#EBEBF5",
         border: "#38383A",
-        todayHighlight: "#FFD60A",
-        weekendText: "#FF453A"
+        todayHighlight: "#0A84FF",
+        weekendText: "#FF453A",
+        selectedDate: "#0A84FF"
     )
 
     func color(from hex: String) -> Color {
@@ -57,4 +60,5 @@ struct ThemeColors: Codable {
     var borderColor: Color { color(from: border) }
     var todayHighlightColor: Color { color(from: todayHighlight) }
     var weekendTextColor: Color { color(from: weekendText) }
+    var selectedDateColor: Color { color(from: selectedDate) }
 }

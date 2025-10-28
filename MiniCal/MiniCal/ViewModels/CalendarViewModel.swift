@@ -17,9 +17,10 @@ class CalendarViewModel: ObservableObject {
     private let calendarService: CalendarService
     private let settingsManager: SettingsManager
     private var cancellables = Set<AnyCancellable>()
+    private var loadTask: Task<Void, Never>?
 
     init(calendarService: CalendarService = CalendarService(),
-         settingsManager: SettingsManager = SettingsManager()) {
+         settingsManager: SettingsManager = SettingsManager.shared) {
         self.calendarService = calendarService
         self.settingsManager = settingsManager
         self.currentMonth = Date()
@@ -37,25 +38,46 @@ class CalendarViewModel: ObservableObject {
                 self?.loadCurrentMonth()
             }
             .store(in: &cancellables)
+
+        // 监听时区变更，重新加载日历数据
+        NotificationCenter.default.publisher(for: .NSSystemTimeZoneDidChange)
+            .sink { [weak self] _ in
+                Logger.info("Time zone changed, reloading calendar", category: Logger.calendar)
+                self?.loadCurrentMonth()
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Data Loading
 
     func loadCurrentMonth() {
-        let secondaryCalendar = settingsManager.currentSettings.secondaryCalendarType
-        calendarDates = calendarService.generateMonth(for: currentMonth, secondaryCalendar: secondaryCalendar)
-        monthYearText = calendarService.monthYearText(for: currentMonth)
+        // 取消之前的加载任务（防抖）
+        loadTask?.cancel()
+
+        loadTask = Task { @MainActor in
+            let complete = Logger.measureTimeAsync(operation: "Load calendar month", category: Logger.performance)
+
+            let secondaryCalendar = settingsManager.currentSettings.secondaryCalendarType
+            calendarDates = await calendarService.generateMonth(for: currentMonth, secondaryCalendar: secondaryCalendar)
+            monthYearText = calendarService.monthYearText(for: currentMonth)
+
+            complete()
+        }
     }
 
     // MARK: - Navigation
 
     func goToPreviousMonth() {
-        currentMonth = calendarService.previousMonth(from: currentMonth)
+        Logger.measureTime(operation: "Navigate to previous month", category: Logger.performance) {
+            currentMonth = calendarService.previousMonth(from: currentMonth)
+        }
         loadCurrentMonth()
     }
 
     func goToNextMonth() {
-        currentMonth = calendarService.nextMonth(from: currentMonth)
+        Logger.measureTime(operation: "Navigate to next month", category: Logger.performance) {
+            currentMonth = calendarService.nextMonth(from: currentMonth)
+        }
         loadCurrentMonth()
     }
 

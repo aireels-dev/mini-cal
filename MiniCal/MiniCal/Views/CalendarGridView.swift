@@ -10,6 +10,7 @@ import SwiftUI
 struct CalendarGridView: View {
     @ObservedObject var viewModel: CalendarViewModel
     let themeColors: ThemeColors
+    var onDateTap: ((CalendarDate) -> Void)?
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 7)
 
@@ -27,6 +28,9 @@ struct CalendarGridView: View {
                         themeColors: themeColors,
                         onTap: {
                             viewModel.selectDate(date)
+                            if !date.events.isEmpty {
+                                onDateTap?(date)
+                            }
                         }
                     )
                     .frame(height: 40)

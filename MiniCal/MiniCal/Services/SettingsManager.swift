@@ -9,12 +9,14 @@ import Foundation
 import Combine
 
 class SettingsManager: ObservableObject {
+    static let shared = SettingsManager()
+
     @Published var currentSettings: UserSettings
 
     private let userDefaults: UserDefaults
     private let settingsKey = "MiniCalUserSettings"
 
-    init(userDefaults: UserDefaults = .standard) {
+    private init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
         self.currentSettings = UserSettings.default
         self.currentSettings = loadSettings()
@@ -32,7 +34,7 @@ class SettingsManager: ObservableObject {
             let settings = try decoder.decode(UserSettings.self, from: data)
             return settings
         } catch {
-            print("Failed to decode settings: \(error)")
+            Logger.error("Failed to decode settings", error: error, category: Logger.settings)
             return UserSettings.default
         }
     }
@@ -40,14 +42,17 @@ class SettingsManager: ObservableObject {
     // MARK: - Save Settings
 
     func saveSettings(_ settings: UserSettings) {
-        do {
-            let encoder = JSONEncoder()
-            encoder.dateEncodingStrategy = .iso8601
-            let data = try encoder.encode(settings)
-            userDefaults.set(data, forKey: settingsKey)
-            currentSettings = settings
-        } catch {
-            print("Failed to encode settings: \(error)")
+        Logger.measureTime(operation: "Save settings", category: Logger.performance) {
+            do {
+                let encoder = JSONEncoder()
+                encoder.dateEncodingStrategy = .iso8601
+                let data = try encoder.encode(settings)
+                userDefaults.set(data, forKey: settingsKey)
+                currentSettings = settings
+                Logger.debug("Settings saved successfully", category: Logger.settings)
+            } catch {
+                Logger.error("Failed to encode settings", error: error, category: Logger.settings)
+            }
         }
     }
 

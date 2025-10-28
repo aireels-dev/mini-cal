@@ -10,19 +10,27 @@ import Foundation
 class CalendarService {
     private let gregorianCalendar: Calendar
     private let secondaryCalendarConverter: SecondaryCalendarConverter
+    private let holidayProvider: HolidayProvider
+    private let eventService: EventService
 
-    init(secondaryCalendarConverter: SecondaryCalendarConverter = SecondaryCalendarConverter()) {
+    init(
+        secondaryCalendarConverter: SecondaryCalendarConverter = SecondaryCalendarConverter(),
+        holidayProvider: HolidayProvider = HolidayProvider.shared,
+        eventService: EventService = EventService.shared
+    ) {
         var calendar = Calendar(identifier: .gregorian)
         calendar.locale = Locale(identifier: "zh_CN")
         calendar.timeZone = TimeZone.current
         self.gregorianCalendar = calendar
         self.secondaryCalendarConverter = secondaryCalendarConverter
+        self.holidayProvider = holidayProvider
+        self.eventService = eventService
     }
 
     // MARK: - Month Generation
 
     /// 生成指定月份的日历数据
-    func generateMonth(for date: Date, secondaryCalendar: CalendarType? = nil) -> [CalendarDate] {
+    func generateMonth(for date: Date, secondaryCalendar: CalendarType? = nil) async -> [CalendarDate] {
         var dates: [Date] = []
 
         let monthStart = gregorianCalendar.firstDayOfMonth(for: date)
@@ -67,17 +75,52 @@ class CalendarService {
             secondaryInfoMap = secondaryCalendarConverter.batchConvert(dates: dates, to: calendarType)
         }
 
-        // 创建 CalendarDate 对象
+        // 获取节假日数据
+        let year = gregorianCalendar.component(.year, from: date)
+        let month = gregorianCalendar.component(.month, from: date)
+        let monthHolidays = holidayProvider.getMonthHolidays(year: year, month: month, region: "CN")
+
+        // 获取系统日历事件（重用已计算的monthStart）
+        let monthEndDate = gregorianCalendar.lastDayOfMonth(for: date)
+        let systemEvents = await eventService.fetchEvents(from: monthStart, to: monthEndDate)
+
+        // 按日期分组系统事件
+        var eventsMap: [String: [DateEvent]] = [:]
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        for event in systemEvents {
+            let dateString = dateFormatter.string(from: event.date)
+            eventsMap[dateString, default: []].append(event)
+        }
+
+        // 创建 CalendarDate 对象（重用已计算的monthStart）
         var calendarDates: [CalendarDate] = []
-        let currentMonthStart = gregorianCalendar.firstDayOfMonth(for: date)
 
         for dateValue in dates {
-            let isCurrentMonth = gregorianCalendar.isDate(dateValue, equalTo: currentMonthStart, toGranularity: .month)
+            let isCurrentMonth = gregorianCalendar.isDate(dateValue, equalTo: monthStart, toGranularity: .month)
             var calendarDate = CalendarDate(date: dateValue, isCurrentMonth: isCurrentMonth)
 
             // 添加副历信息
             if let secondaryInfo = secondaryInfoMap[dateValue] {
                 calendarDate.secondaryDate = secondaryInfo
+            }
+
+            // 添加节假日事件
+            let dateString = dateFormatter.string(from: dateValue)
+            if let holiday = monthHolidays[dateString] {
+                let holidayEvent = DateEvent(
+                    title: holiday.name,
+                    date: dateValue,
+                    type: holiday.eventType,
+                    source: .builtin,
+                    description: holiday.name
+                )
+                calendarDate.events.append(holidayEvent)
+            }
+
+            // 添加系统日历事件
+            if let dayEvents = eventsMap[dateString] {
+                calendarDate.events.append(contentsOf: dayEvents)
             }
 
             calendarDates.append(calendarDate)

@@ -23,54 +23,82 @@
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design and implementation.*
 
-### 架构原则验证
+**Constitution Reference**: See `.specify/memory/constitution.md` (Version 1.0.0, Ratified 2025-10-28)
 
-| 原则 | 状态 | 说明 |
-|------|------|------|
-| **模块化设计** | ✅ PASS | 应用分为明确的模块: MenuBarView, CalendarView, SettingsView, CalendarEngine, ThemeManager |
-| **关注点分离** | ✅ PASS | UI层(SwiftUI)、业务逻辑层(Services)、数据层(Models)清晰分离 |
-| **可测试性** | ✅ PASS | 采用MVVM架构,ViewModel可独立测试,业务逻辑与UI解耦 |
-| **平台原生性** | ✅ PASS | 使用SwiftUI + AppKit,完全遵循macOS原生API和设计规范 |
-| **性能优先** | ✅ PASS | 明确性能目标(<300ms响应,<50MB内存),使用本地计算避免网络延迟 |
+### 核心原则验证 (基于 Constitution v1.0.0)
 
-### 复杂度评估
+| Constitution 原则 | 状态 | 验证说明 |
+|------------------|------|---------|
+| **I. Native-First** | ✅ PASS | Swift 5.9+ + SwiftUI + AppKit, 无第三方依赖, 遵循 macOS HIG |
+| **II. Performance-First** | ✅ PASS | 性能目标明确量化: UI<300ms, 月切换<200ms, 主题<200ms, 内存<50MB, CPU<1% |
+| **III. Simplicity & YAGNI** | ✅ PASS | 仅实现 spec.md 定义功能, 无范围外特性, 优先 SwiftUI 内置组件 |
+| **IV. Modularity & Testability** | ✅ PASS | MVVM架构, 清晰分层(Views/ViewModels/Services/Models), 协议+依赖注入 |
+| **V. Data Integrity & Offline-First** | ✅ PASS | 本地算法+JSON数据, UserDefaults持久化, 无网络依赖 |
+| **VI. User Experience Excellence** | ✅ PASS | 遵循 macOS 交互模式, 标准快捷键, 优雅降级, 屏幕边缘适配, VoiceOver支持 |
+| **VII. Code Quality Standards** | ✅ PASS | Swift API Guidelines, 命名规范, 文档注释, 避免强制解包, Codable协议 |
 
-| 指标 | 评估 | 合理性 |
-|------|------|--------|
-| **依赖数量** | 低 | 仅依赖系统框架(SwiftUI, AppKit, EventKit),无第三方依赖 |
-| **模块数量** | 适中 | 约8-10个核心模块,每个职责单一 |
-| **API复杂度** | 低 | 主要是UI交互和本地数据操作,无复杂网络通信 |
-| **数据流** | 简单 | 单向数据流(SwiftUI Binding),状态管理清晰 |
+### 性能标准验证
 
-### 风险识别
+| 性能指标 | Constitution 要求 | Plan 设计 | 验证方法 | 状态 |
+|---------|------------------|----------|---------|------|
+| 菜单栏点击响应 | < 300ms | ✅ 优化设计 | Instruments Time Profiler | ✅ 可达 |
+| 月视图切换 | < 200ms | ✅ NSCache缓存 | Instruments Time Profiler | ✅ 可达 |
+| 主题切换 | < 200ms | ✅ 预加载主题 | 手动测试 + 秒表 | ✅ 可达 |
+| 内存占用 | < 50MB | ✅ 轻量设计 | Instruments Allocations | ✅ 可达 |
+| 空闲CPU | < 1% | ✅ Timer优化 | Activity Monitor | ✅ 可达 |
 
-| 风险 | 影响 | 缓解措施 |
-|------|------|----------|
-| **副日历算法复杂性** | 中 | 使用成熟算法库或Foundation框架的Calendar API |
-| **EventKit权限处理** | 低 | 优雅降级:权限拒绝时仅显示基础日历功能 |
-| **性能优化** | 低 | SwiftUI原生优化足够,月视图数据量小(最多42个单元格) |
+### 平台集成验证
 
-**结论**: ✅ 通过 - 架构设计合理,无明显复杂度风险,可以进入Phase 0研究阶段。
+| 系统服务 | Constitution 要求 | Plan 实现 | 状态 |
+|---------|------------------|----------|------|
+| NSStatusBar | NSStatusItem + LSUIElement | ✅ MenuBarController | ✅ PASS |
+| EventKit | requestAccess + 优雅降级 | ✅ EventService | ✅ PASS |
+| NSAppearance | 观察系统外观变化 | ✅ ThemeManager | ✅ PASS |
+| Locale | 自动推荐副日历 | ✅ SecondaryCalendarConverter | ✅ PASS |
 
----
+### 实施验证 (基于会话历史 2025-10-28)
 
-### Phase 1完成后重新评估
+**实施阶段**: Phases 1-6 已完成, 正在进行 Phase 8-10 优化
 
-**评估日期**: 2025-10-27
-**评估阶段**: Phase 1 (Design & Contracts) 完成
+| 已实施功能 | Constitution 合规性 | 发现的调整 |
+|-----------|------------------|-----------|
+| **Phase 1-2: 基础设施** | ✅ PASS | 遵循 MVVM, 所有模型使用 Codable |
+| **Phase 3: 菜单栏显示** | ✅ PASS | MenuBarViewModel 使用单例模式 (SettingsManager.shared) 确保状态同步 |
+| **Phase 4: 月视图展开** | ✅ PASS | 左键/右键/悬浮交互已修复, 通过编程方式显示右键菜单避免冲突 |
+| **Phase 5: 副日历显示** | ✅ PASS | 使用 Foundation.Calendar API, 支持6+种历法 |
+| **Phase 6: 日期状态标记** | ✅ PASS | EventKit 优雅降级, HolidayProvider 本地 JSON |
+| **设置项保存机制** | ✅ PASS | SettingsManager 单例模式, UserDefaults 持久化, onChange 自动保存 |
+| **Glass 主题兼容** | ✅ PASS | NSVisualEffectView wrapper, 遵循 macOS 26 设计规范 |
+| **自定义格式输入** | ✅ PASS | 输入态/展示态切换, 格式说明完整, 包含周数支持 |
+| **秒显示控制** | ✅ PASS | UserSettings.showSeconds, 自定义格式时禁用其他选项 |
 
-| 检查项 | 状态 | 说明 |
-|--------|------|------|
-| **数据模型设计** | ✅ PASS | 11个核心实体,职责清晰,遵循Codable协议 |
-| **服务接口定义** | ✅ PASS | 6个核心服务协议,支持依赖注入和单元测试 |
-| **架构一致性** | ✅ PASS | MVVM模式贯穿全栈,符合SwiftUI最佳实践 |
-| **性能目标可达** | ✅ PASS | 缓存策略+防抖+批量处理,预期满足<300ms要求 |
-| **测试策略** | ✅ PASS | 每个服务提供Protocol和Mock实现,支持单元测试 |
-| **复杂度控制** | ✅ PASS | 无第三方依赖,模块数量适中(8-10个) |
+### 发现的优化调整
 
-**结论**: ✅ 设计阶段验证通过,准备进入Phase 2 (任务分解)。无架构违规,无需填充"Complexity Tracking"表格。
+**已修复的 Constitution 违规**:
+1. ✅ **单例模式**: SettingsManager 改为单例避免多实例状态不一致
+2. ✅ **菜单栏交互**: 修正左键/右键事件处理, 避免 statusItem.menu 冲突
+3. ✅ **性能优化**: 添加 Timer 优化, 避免每秒更新（仅在有秒显示时优化）
+
+**符合 Simplicity & YAGNI**:
+- 未实现范围外功能（无日视图、无事件编辑、无云同步）
+- 优先使用 SwiftUI 内置组件（Toggle, Picker, Slider, TextField）
+- 避免过度设计（单例仅在必要时使用）
+
+### 边缘情况处理验证
+
+| 边缘情况 | Constitution 要求 | 实施状态 |
+|---------|------------------|---------|
+| 屏幕边缘适配 | MUST 自动调整位置 | ⚠️ 待补充测试任务 (T168) |
+| 时区变更 | MUST 自动更新显示 | ⚠️ 待补充测试任务 (T169) |
+| EventKit 权限拒绝 | MUST 优雅降级 | ✅ EventService 已实现 |
+| 快速点击防抖 | MUST 避免闪烁 | ✅ CalendarViewModel 已实现 |
+| 副日历跨天 | MUST 正确显示 | ⚠️ 待补充测试任务 (T073.4) |
+| 首次启动推荐 | MUST 自动推荐副日历 | ⚠️ 待补充任务 (T073.1, FR-019) |
+| 设置加载失败 | MUST 使用默认配置 | ✅ SettingsManager.default 已实现 |
+
+**结论**: ✅ **高度符合 Constitution 要求**, 发现 3 个边缘情况需补充测试任务（非阻塞）。
 
 ## Project Structure
 

@@ -17,6 +17,12 @@ extension Calendar {
         return self.date(from: components)!
     }
 
+    func lastDayOfMonth(for date: Date) -> Date {
+        let firstDay = firstDayOfMonth(for: date)
+        let numberOfDays = numberOfDaysInMonth(for: date)
+        return self.date(byAdding: .day, value: numberOfDays - 1, to: firstDay)!
+    }
+
     func weekdayOfFirstDay(for date: Date) -> Int {
         let firstDay = firstDayOfMonth(for: date)
         return component(.weekday, from: firstDay)

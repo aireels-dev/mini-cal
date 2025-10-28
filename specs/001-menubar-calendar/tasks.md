@@ -41,24 +41,24 @@ This is a macOS desktop application using Swift + SwiftUI:
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T007 Create MiniCalApp.swift entry point in MiniCal/App/ with @main attribute
-- [ ] T008 Create AppDelegate.swift in MiniCal/App/ with NSApplicationDelegate conformance
-- [ ] T009 Implement MenuBarController.swift in MiniCal/App/ managing NSStatusItem lifecycle
-- [ ] T010 [P] Create Constants.swift in MiniCal/Utilities/ with app-wide constants
-- [ ] T011 [P] Create Date+Extensions.swift in MiniCal/Utilities/Extensions/ with helper methods
-- [ ] T012 [P] Create Calendar+Extensions.swift in MiniCal/Utilities/Extensions/ with calendar utilities
-- [ ] T013 Create CalendarDate.swift model in MiniCal/Models/ per data-model.md
-- [ ] T014 [P] Create SecondaryDateInfo.swift model in MiniCal/Models/
-- [ ] T015 [P] Create CalendarType.swift enum in MiniCal/Models/
-- [ ] T016 [P] Create DateEvent.swift model in MiniCal/Models/
-- [ ] T017 [P] Create EventType.swift enum in MiniCal/Models/
-- [ ] T018 [P] Create EventColor.swift enum in MiniCal/Models/
-- [ ] T019 [P] Create EventSource.swift enum in MiniCal/Models/
-- [ ] T020 [P] Create Theme.swift model in MiniCal/Models/
-- [ ] T021 [P] Create ThemeColors.swift model in MiniCal/Models/
-- [ ] T022 [P] Create UserSettings.swift model in MiniCal/Models/
-- [ ] T023 [P] Create MenuBarFormat.swift enum in MiniCal/Models/
-- [ ] T024 Create MiniCalError.swift error enum in MiniCal/Utilities/
+- [X] T007 Create MiniCalApp.swift entry point in MiniCal/App/ with @main attribute
+- [X] T008 Create AppDelegate.swift in MiniCal/App/ with NSApplicationDelegate conformance
+- [X] T009 Implement MenuBarController.swift in MiniCal/App/ managing NSStatusItem lifecycle
+- [X] T010 [P] Create Constants.swift in MiniCal/Utilities/ with app-wide constants
+- [X] T011 [P] Create Date+Extensions.swift in MiniCal/Utilities/Extensions/ with helper methods
+- [X] T012 [P] Create Calendar+Extensions.swift in MiniCal/Utilities/Extensions/ with calendar utilities
+- [X] T013 Create CalendarDate.swift model in MiniCal/Models/ per data-model.md
+- [X] T014 [P] Create SecondaryDateInfo.swift model in MiniCal/Models/
+- [X] T015 [P] Create CalendarType.swift enum in MiniCal/Models/
+- [X] T016 [P] Create DateEvent.swift model in MiniCal/Models/
+- [X] T017 [P] Create EventType.swift enum in MiniCal/Models/
+- [X] T018 [P] Create EventColor.swift enum in MiniCal/Models/
+- [X] T019 [P] Create EventSource.swift enum in MiniCal/Models/
+- [X] T020 [P] Create Theme.swift model in MiniCal/Models/
+- [X] T021 [P] Create ThemeColors.swift model in MiniCal/Models/
+- [X] T022 [P] Create UserSettings.swift model in MiniCal/Models/
+- [X] T023 [P] Create MenuBarFormat.swift enum in MiniCal/Models/
+- [X] T024 Create MiniCalError.swift error enum in MiniCal/Utilities/
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -72,18 +72,18 @@ This is a macOS desktop application using Swift + SwiftUI:
 
 ### Implementation for User Story 1
 
-- [ ] T025 [US1] Implement MenuBarViewModel.swift in MiniCal/Views/MenuBar/ managing display text and timer
-- [ ] T026 [US1] Create MenuBarView.swift in MiniCal/Views/MenuBar/ (SwiftUI view, minimal UI)
-- [ ] T027 [US1] Implement SettingsManager.swift in MiniCal/Services/ conforming to protocol from contracts
-- [ ] T028 [US1] In MenuBarController: Create NSStatusItem and set initial button title
-- [ ] T029 [US1] In MenuBarController: Setup Timer to update menu bar text every 60 seconds
-- [ ] T030 [US1] In MenuBarViewModel: Implement updateDisplayText() formatting date per UserSettings
-- [ ] T031 [US1] In MenuBarViewModel: Implement startUpdating() initializing timer
-- [ ] T032 [US1] In MenuBarFormat enum: Implement format(date:show24Hour:showWeekday:) method
-- [ ] T033 [US1] In SettingsManager: Implement load() from UserDefaults
-- [ ] T034 [US1] In SettingsManager: Implement save() to UserDefaults
-- [ ] T035 [US1] Wire MenuBarViewModel to MenuBarController in AppDelegate
-- [ ] T036 [US1] Test: Launch app and verify menu bar displays formatted date/time
+- [X] T025 [US1] Implement MenuBarViewModel.swift in MiniCal/Views/MenuBar/ managing display text and timer
+- [X] T026 [US1] Create MenuBarView.swift in MiniCal/Views/MenuBar/ (SwiftUI view, minimal UI)
+- [X] T027 [US1] Implement SettingsManager.swift in MiniCal/Services/ conforming to protocol from contracts
+- [X] T028 [US1] In MenuBarController: Create NSStatusItem and set initial button title
+- [X] T029 [US1] In MenuBarController: Setup Timer to update menu bar text every 60 seconds
+- [X] T030 [US1] In MenuBarViewModel: Implement updateDisplayText() formatting date per UserSettings
+- [X] T031 [US1] In MenuBarViewModel: Implement startUpdating() initializing timer
+- [X] T032 [US1] In MenuBarFormat enum: Implement format(date:show24Hour:showWeekday:) method
+- [X] T033 [US1] In SettingsManager: Implement load() from UserDefaults
+- [X] T034 [US1] In SettingsManager: Implement save() to UserDefaults
+- [X] T035 [US1] Wire MenuBarViewModel to MenuBarController in AppDelegate
+- [X] T036 [US1] Test: Launch app and verify menu bar displays formatted date/time
 
 **Checkpoint**: 菜单栏显示功能完整,应用可显示实时日期时间
 
@@ -147,6 +147,10 @@ This is a macOS desktop application using Swift + SwiftUI:
 - [ ] T071 [US3] Test: Switch between different calendar types and verify correct conversions
 - [ ] T072 [US3] Test: Verify Spring Festival (春节) and Mid-Autumn Festival (中秋) are highlighted
 - [ ] T073 [US3] Test: Disable secondary calendar and verify only gregorian dates show
+- [ ] T073.1 [US3] Implement auto-recommend secondary calendar based on Locale (FR-019)
+- [ ] T073.2 [US3] Test: Verify Chinese locale (zh-CN) auto-selects lunar calendar on first launch
+- [ ] T073.3 [US3] Test: Verify Arabic locale (ar-SA) auto-selects Islamic calendar on first launch
+- [ ] T073.4 [US3] Edge case test: Verify secondary calendar date crossing gregorian day boundary displays correctly
 
 **Checkpoint**: 副日历功能完整,支持6+种全球主流历法
 
@@ -301,6 +305,10 @@ This is a macOS desktop application using Swift + SwiftUI:
 - [ ] T164 Code review: Ensure SwiftUI best practices and naming conventions
 - [ ] T165 Run quickstart.md validation scenarios
 - [ ] T166 Prepare for App Store submission (if applicable)
+- [ ] T167 [P] Design review: Verify compliance with macOS HIG (FR-020)
+- [ ] T168 [P] Edge case test: Popover positioning at screen edges (top, bottom, left, right)
+- [ ] T169 [P] Edge case test: Timezone change handling and display update verification
+- [ ] T170 [P] Edge case test: Rapid month switching debounce logic verification
 
 ---
 

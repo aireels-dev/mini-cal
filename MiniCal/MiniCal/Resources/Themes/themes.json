@@ -1,0 +1,58 @@
+[
+  {
+    "id": "system",
+    "name": "跟随系统",
+    "colors": {
+      "background": "#FFFFFF",
+      "text": "#000000",
+      "secondaryText": "#666666",
+      "border": "#E0E0E0",
+      "todayHighlight": "#007AFF",
+      "weekendText": "#FF3B30",
+      "selectedDate": "#007AFF"
+    },
+    "isSystemTheme": true
+  },
+  {
+    "id": "light",
+    "name": "浅色",
+    "colors": {
+      "background": "#FFFFFF",
+      "text": "#000000",
+      "secondaryText": "#666666",
+      "border": "#E0E0E0",
+      "todayHighlight": "#007AFF",
+      "weekendText": "#FF3B30",
+      "selectedDate": "#007AFF"
+    },
+    "isSystemTheme": false
+  },
+  {
+    "id": "dark",
+    "name": "深色",
+    "colors": {
+      "background": "#1C1C1E",
+      "text": "#FFFFFF",
+      "secondaryText": "#EBEBF5",
+      "border": "#38383A",
+      "todayHighlight": "#0A84FF",
+      "weekendText": "#FF453A",
+      "selectedDate": "#0A84FF"
+    },
+    "isSystemTheme": false
+  },
+  {
+    "id": "glass",
+    "name": "Glass 效果",
+    "colors": {
+      "background": "transparent",
+      "text": "#000000",
+      "secondaryText": "#666666",
+      "border": "#E0E0E0",
+      "todayHighlight": "#007AFF",
+      "weekendText": "#FF3B30",
+      "selectedDate": "#007AFF"
+    },
+    "isSystemTheme": false
+  }
+]
