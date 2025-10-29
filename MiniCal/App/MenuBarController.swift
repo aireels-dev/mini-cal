@@ -21,6 +21,7 @@ class MenuBarController: NSObject {
     private var localMouseMonitor: Any?
     private var isMouseInside = false
     private var contextMenu: NSMenu!
+    private var cancellables = Set<AnyCancellable>()
 
     override init() {
         super.init()
@@ -28,6 +29,7 @@ class MenuBarController: NSObject {
         setupMenuBar()
         setupPopover()
         setupContextMenu()
+        observeSettingsChanges()
     }
 
     private func setupViewModel() {
@@ -140,7 +142,10 @@ class MenuBarController: NSObject {
     private func setupPopover() {
         // Create popover with calendar view
         popover = NSPopover()
-        popover.contentSize = NSSize(width: 320, height: 380)
+
+        // 使用当前设置的日历尺寸
+        let calendarSize = settingsManager.currentSettings.calendarSize
+        popover.contentSize = NSSize(width: calendarSize.width, height: calendarSize.height)
         popover.behavior = .transient
 
         // Set calendar view as popover content with settings action
@@ -150,6 +155,18 @@ class MenuBarController: NSObject {
         }
         let hostingController = NSHostingController(rootView: calendarView)
         popover.contentViewController = hostingController
+    }
+
+    private func observeSettingsChanges() {
+        // 监听设置变更，更新 popover 尺寸
+        settingsManager.$currentSettings
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] settings in
+                guard let self = self else { return }
+                let calendarSize = settings.calendarSize
+                self.popover.contentSize = NSSize(width: calendarSize.width, height: calendarSize.height)
+            }
+            .store(in: &cancellables)
     }
 
     private func updateMenuBarTitle() {

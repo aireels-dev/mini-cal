@@ -20,22 +20,22 @@ struct ThemeColors: Codable {
     var accent: String { todayHighlight }
 
     static let light = ThemeColors(
-        background: "#FFFFFF",
-        text: "#000000",
-        secondaryText: "#666666",
-        border: "#E0E0E0",
-        todayHighlight: "#007AFF",
-        weekendText: "#FF3B30",
+        background: "#FAFAFA",        // 柔和白色背景（非纯白）
+        text: "#1C1C1E",              // 深灰文字（非纯黑）
+        secondaryText: "#8E8E93",     // Apple 标准次要文字色
+        border: "#E5E5EA",            // 柔和边框色
+        todayHighlight: "#007AFF",    // Apple 蓝
+        weekendText: "#FF6B6B",       // 柔和红色
         selectedDate: "#007AFF"
     )
 
     static let dark = ThemeColors(
-        background: "#1C1C1E",
-        text: "#FFFFFF",
-        secondaryText: "#EBEBF5",
-        border: "#38383A",
-        todayHighlight: "#0A84FF",
-        weekendText: "#FF453A",
+        background: "#1C1C1E",        // Apple 标准深色背景
+        text: "#F5F5F7",              // 柔和白色（非纯白）
+        secondaryText: "#98989D",     // Apple 标准次要文字色
+        border: "#2C2C2E",            // 深灰边框
+        todayHighlight: "#0A84FF",    // Apple 蓝（深色模式）
+        weekendText: "#FF6B6B",       // 柔和红色（统一色值）
         selectedDate: "#0A84FF"
     )
 

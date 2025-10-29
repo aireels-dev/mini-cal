@@ -17,6 +17,7 @@ struct UserSettings: Codable, Equatable {
     var themeId: String
     var hoverToShowEnabled: Bool
     var hoverDelay: Double
+    var calendarSize: CalendarSize
     var lastUpdated: Date
 
     static let `default` = UserSettings(
@@ -29,6 +30,7 @@ struct UserSettings: Codable, Equatable {
         themeId: "system",
         hoverToShowEnabled: true,
         hoverDelay: 0.5,
+        calendarSize: .standard,
         lastUpdated: Date()
     )
 

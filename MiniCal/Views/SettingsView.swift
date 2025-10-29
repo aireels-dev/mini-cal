@@ -25,10 +25,10 @@ struct SettingsView: View {
                     Label("日历", systemImage: "calendar")
                 }
 
-            // 主题设置
-            ThemeSettingsView(settingsManager: settingsManager)
+            // 外观设置
+            AppearanceSettingsView(settingsManager: settingsManager)
                 .tabItem {
-                    Label("主题", systemImage: "paintbrush")
+                    Label("外观", systemImage: "paintbrush")
                 }
         }
         .frame(width: 500, height: 400)
@@ -325,9 +325,60 @@ struct CalendarSettingsView: View {
     }
 }
 
-// MARK: - 主题设置
+// MARK: - 快捷键行视图
 
-struct ThemeSettingsView: View {
+struct ShortcutRow: View {
+    let key: String
+    let description: String
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Text(key)
+                .font(.system(.caption, design: .monospaced))
+                .fontWeight(.semibold)
+                .foregroundColor(.primary)
+                .frame(width: 30, height: 20)
+                .background(Color.secondary.opacity(0.15))
+                .cornerRadius(4)
+
+            Text(description)
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            Spacer()
+        }
+    }
+}
+
+// MARK: - 手势行视图
+
+struct GestureRow: View {
+    let gesture: String
+    let description: String
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Text(gesture)
+                .font(.caption)
+                .foregroundColor(.primary)
+                .frame(width: 80, alignment: .leading)
+
+            Text("→")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            Text(description)
+                .font(.caption)
+                .foregroundColor(.blue)
+
+            Spacer()
+        }
+    }
+}
+
+// MARK: - 外观设置
+
+struct AppearanceSettingsView: View {
     @ObservedObject var settingsManager: SettingsManager
     @ObservedObject private var themeManager = ThemeManager.shared
     @State private var localSettings: UserSettings
@@ -339,6 +390,43 @@ struct ThemeSettingsView: View {
 
     var body: some View {
         Form {
+            Section("面板大小") {
+                Picker("尺寸档位", selection: $localSettings.calendarSize) {
+                    ForEach(CalendarSize.allCases, id: \.self) { size in
+                        HStack {
+                            Text(size.displayName)
+                            Spacer()
+                            Text(size.shortDescription)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .tag(size)
+                    }
+                }
+                .onChange(of: localSettings.calendarSize) { newValue in
+                    var updated = settingsManager.currentSettings
+                    updated.calendarSize = newValue
+                    updated.lastUpdated = Date()
+                    settingsManager.saveSettings(updated)
+                }
+
+                // 尺寸预览说明
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text("当前尺寸：")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text(localSettings.calendarSize.sizeDescription)
+                            .font(.caption)
+                            .foregroundColor(.blue)
+                    }
+
+                    Text("单元格大小：\(Int(localSettings.calendarSize.cellSize)) × \(Int(localSettings.calendarSize.cellSize))")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+
             Section("主题选择") {
                 // 动态加载所有可用主题
                 Picker("主题", selection: $localSettings.themeId) {
@@ -368,10 +456,48 @@ struct ThemeSettingsView: View {
                 }
             }
 
+            Section("快捷键与手势") {
+                VStack(alignment: .leading, spacing: 12) {
+                    // 键盘快捷键
+                    Group {
+                        Text("键盘快捷键")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
+
+                        ShortcutRow(key: "←", description: "上个月")
+                        ShortcutRow(key: "→", description: "下个月")
+                        ShortcutRow(key: "↑", description: "上一年")
+                        ShortcutRow(key: "↓", description: "下一年")
+                    }
+
+                    Divider()
+                        .padding(.vertical, 4)
+
+                    // 触摸板手势
+                    Group {
+                        Text("触摸板手势")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
+
+                        GestureRow(gesture: "左右滑动", description: "月份切换")
+                        GestureRow(gesture: "上下滑动", description: "年份切换")
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+
             Section("说明") {
+                Text("调整面板大小可以获得更好的视觉体验")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
                 Text("日历弹窗使用 macOS Glass 效果")
                     .font(.caption)
                     .foregroundColor(.secondary)
+                    .padding(.top, 4)
+
                 Text("自动适配系统外观")
                     .font(.caption)
                     .foregroundColor(.secondary)

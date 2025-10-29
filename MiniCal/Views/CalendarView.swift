@@ -13,6 +13,7 @@ struct CalendarView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @State private var selectedDateForDetail: CalendarDate?
     @State private var showEventDetail = false
+    @State private var settingsKeyMonitor: Any?
 
     var openSettingsAction: (() -> Void)?
 
@@ -21,30 +22,32 @@ struct CalendarView: View {
         themeManager.effectiveColors()
     }
 
+    private var calendarSize: CalendarSize {
+        settingsManager.currentSettings.calendarSize
+    }
+
     var body: some View {
         VStack(spacing: 0) {
-            // 日历头部
+            // 日历头部（通过颜色和间距区分层级）
             CalendarHeaderView(
                 viewModel: viewModel,
                 themeColors: effectiveColors
             )
-
-            Divider()
-                .background(effectiveColors.borderColor.opacity(0.3))
+            .padding(.bottom, 12)
 
             // 日历网格
             CalendarGridView(
                 viewModel: viewModel,
                 themeColors: effectiveColors,
+                calendarSize: calendarSize,
                 onDateTap: { date in
                     selectedDateForDetail = date
                     showEventDetail = true
                 }
             )
-            .padding(.top, 12)
             .padding(.bottom, 16)
         }
-        .frame(width: 320, height: 380)
+        .frame(width: calendarSize.width, height: calendarSize.height)
         .sheet(isPresented: $showEventDetail) {
             if let selectedDate = selectedDateForDetail {
                 EventDetailView(
@@ -65,15 +68,34 @@ struct CalendarView: View {
             )
         )
         .onAppear {
-            // 设置快捷键
-            NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-                // Command+, 打开设置
-                if event.modifierFlags.contains(.command) && event.charactersIgnoringModifiers == "," {
-                    openSettingsAction?()
-                    return nil
-                }
-                return event
+            setupSettingsKeyMonitor()
+        }
+        .onDisappear {
+            removeSettingsKeyMonitor()
+        }
+    }
+
+    // MARK: - Settings Key Monitor
+
+    private func setupSettingsKeyMonitor() {
+        // 移除旧监听器（如果存在）
+        removeSettingsKeyMonitor()
+
+        // 添加 Command+, 快捷键监听
+        settingsKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+            // Command+, 打开设置
+            if event.modifierFlags.contains(.command) && event.charactersIgnoringModifiers == "," {
+                openSettingsAction?()
+                return nil
             }
+            return event
+        }
+    }
+
+    private func removeSettingsKeyMonitor() {
+        if let monitor = settingsKeyMonitor {
+            NSEvent.removeMonitor(monitor)
+            settingsKeyMonitor = nil
         }
     }
 }
