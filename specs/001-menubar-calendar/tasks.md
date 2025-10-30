@@ -97,62 +97,64 @@ This is a macOS desktop application using Swift + SwiftUI:
 
 ### Implementation for User Story 2
 
-- [ ] T037 [P] [US2] Create CalendarViewModel.swift in MiniCal/Views/Calendar/ managing month data and navigation
-- [ ] T038 [P] [US2] Create CalendarEngine.swift in MiniCal/Services/CalendarEngine/ implementing protocol
-- [ ] T039 [P] [US2] Create CalendarPopoverView.swift in MiniCal/Views/Calendar/ as popover root view
-- [ ] T040 [P] [US2] Create CalendarMonthView.swift in MiniCal/Views/Calendar/ using LazyVGrid for date grid
-- [ ] T041 [P] [US2] Create CalendarDayCell.swift in MiniCal/Views/Calendar/ displaying single date
-- [ ] T042 [US2] In CalendarEngine: Implement getMonthData(year:month:secondaryCalendar:) generating 42 cells
-- [ ] T043 [US2] In CalendarEngine: Implement getToday() returning current date
-- [ ] T044 [US2] In CalendarViewModel: Implement loadMonth(year:month:) calling CalendarEngine
-- [ ] T045 [US2] In CalendarViewModel: Implement navigateToMonth(offset:) with debounce logic
-- [ ] T046 [US2] In CalendarMonthView: Layout 7-column grid with weekday headers
-- [ ] T047 [US2] In CalendarDayCell: Display day number and highlight today
-- [ ] T048 [US2] In MenuBarController: Create NSPopover with CalendarPopoverView as content
-- [ ] T049 [US2] In MenuBarController: Implement togglePopover() showing/hiding popover
-- [ ] T050 [US2] In MenuBarController: Bind button click action to togglePopover()
-- [ ] T051 [US2] In MenuBarController: Setup NSTrackingArea for hover detection (0.5s delay)
-- [ ] T052 [US2] In CalendarPopoverView: Add left/right navigation buttons for month switching
-- [ ] T053 [US2] In CalendarPopoverView: Add ESC key handler to close popover
-- [ ] T054 [US2] In CalendarEngine: Implement NSCache for month data caching
-- [ ] T055 [US2] Test: Click menu bar icon and verify calendar popover displays current month
-- [ ] T056 [US2] Test: Hover over menu bar icon for 0.5s and verify auto-show
-- [ ] T057 [US2] Test: Click outside popover and verify it closes
-- [ ] T058 [US2] Test: Press ESC key and verify popover closes
-- [ ] T059 [US2] Test: Click navigation arrows and verify month switches
+- [X] T037 [P] [US2] Create CalendarViewModel.swift in MiniCal/Views/Calendar/ managing month data and navigation
+- [X] T038 [P] [US2] Create CalendarEngine.swift in MiniCal/Services/CalendarEngine/ implementing protocol
+- [X] T039 [P] [US2] Create CalendarPopoverView.swift in MiniCal/Views/Calendar/ as popover root view
+- [X] T040 [P] [US2] Create CalendarMonthView.swift in MiniCal/Views/Calendar/ using LazyVGrid for date grid
+- [X] T041 [P] [US2] Create CalendarDayCell.swift in MiniCal/Views/Calendar/ displaying single date
+- [X] T042 [US2] In CalendarEngine: Implement getMonthData(year:month:secondaryCalendar:) generating 42 cells
+- [X] T043 [US2] In CalendarEngine: Implement getToday() returning current date
+- [X] T044 [US2] In CalendarViewModel: Implement loadMonth(year:month:) calling CalendarEngine
+- [X] T045 [US2] In CalendarViewModel: Implement navigateToMonth(offset:) with debounce logic
+- [X] T046 [US2] In CalendarMonthView: Layout 7-column grid with weekday headers
+- [X] T047 [US2] In CalendarDayCell: Display day number and highlight today
+- [X] T048 [US2] In MenuBarController: Create NSPopover with CalendarPopoverView as content
+- [X] T049 [US2] In MenuBarController: Implement togglePopover() showing/hiding popover
+- [X] T050 [US2] In MenuBarController: Bind button click action to togglePopover()
+- [X] T051 [US2] In MenuBarController: Setup NSTrackingArea for hover detection (0.5s delay)
+- [X] T052 [US2] In CalendarPopoverView: Add left/right navigation buttons for month switching
+- [X] T053 [US2] In CalendarPopoverView: Add ESC key handler to close popover
+- [X] T054 [US2] In CalendarEngine: Implement NSCache for month data caching
+- [X] T055 [US2] Test: Click menu bar icon and verify calendar popover displays current month
+- [X] T056 [US2] Test: Hover over menu bar icon for 0.5s and verify auto-show
+- [X] T057 [US2] Test: Click outside popover and verify it closes
+- [X] T058 [US2] Test: Press ESC key and verify popover closes
+- [X] T059 [US2] Test: Click navigation arrows and verify month switches
 
 **Checkpoint**: 日历浮窗展开功能完整,用户可查看月视图并导航不同月份
 
 ---
 
-## Phase 5: User Story 3 - 副日历显示 (Priority: P2)
+## Phase 5: User Story 3 - 本地历法显示 (Priority: P2)
 
-**Goal**: 在月视图中显示对应的副日历日期(农历、伊斯兰历等),满足文化习俗需求
+**Goal**: 在月视图中显示对应的本地历法日期(农历、伊斯兰历等),满足文化习俗需求
 
-**Independent Test**: 在设置中启用副日历(如中国农历),打开日历浮窗验证每个日期下方是否显示对应副日历信息
+**Independent Test**: 在设置中启用本地历法(如中国农历),打开日历浮窗验证每个日期下方是否显示对应本地历法信息
 
 ### Implementation for User Story 3
 
-- [ ] T060 [P] [US3] Create SecondaryCalendarConverter.swift in MiniCal/Services/CalendarEngine/
-- [ ] T061 [US3] In SecondaryCalendarConverter: Implement convert(gregorianDate:to:) using Foundation.Calendar
-- [ ] T062 [US3] In SecondaryCalendarConverter: Implement batchConvert(dates:to:) for performance
-- [ ] T063 [US3] In SecondaryCalendarConverter: Implement getFestivalName(for:calendarType:) identifying festivals
-- [ ] T064 [US3] In SecondaryCalendarConverter: Add custom Buddhist calendar conversion (gregorian year + 543)
-- [ ] T065 [US3] In CalendarEngine: Integrate SecondaryCalendarConverter for batch conversion
-- [ ] T066 [US3] In CalendarEngine.getMonthData: Call batchConvert when secondaryCalendar is set
-- [ ] T067 [US3] In CalendarDayCell: Display secondaryDate.displayText below day number
-- [ ] T068 [US3] In CalendarDayCell: Highlight festival names in special color
-- [ ] T069 [US3] In CalendarType enum: Implement displayName property for each calendar type
-- [ ] T070 [US3] Test: Enable Chinese lunar calendar in settings and verify correct lunar dates
-- [ ] T071 [US3] Test: Switch between different calendar types and verify correct conversions
-- [ ] T072 [US3] Test: Verify Spring Festival (春节) and Mid-Autumn Festival (中秋) are highlighted
-- [ ] T073 [US3] Test: Disable secondary calendar and verify only gregorian dates show
-- [ ] T073.1 [US3] Implement auto-recommend secondary calendar based on Locale (FR-019)
-- [ ] T073.2 [US3] Test: Verify Chinese locale (zh-CN) auto-selects lunar calendar on first launch
-- [ ] T073.3 [US3] Test: Verify Arabic locale (ar-SA) auto-selects Islamic calendar on first launch
-- [ ] T073.4 [US3] Edge case test: Verify secondary calendar date crossing gregorian day boundary displays correctly
+- [X] T060 [P] [US3] Create SecondaryCalendarConverter.swift in MiniCal/Services/CalendarEngine/
+- [X] T061 [US3] In SecondaryCalendarConverter: Implement convert(gregorianDate:to:) using Foundation.Calendar
+- [X] T062 [US3] In SecondaryCalendarConverter: Implement batchConvert(dates:to:) for performance
+- [X] T063 [US3] In SecondaryCalendarConverter: Implement getFestivalName(for:calendarType:) identifying festivals
+- [X] T064 [US3] In SecondaryCalendarConverter: Add custom Buddhist calendar conversion (gregorian year + 543)
+- [X] T065 [US3] In CalendarEngine: Integrate SecondaryCalendarConverter for batch conversion
+- [X] T066 [US3] In CalendarEngine.getMonthData: Call batchConvert when secondaryCalendar is set
+- [X] T067 [US3] In CalendarDayCell: Display secondaryDate.displayText below day number
+- [X] T068 [US3] In CalendarDayCell: Highlight festival names in special color
+- [X] T069 [US3] In CalendarType enum: Implement displayName property for each calendar type
+- [X] T070 [US3] Test: Enable Chinese lunar calendar in settings and verify correct lunar dates
+- [X] T071 [US3] Test: Switch between different calendar types and verify correct conversions
+- [X] T072 [US3] Test: Verify Spring Festival (春节) and Mid-Autumn Festival (中秋) are highlighted
+- [X] T073 [US3] Test: Disable secondary calendar and verify only gregorian dates show
+- [X] T073.0 [US3] In SecondaryCalendarConverter: Implement static recommendCalendar(for locale: Locale) -> CalendarType mapping locale identifier to appropriate calendar (zh-CN/TW/HK → chinese, ar-SA/AE → islamic, he-IL → hebrew, fa-IR → persian, ja-JP → japanese)
+- [X] T073.0.1 [US3] In SettingsManager.load(): Check if UserSettings.secondaryCalendar is nil, call SecondaryCalendarConverter.recommendCalendar(Locale.current) and auto-save result (FR-019 implementation)
+- [X] T073.1 [US3] Test: Auto-recommend functionality - verify first launch behavior
+- [X] T073.2 [US3] Test: Verify Chinese locale (zh-CN) auto-selects lunar calendar on first launch
+- [X] T073.3 [US3] Test: Verify Arabic locale (ar-SA) auto-selects Islamic calendar on first launch
+- [X] T073.4 [US3] Edge case test: Verify secondary calendar date crossing gregorian day boundary displays correctly
 
-**Checkpoint**: 副日历功能完整,支持6+种全球主流历法
+**Checkpoint**: 本地历法功能完整,支持6+种全球主流历法
 
 ---
 
@@ -164,34 +166,34 @@ This is a macOS desktop application using Swift + SwiftUI:
 
 ### Implementation for User Story 4
 
-- [ ] T074 [P] [US4] Create HolidayProvider.swift in MiniCal/Services/CalendarEngine/ implementing protocol
-- [ ] T075 [P] [US4] Create EventService.swift in MiniCal/Services/ implementing protocol
-- [ ] T076 [P] [US4] Create CN.json in MiniCal/Resources/Holidays/ with Chinese holidays data (2025-2027)
-- [ ] T077 [P] [US4] Create US.json in MiniCal/Resources/Holidays/ with US holidays data
-- [ ] T078 [P] [US4] Create festival-mapping.json in MiniCal/Resources/Holidays/ mapping lunar festivals
-- [ ] T079 [US4] In HolidayProvider: Implement loadHolidayData() parsing JSON files
-- [ ] T080 [US4] In HolidayProvider: Implement getHolidays(for:region:) querying by date
-- [ ] T081 [US4] In HolidayProvider: Implement getMonthHolidays(year:month:region:) for batch query
-- [ ] T082 [US4] In HolidayProvider: Implement isDataOutdated() checking latest holiday date
-- [ ] T083 [US4] In EventService: Implement requestAuthorization() async calling EKEventStore
-- [ ] T084 [US4] In EventService: Implement fetchEvents(for:) async querying EventKit
-- [ ] T085 [US4] In EventService: Implement fetchEvents(from:to:) async for date range
-- [ ] T086 [US4] In EventService: Implement observeEventStoreChanges(handler:) for live updates
-- [ ] T087 [US4] In CalendarEngine: Integrate HolidayProvider to load month holidays
-- [ ] T088 [US4] In CalendarEngine: Integrate EventService to load system events (if authorized)
-- [ ] T089 [US4] In CalendarEngine.getMonthData: Merge holidays and events into CalendarDate.events
-- [ ] T090 [US4] In CalendarDayCell: Add HStack displaying event dots (Circle views)
-- [ ] T091 [US4] In CalendarDayCell: Color dots per event.color (red/orange/blue/purple/green)
-- [ ] T092 [US4] In CalendarDayCell: Limit max 5 dots, show "+" if more events
-- [ ] T093 [US4] Create EventDetailPopover.swift in MiniCal/Views/Calendar/ for event details
-- [ ] T094 [US4] In CalendarDayCell: Add tap gesture opening EventDetailPopover
-- [ ] T095 [US4] In EventDetailPopover: Display all events for selected date with titles and descriptions
-- [ ] T096 [US4] Test: Verify public holidays show red dots
-- [ ] T097 [US4] Test: Verify traditional festivals show orange dots
-- [ ] T098 [US4] Test: Grant EventKit permission and verify calendar events show blue dots
-- [ ] T099 [US4] Test: Deny EventKit permission and verify app still shows holidays
-- [ ] T100 [US4] Test: Click date with events and verify detail popover displays correctly
-- [ ] T101 [US4] Test: Verify multiple event dots display for same date
+- [X] T074 [P] [US4] Create HolidayProvider.swift in MiniCal/Services/CalendarEngine/ implementing protocol
+- [X] T075 [P] [US4] Create EventService.swift in MiniCal/Services/ implementing protocol
+- [X] T076 [P] [US4] Create CN.json in MiniCal/Resources/Holidays/ with Chinese holidays data (2025-2027)
+- [X] T077 [P] [US4] Create US.json in MiniCal/Resources/Holidays/ with US holidays data
+- [X] T078 [P] [US4] Create festival-mapping.json in MiniCal/Resources/Holidays/ mapping lunar festivals
+- [X] T079 [US4] In HolidayProvider: Implement loadHolidayData() parsing JSON files
+- [X] T080 [US4] In HolidayProvider: Implement getHolidays(for:region:) querying by date
+- [X] T081 [US4] In HolidayProvider: Implement getMonthHolidays(year:month:region:) for batch query
+- [X] T082 [US4] In HolidayProvider: Implement isDataOutdated() checking latest holiday date
+- [X] T083 [US4] In EventService: Implement requestAuthorization() async calling EKEventStore
+- [X] T084 [US4] In EventService: Implement fetchEvents(for:) async querying EventKit
+- [X] T085 [US4] In EventService: Implement fetchEvents(from:to:) async for date range
+- [X] T086 [US4] In EventService: Implement observeEventStoreChanges(handler:) for live updates
+- [X] T087 [US4] In CalendarEngine: Integrate HolidayProvider to load month holidays
+- [X] T088 [US4] In CalendarEngine: Integrate EventService to load system events (if authorized)
+- [X] T089 [US4] In CalendarEngine.getMonthData: Merge holidays and events into CalendarDate.events
+- [X] T090 [US4] In CalendarDayCell: Add HStack displaying event dots (Circle views)
+- [X] T091 [US4] In CalendarDayCell: Color dots per event.color (red/orange/blue/purple/green)
+- [X] T092 [US4] In CalendarDayCell: Limit max 5 dots, show "+" if more events
+- [X] T093 [US4] Create EventDetailPopover.swift in MiniCal/Views/Calendar/ for event details
+- [X] T094 [US4] In CalendarDayCell: Add tap gesture opening EventDetailPopover
+- [X] T095 [US4] In EventDetailPopover: Display all events for selected date with titles and descriptions
+- [X] T096 [US4] Test: Verify public holidays show red dots
+- [X] T097 [US4] Test: Verify traditional festivals show orange dots
+- [X] T098 [US4] Test: Grant EventKit permission and verify calendar events show blue dots
+- [X] T099 [US4] Test: Deny EventKit permission and verify app still shows holidays
+- [X] T100 [US4] Test: Click date with events and verify detail popover displays correctly
+- [X] T101 [US4] Test: Verify multiple event dots display for same date
 
 **Checkpoint**: 日期状态标记功能完整,用户可查看节假日和日历事件
 
@@ -205,21 +207,21 @@ This is a macOS desktop application using Swift + SwiftUI:
 
 ### Implementation for User Story 5
 
-- [ ] T102 [P] [US5] Create SettingsView.swift in MiniCal/Views/Settings/ as main settings window
-- [ ] T103 [P] [US5] Create SettingsViewModel.swift in MiniCal/Views/Settings/ managing settings state
-- [ ] T104 [P] [US5] Create MenuBarSettingsView.swift in MiniCal/Views/Settings/ for menu bar options
-- [ ] T105 [P] [US5] Create ThemeSettingsView.swift in MiniCal/Views/Settings/ for theme selection
-- [ ] T106 [US5] In SettingsView: Create tabbed interface with "菜单栏", "日历", "主题" tabs
-- [ ] T107 [US5] In SettingsViewModel: Bind UserSettings properties as @Published
-- [ ] T108 [US5] In SettingsViewModel: Implement save() calling SettingsManager
-- [ ] T109 [US5] In MenuBarController: Add right-click context menu with "设置" item
-- [ ] T110 [US5] In MenuBarController: Bind "设置" action to open SettingsView window
-- [ ] T111 [US5] In CalendarPopoverView: Add keyboard shortcut ⌘+, opening SettingsView
-- [ ] T112 [US5] In SettingsView: Implement window lifecycle (single instance, bring to front if open)
-- [ ] T113 [US5] Test: Right-click menu bar icon and verify context menu displays
-- [ ] T114 [US5] Test: Click "设置" menu item and verify settings window opens
-- [ ] T115 [US5] Test: Press ⌘+, in calendar popover and verify settings window opens
-- [ ] T116 [US5] Test: Open settings twice and verify single window instance
+- [X] T102 [P] [US5] Create SettingsView.swift in MiniCal/Views/Settings/ as main settings window
+- [X] T103 [P] [US5] Create SettingsViewModel.swift in MiniCal/Views/Settings/ managing settings state
+- [X] T104 [P] [US5] Create MenuBarSettingsView.swift in MiniCal/Views/Settings/ for menu bar options
+- [X] T105 [P] [US5] Create ThemeSettingsView.swift in MiniCal/Views/Settings/ for theme selection
+- [X] T106 [US5] In SettingsView: Create tabbed interface with "菜单栏", "日历", "主题" tabs
+- [X] T107 [US5] In SettingsViewModel: Bind UserSettings properties as @Published
+- [X] T108 [US5] In SettingsViewModel: Implement save() calling SettingsManager
+- [X] T109 [US5] In MenuBarController: Add right-click context menu with "设置" item
+- [X] T110 [US5] In MenuBarController: Bind "设置" action to open SettingsView window
+- [X] T111 [US5] In CalendarPopoverView: Add keyboard shortcut ⌘+, opening SettingsView
+- [X] T112 [US5] In SettingsView: Implement window lifecycle (single instance, bring to front if open)
+- [X] T113 [US5] Test: Right-click menu bar icon and verify context menu displays
+- [X] T114 [US5] Test: Click "设置" menu item and verify settings window opens
+- [X] T115 [US5] Test: Press ⌘+, in calendar popover and verify settings window opens
+- [X] T116 [US5] Test: Open settings twice and verify single window instance
 
 **Checkpoint**: 设置页面访问功能完整,用户可打开配置界面
 
@@ -233,19 +235,19 @@ This is a macOS desktop application using Swift + SwiftUI:
 
 ### Implementation for User Story 6
 
-- [ ] T117 [US6] In MenuBarSettingsView: Add Picker for menuBarFormat selection
-- [ ] T118 [US6] In MenuBarSettingsView: Add Toggle for show24Hour option
-- [ ] T119 [US6] In MenuBarSettingsView: Add Toggle for showWeekday option
-- [ ] T120 [US6] In MenuBarSettingsView: Add preview text showing current format
-- [ ] T121 [US6] In MenuBarSettingsView: Bind controls to SettingsViewModel properties
-- [ ] T122 [US6] In SettingsViewModel: Observe settings changes and auto-save
-- [ ] T123 [US6] In MenuBarViewModel: Observe SettingsManager.settings via Combine
-- [ ] T124 [US6] In MenuBarViewModel: Trigger updateDisplayText() when settings change
-- [ ] T125 [US6] In MenuBarFormat.format(): Implement all format options (.dateOnly, .timeOnly, .dateTime)
-- [ ] T126 [US6] Test: Change to "仅时间" and verify menu bar shows only time
-- [ ] T127 [US6] Test: Enable "24小时制" and verify time displays as 14:30 not 2:30 PM
-- [ ] T128 [US6] Test: Enable "显示星期" and verify "周一 10月27日" format
-- [ ] T129 [US6] Test: Verify settings persist after app restart
+- [X] T117 [US6] In MenuBarSettingsView: Add Picker for menuBarFormat selection
+- [X] T118 [US6] In MenuBarSettingsView: Add Toggle for show24Hour option
+- [X] T119 [US6] In MenuBarSettingsView: Add Toggle for showWeekday option
+- [X] T120 [US6] In MenuBarSettingsView: Add preview text showing current format
+- [X] T121 [US6] In MenuBarSettingsView: Bind controls to SettingsViewModel properties
+- [X] T122 [US6] In SettingsViewModel: Observe settings changes and auto-save
+- [X] T123 [US6] In MenuBarViewModel: Observe SettingsManager.settings via Combine
+- [X] T124 [US6] In MenuBarViewModel: Trigger updateDisplayText() when settings change
+- [X] T125 [US6] In MenuBarFormat.format(): Implement all format options (.dateOnly, .timeOnly, .dateTime)
+- [X] T126 [US6] Test: Change to "仅时间" and verify menu bar shows only time
+- [X] T127 [US6] Test: Enable "24小时制" and verify time displays as 14:30 not 2:30 PM
+- [X] T128 [US6] Test: Enable "显示星期" and verify "周一 10月27日" format
+- [X] T129 [US6] Test: Verify settings persist after app restart
 
 **Checkpoint**: 菜单栏显示自定义功能完整,用户可个性化时间格式
 
@@ -259,28 +261,28 @@ This is a macOS desktop application using Swift + SwiftUI:
 
 ### Implementation for User Story 7
 
-- [ ] T130 [P] [US7] Create ThemeManager.swift in MiniCal/Services/ implementing protocol
-- [ ] T131 [P] [US7] Create themes.json in MiniCal/Resources/Themes/ with light/dark/system themes
-- [ ] T132 [US7] In ThemeManager: Implement loadThemes() parsing themes.json
-- [ ] T133 [US7] In ThemeManager: Implement applyTheme(_:) updating currentTheme
-- [ ] T134 [US7] In ThemeManager: Implement theme(withId:) looking up theme by ID
-- [ ] T135 [US7] In ThemeManager: Implement startObservingSystemAppearance() watching NSApp.effectiveAppearance
-- [ ] T136 [US7] In ThemeManager: Implement stopObservingSystemAppearance() removing observer
-- [ ] T137 [US7] In ThemeColors: Implement color(from:) converting hex to SwiftUI Color
-- [ ] T138 [US7] In ThemeSettingsView: Add Picker displaying all available themes
-- [ ] T139 [US7] In ThemeSettingsView: Add theme preview cards showing colors
-- [ ] T140 [US7] In ThemeSettingsView: Bind theme selection to SettingsViewModel.themeId
-- [ ] T141 [US7] In SettingsViewModel: Call ThemeManager.applyTheme() when themeId changes
-- [ ] T142 [US7] In SettingsViewModel: Call startObservingSystemAppearance() if "跟随系统" selected
-- [ ] T143 [US7] In AppDelegate: Inject ThemeManager into SwiftUI environment
-- [ ] T144 [US7] In CalendarPopoverView: Apply theme colors to background
-- [ ] T145 [US7] In CalendarMonthView: Apply theme colors to text and borders
-- [ ] T146 [US7] In CalendarDayCell: Apply theme.todayHighlight to current day
-- [ ] T147 [US7] In CalendarDayCell: Apply theme.weekendText to Saturday/Sunday
-- [ ] T148 [US7] Test: Select "浅色主题" and verify calendar uses light colors
-- [ ] T149 [US7] Test: Select "深色主题" and verify calendar uses dark colors
-- [ ] T150 [US7] Test: Select "跟随系统", switch macOS to dark mode, verify theme changes
-- [ ] T151 [US7] Test: Measure theme switching time is <200ms
+- [X] T130 [P] [US7] Create ThemeManager.swift in MiniCal/Services/ implementing protocol
+- [X] T131 [P] [US7] Create themes.json in MiniCal/Resources/Themes/ with light/dark/system themes
+- [X] T132 [US7] In ThemeManager: Implement loadThemes() parsing themes.json
+- [X] T133 [US7] In ThemeManager: Implement applyTheme(_:) updating currentTheme
+- [X] T134 [US7] In ThemeManager: Implement theme(withId:) looking up theme by ID
+- [X] T135 [US7] In ThemeManager: Implement startObservingSystemAppearance() watching NSApp.effectiveAppearance
+- [X] T136 [US7] In ThemeManager: Implement stopObservingSystemAppearance() removing observer
+- [X] T137 [US7] In ThemeColors: Implement color(from:) converting hex to SwiftUI Color
+- [X] T138 [US7] In ThemeSettingsView: Add Picker displaying all available themes
+- [X] T139 [US7] In ThemeSettingsView: Add theme preview cards showing colors
+- [X] T140 [US7] In ThemeSettingsView: Bind theme selection to SettingsViewModel.themeId
+- [X] T141 [US7] In SettingsViewModel: Call ThemeManager.applyTheme() when themeId changes
+- [X] T142 [US7] In SettingsViewModel: Call startObservingSystemAppearance() if "跟随系统" selected
+- [X] T143 [US7] In AppDelegate: Inject ThemeManager into SwiftUI environment
+- [X] T144 [US7] In CalendarPopoverView: Apply theme colors to background
+- [X] T145 [US7] In CalendarMonthView: Apply theme colors to text and borders
+- [X] T146 [US7] In CalendarDayCell: Apply theme.todayHighlight to current day
+- [X] T147 [US7] In CalendarDayCell: Apply theme.weekendText to Saturday/Sunday
+- [X] T148 [US7] Test: Select "浅色主题" and verify calendar uses light colors
+- [X] T149 [US7] Test: Select "深色主题" and verify calendar uses dark colors
+- [X] T150 [US7] Test: Select "跟随系统", switch macOS to dark mode, verify theme changes
+- [X] T151 [US7] Test: Measure theme switching time is <200ms
 
 **Checkpoint**: 主题定制功能完整,支持3个主题和系统跟随
 
@@ -296,19 +298,24 @@ This is a macOS desktop application using Swift + SwiftUI:
 - [ ] T155 [P] Add about window showing app version and credits
 - [ ] T156 [P] Create user guide document in docs/user-guide.md
 - [ ] T157 Add performance profiling and optimize slow operations
-- [ ] T158 Add memory leak detection and fix retain cycles
+- [ ] T157.1 [P] Use Instruments Allocations to verify memory usage <50MB during idle and active month switching (SC-008)
+- [ ] T157.2 [P] Use Activity Monitor to verify CPU usage <1% when idle with menu bar display only (SC-008)
+- [X] T158 Add memory leak detection and fix retain cycles
 - [ ] T159 [P] Review and improve error messages for user-facing errors
-- [ ] T160 [P] Add logging for debugging (using os.log)
-- [ ] T161 [P] Security review: Verify EventKit permission handling
+- [X] T160 [P] Add logging for debugging (using os.log)
+- [X] T161 [P] Security review: Verify EventKit permission handling
 - [ ] T162 [P] Accessibility review: Ensure VoiceOver compatibility
-- [ ] T163 Code cleanup: Remove debug print statements and commented code
-- [ ] T164 Code review: Ensure SwiftUI best practices and naming conventions
+- [X] T163 Code cleanup: Remove debug print statements and commented code
+- [X] T164 Code review: Ensure SwiftUI best practices and naming conventions
 - [ ] T165 Run quickstart.md validation scenarios
 - [ ] T166 Prepare for App Store submission (if applicable)
 - [ ] T167 [P] Design review: Verify compliance with macOS HIG (FR-020)
 - [ ] T168 [P] Edge case test: Popover positioning at screen edges (top, bottom, left, right)
 - [ ] T169 [P] Edge case test: Timezone change handling and display update verification
 - [ ] T170 [P] Edge case test: Rapid month switching debounce logic verification
+- [X] T170.1 [P] Add color legend tooltip in EventDetailPopover explaining dot color meanings (red=holiday, orange=festival, blue=meeting) as fallback for SC-010 usability requirement
+- [X] T171 [P] Verify all completed tasks reference spec requirements (FR-XXX, SC-XXX, US-X) ensuring Spec-First Principle compliance
+- [X] T172 Run /speckit.analyze and resolve all HIGH+ severity findings before final merge (Spec-First Principle gate)
 
 ---
 
@@ -328,7 +335,7 @@ This is a macOS desktop application using Swift + SwiftUI:
 
 - **US1 (菜单栏显示)**: Can start after Foundational - No dependencies
 - **US2 (月视图展开)**: Can start after Foundational - No dependencies (independent of US1)
-- **US3 (副日历)**: Depends on US2 (needs CalendarEngine and CalendarDayCell)
+- **US3 (本地历法)**: Depends on US2 (needs CalendarEngine and CalendarDayCell)
 - **US4 (状态标记)**: Depends on US2 (needs CalendarEngine and CalendarDayCell)
 - **US5 (设置页面)**: Can start after Foundational - No dependencies
 - **US6 (菜单栏自定义)**: Depends on US1 (MenuBar) and US5 (Settings)
@@ -341,7 +348,7 @@ This is a macOS desktop application using Swift + SwiftUI:
 3. **Phase 3**: US1 - 菜单栏显示 (T025-T036) ✅ **First MVP checkpoint**
 4. **Phase 4**: US2 - 月视图展开 (T037-T059) ✅ **Second MVP checkpoint**
 5. **Phase 7**: US5 - 设置页面 (T102-T116) - Enables customization
-6. **Phase 5**: US3 - 副日历显示 (T060-T073)
+6. **Phase 5**: US3 - 本地历法显示 (T060-T073)
 7. **Phase 6**: US4 - 状态标记 (T074-T101)
 8. **Phase 8**: US6 - 菜单栏自定义 (T117-T129)
 9. **Phase 9**: US7 - 主题定制 (T130-T151)
@@ -436,19 +443,19 @@ Task T102-T116: "User Story 5 - Settings window" (Developer C)
 
 ## Task Statistics
 
-- **Total Tasks**: 166
-- **Setup**: 6 tasks
-- **Foundational**: 18 tasks
-- **US1 (MenuBar)**: 12 tasks
-- **US2 (Calendar)**: 23 tasks
-- **US3 (Secondary Calendar)**: 14 tasks
-- **US4 (Event Dots)**: 28 tasks
-- **US5 (Settings)**: 15 tasks
-- **US6 (MenuBar Custom)**: 13 tasks
-- **US7 (Theme)**: 22 tasks
-- **Polish**: 15 tasks
+- **Total Tasks**: 177 (including sub-tasks and new additions from /speckit.analyze)
+- **Setup**: 6 tasks (T001-T006)
+- **Foundational**: 18 tasks (T007-T024)
+- **US1 (MenuBar)**: 12 tasks (T025-T036)
+- **US2 (Calendar)**: 23 tasks (T037-T059)
+- **US3 (Secondary Calendar)**: 20 tasks (T060-T073.4, including T073.0, T073.0.1)
+- **US4 (Event Dots)**: 28 tasks (T074-T101)
+- **US5 (Settings)**: 15 tasks (T102-T116)
+- **US6 (MenuBar Custom)**: 13 tasks (T117-T129)
+- **US7 (Theme)**: 22 tasks (T130-T151)
+- **Polish**: 20 tasks (T152-T172, including T157.1, T157.2, T170.1)
 
-**Parallel Tasks**: 51 tasks marked [P] (30.7%)
+**Parallel Tasks**: 54 tasks marked [P] (30.5%)
 **MVP Tasks**: 36 tasks (Setup + Foundational + US1 + US2)
 
 ---

@@ -47,7 +47,7 @@
 
 ## 1. CalendarEngineProtocol
 
-**职责**: 核心日历计算引擎,负责月视图数据生成、副日历转换、节假日查询
+**职责**: 核心日历计算引擎,负责月视图数据生成、本地历法转换、节假日查询
 
 ### 接口定义
 
@@ -57,7 +57,7 @@ protocol CalendarEngineProtocol {
     /// - Parameters:
     ///   - year: 年份
     ///   - month: 月份 (1-12)
-    ///   - secondaryCalendar: 副日历类型 (可选)
+    ///   - secondaryCalendar: 本地历法类型 (可选)
     /// - Returns: 月视图所需的所有日期数据 (通常42个单元格)
     func getMonthData(
         year: Int,
@@ -69,11 +69,11 @@ protocol CalendarEngineProtocol {
     /// - Returns: 当前日期的CalendarDate对象
     func getToday() -> CalendarDate
 
-    /// 转换公历日期到副日历
+    /// 转换公历日期到本地历法
     /// - Parameters:
     ///   - date: 公历日期
     ///   - calendarType: 目标历法类型
-    /// - Returns: 副日历信息
+    /// - Returns: 本地历法信息
     func convertToSecondaryCalendar(
         date: Date,
         calendarType: CalendarType
@@ -419,29 +419,29 @@ class CalendarEngine: CalendarEngineProtocol {
 
 ## 6. SecondaryCalendarConverterProtocol
 
-**职责**: 副日历转换算法实现
+**职责**: 本地历法转换算法实现
 
 ### 接口定义
 
 ```swift
 protocol SecondaryCalendarConverterProtocol {
-    /// 转换公历日期到副日历
+    /// 转换公历日期到本地历法
     /// - Parameters:
     ///   - gregorianDate: 公历日期
     ///   - calendarType: 目标历法类型
-    /// - Returns: 副日历信息
+    /// - Returns: 本地历法信息
     func convert(gregorianDate: Date, to calendarType: CalendarType) -> SecondaryDateInfo
 
     /// 批量转换 (性能优化)
     /// - Parameters:
     ///   - dates: 公历日期数组
     ///   - calendarType: 目标历法类型
-    /// - Returns: 日期到副日历信息的映射
+    /// - Returns: 日期到本地历法信息的映射
     func batchConvert(dates: [Date], to calendarType: CalendarType) -> [Date: SecondaryDateInfo]
 
-    /// 获取副日历节日名称
+    /// 获取本地历法节日名称
     /// - Parameters:
-    ///   - secondaryDate: 副日历日期信息
+    ///   - secondaryDate: 本地历法日期信息
     ///   - calendarType: 历法类型
     /// - Returns: 节日名称 (如果该日是节日)
     func getFestivalName(for secondaryDate: SecondaryDateInfo, calendarType: CalendarType) -> String?

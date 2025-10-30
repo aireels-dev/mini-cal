@@ -176,11 +176,13 @@ class MenuBarController: NSObject {
     }
 
     private func observeViewModelChanges() {
-        // Observe displayText changes
+        // Observe displayText changes and update immediately
         menuBarViewModel.$displayText
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.updateMenuBarTitle()
+            .sink { [weak self] newText in
+                guard let self = self else { return }
+                Logger.debug("MenuBar displayText changed to: \(newText)", category: Logger.ui)
+                self.updateMenuBarTitle()
             }
             .store(in: &menuBarViewModel.cancellables)
     }

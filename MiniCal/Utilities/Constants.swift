@@ -15,7 +15,6 @@ struct Constants {
 
     // Timing
     struct Timing {
-        static let menuBarUpdateInterval: TimeInterval = 60.0 // 1 minute
         static let hoverDelay: TimeInterval = 0.5 // 0.5 seconds
         static let debounceDelay: TimeInterval = 0.1 // 100ms
     }

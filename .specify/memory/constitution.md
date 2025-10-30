@@ -26,7 +26,7 @@
 - **MUST** 应用内存占用 < 50MB (SC-008)
 - **MUST** 空闲状态 CPU 占用率 < 1% (SC-008)
 - **MUST** 使用缓存优化重复计算（NSCache for month data）
-- **MUST** 批量处理副日历转换（batchConvert）
+- **MUST** 批量处理本地历法转换（batchConvert）
 - **MUST** 实现防抖逻辑避免快速操作导致的性能问题
 
 **Verification**: 使用 Instruments (Time Profiler, Allocations, Leaks) 验证性能指标。
@@ -75,7 +75,7 @@
 **应用必须离线可用，数据可靠持久化**
 
 - **MUST** 所有功能在无网络环境下正常工作
-- **MUST** 副日历计算使用本地算法（Foundation.Calendar + 自定义算法）
+- **MUST** 本地历法计算使用本地算法（Foundation.Calendar + 自定义算法）
 - **MUST** 节假日数据通过本地 JSON 文件提供
 - **MUST** 用户设置通过 UserDefaults 持久化
 - **MUST** 实现设置加载失败的降级策略（使用默认配置）
@@ -94,7 +94,7 @@
 - **MUST** 遵循 macOS 交互模式（菜单栏应用标准行为）
 - **MUST** 支持标准快捷键（⌘+, 打开设置，ESC 关闭弹窗）
 - **MUST** 实现优雅降级：EventKit 权限拒绝不影响基础日历功能
-- **MUST** 根据系统语言/地区自动推荐合适的副日历（FR-019）
+- **MUST** 根据系统语言/地区自动推荐合适的本地历法（FR-019）
 - **MUST** 支持系统外观模式（浅色/深色/跟随系统）
 - **MUST** 日历浮窗在屏幕边缘自动调整位置，确保完整显示
 - **MUST** 首次启动无需配置即可使用（SC-001）
@@ -170,7 +170,7 @@
 
 4. **区域设置 (Locale)**
    - 使用 `Locale.current.identifier` 和 `Locale.current.calendar` 识别地区
-   - 自动推荐对应的副日历（如 zh-CN → 农历，ar-SA → 伊斯兰历）
+   - 自动推荐对应的本地历法（如 zh-CN → 农历，ar-SA → 伊斯兰历）
 
 ### Security & Privacy
 
@@ -183,6 +183,16 @@
 
 ## Development Workflow
 
+### Spec-First Principle (NON-NEGOTIABLE)
+- Every code change must trace to a spec requirement
+- Bug fixes exposing spec gaps require spec updates
+- PR reviews must verify spec alignment
+- Use `/speckit.analyze` before merging
+
+### Violation Handling
+- PRs without spec references are rejected
+- Post-merge spec drift triggers immediate remediation
+
 ### Phase Execution Order
 
 **MUST** 按照以下顺序执行 phases：
@@ -192,7 +202,7 @@
 3. **Phase 3: US1 - 菜单栏显示** (T025-T036) - MVP 第一步
 4. **Phase 4: US2 - 月视图展开** (T037-T059) - MVP 第二步
 5. **Phase 7: US5 - 设置页面** (T102-T116) - 启用自定义
-6. **Phase 5: US3 - 副日历显示** (T060-T073.2)
+6. **Phase 5: US3 - 本地历法显示** (T060-T073.2)
 7. **Phase 6: US4 - 状态标记** (T074-T101)
 8. **Phase 8: US6 - 菜单栏自定义** (T117-T129)
 9. **Phase 9: US7 - 主题定制** (T130-T151)
@@ -205,7 +215,7 @@
 - **Checkpoint 1 (after Phase 2)**: Foundation ready - 编译成功，所有模型可用
 - **Checkpoint 2 (after Phase 3)**: 菜单栏显示日期时间，自动更新
 - **Checkpoint 3 (after Phase 4)**: 点击/悬浮展开日历，月视图导航正常
-- **Checkpoint 4 (after Phase 5)**: 副日历正确显示（6+ 历法）
+- **Checkpoint 4 (after Phase 5)**: 本地历法正确显示（6+ 历法）
 - **Checkpoint 5 (after Phase 6)**: 节假日和事件圆点显示，详情弹窗可用
 - **Checkpoint 6 (after Phase 7)**: 设置窗口可访问（右键菜单 + ⌘+,）
 - **Checkpoint 7 (after Phase 8)**: 菜单栏格式自定义生效

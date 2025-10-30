@@ -18,14 +18,14 @@ struct CalendarGridView: View {
     @State private var scrollMonitor: Any?
     @State private var scrollDeltaX: CGFloat = 0
     @State private var scrollDeltaY: CGFloat = 0
-
+    
     var body: some View {
         VStack(spacing: 0) {
             // 星期标题行
             weekdayHeaderRow
                 .padding(.bottom, 8)
 
-            // 日期网格（带转场动画）
+            // 日期网格（带优化转场动画）
             LazyVGrid(columns: columns, spacing: 6) {
                 ForEach(viewModel.calendarDates) { date in
                     CalendarDayCell(
@@ -45,6 +45,7 @@ struct CalendarGridView: View {
             }
             .id(viewModel.currentMonth) // 关键：用于触发转场
             .transition(monthTransition)
+            .animation(.easeInOut(duration: 0.35), value: viewModel.currentMonth)
         }
         .padding(.horizontal, 12)
         .onAppear {
@@ -55,6 +56,7 @@ struct CalendarGridView: View {
             removeKeyboardMonitor()
             removeScrollMonitor()
         }
+              // 状态同步现在通过 ViewModel 的立即生效状态处理，无需额外监听
     }
 
     // MARK: - Keyboard Monitor Setup
@@ -97,32 +99,39 @@ struct CalendarGridView: View {
 
     // MARK: - Event Handlers
 
-    /// 键盘快捷键处理
+    /// 键盘快捷键处理（彻底优化版）
     private func handleKeyPress(_ event: NSEvent) -> NSEvent? {
-        // 左箭头 = 上一个月
+        // 检查当前是否有文本输入框获得焦点（避免拦截设置窗口的输入）
+        if NSApp.keyWindow?.firstResponder as? NSTextView != nil {
+            return event
+        }
+
+        let animation = Animation.easeInOut(duration: 0.35)
+
+        // 左箭头 = 上一个月（月份减小）
         if event.keyCode == 123 { // Left arrow
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+            withAnimation(animation) {
                 viewModel.goToPreviousMonth()
             }
             return nil
         }
-        // 右箭头 = 下一个月
+        // 右箭头 = 下一个月（月份增大）
         else if event.keyCode == 124 { // Right arrow
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+            withAnimation(animation) {
                 viewModel.goToNextMonth()
             }
             return nil
         }
-        // 上箭头 = 上一年
+        // 上箭头 = 上一年（年份减小）
         else if event.keyCode == 126 { // Up arrow
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+            withAnimation(animation) {
                 viewModel.goToPreviousYear()
             }
             return nil
         }
-        // 下箭头 = 下一年
+        // 下箭头 = 下一年（年份增大）
         else if event.keyCode == 125 { // Down arrow
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+            withAnimation(animation) {
                 viewModel.goToNextYear()
             }
             return nil
@@ -130,19 +139,10 @@ struct CalendarGridView: View {
         return event
     }
 
-    /// 滚动事件处理（触摸板手势）
+    /// 滚动事件处理（触摸板手势，彻底优化版）
     private func handleScrollEvent(_ event: NSEvent) -> NSEvent? {
-        // 🔍 调试日志：输出所有滚动事件
-        print("📱 [手势调试] 收到滚动事件")
-        print("  hasPreciseScrollingDeltas: \(event.hasPreciseScrollingDeltas)")
-        print("  phase: \(event.phase.rawValue) (0=none, 1=began, 2=changed, 3=ended, 4=cancelled, 5=mayBegin)")
-        print("  momentumPhase: \(event.momentumPhase.rawValue)")
-        print("  scrollingDeltaX: \(event.scrollingDeltaX)")
-        print("  scrollingDeltaY: \(event.scrollingDeltaY)")
-
         // 检查是否是触摸板手势（不是鼠标滚轮）
         guard event.hasPreciseScrollingDeltas else {
-            print("  ❌ 不是触摸板手势（鼠标滚轮），跳过")
             return event
         }
 
@@ -150,43 +150,33 @@ struct CalendarGridView: View {
         if event.phase == .began || event.phase == .changed {
             scrollDeltaX += event.scrollingDeltaX
             scrollDeltaY += event.scrollingDeltaY
-            print("  📊 累积中 - X: \(scrollDeltaX), Y: \(scrollDeltaY)")
             return event
         }
 
         // 手势结束，判断方向
         if event.phase == .ended {
-            let threshold: CGFloat = 30.0  // 提高阈值避免误触
-
-            print("  ✅ 手势结束 - 累积值 X: \(scrollDeltaX), Y: \(scrollDeltaY)")
+            let threshold: CGFloat = 25.0  // 优化阈值
+            let animation = Animation.easeInOut(duration: 0.35)
 
             // 水平滑动（月份切换）
             if abs(scrollDeltaX) > abs(scrollDeltaY) && abs(scrollDeltaX) > threshold {
-                print("  ➡️ 触发月份切换: \(scrollDeltaX > 0 ? "上一月" : "下一月")")
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
-                    if scrollDeltaX > 0 {
-                        // 向右滑动 = 上一个月
+                withAnimation(animation) {
+                    if scrollDeltaX < 0 {
                         viewModel.goToPreviousMonth()
                     } else {
-                        // 向左滑动 = 下一个月
                         viewModel.goToNextMonth()
                     }
                 }
             }
             // 垂直滑动（年份切换）
             else if abs(scrollDeltaY) > abs(scrollDeltaX) && abs(scrollDeltaY) > threshold {
-                print("  ⬆️ 触发年份切换: \(scrollDeltaY > 0 ? "上一年" : "下一年")")
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
-                    if scrollDeltaY > 0 {
-                        // 向下滑动 = 上一年
+                withAnimation(animation) {
+                    if scrollDeltaY < 0 {
                         viewModel.goToPreviousYear()
                     } else {
-                        // 向上滑动 = 下一年
                         viewModel.goToNextYear()
                     }
                 }
-            } else {
-                print("  ⚠️ 未达到阈值（threshold: \(threshold)）")
             }
 
             // 重置累积值
@@ -198,36 +188,79 @@ struct CalendarGridView: View {
         return event
     }
 
-    /// 月份切换转场动画（差速移动，增强层次感）
+    /// 日历切换转场动画（彻底解决延迟问题）
     private var monthTransition: AnyTransition {
-        switch viewModel.navigationDirection {
+        // 优先使用立即生效的导航状态，完全解决延迟问题
+        let effectiveType = viewModel.currentNavigationType != .none ?
+                           viewModel.currentNavigationType :
+                           viewModel.navigationType
+        let effectiveDirection = viewModel.currentNavigationDirection != .none ?
+                               viewModel.currentNavigationDirection :
+                               viewModel.navigationDirection
+
+        let isHorizontal = effectiveType == .month
+
+        // 动画参数 - 更平滑的设置
+        let slideDistance: CGFloat = 280  // 减小滑动距离
+        let fadeThreshold: Double = 0.3    // 透明度阈值，避免突然消失
+
+        switch effectiveDirection {
         case .forward:
-            // 前进：新月份从右侧慢速滑入，旧月份向左侧快速滑出
+            // 前进动画：月份增大（从左向右）或年份增大（下一年）
             return .asymmetric(
                 insertion: .modifier(
-                    active: SlideModifier(offset: 1.2, opacity: 0),  // 新月份：远距离进入
-                    identity: SlideModifier(offset: 0, opacity: 1)
+                    active: SmoothSlideModifier(
+                        offsetX: isHorizontal ? -slideDistance : 0,
+                        offsetY: isHorizontal ? 0 : -slideDistance,  // 下一年：新内容从上方进入
+                        scale: 0.95,
+                        opacity: fadeThreshold
+                    ),
+                    identity: SmoothSlideModifier(offsetX: 0, offsetY: 0, scale: 1.0, opacity: 1.0)
                 ),
                 removal: .modifier(
-                    active: SlideModifier(offset: -0.8, opacity: 0),  // 旧月份：近距离退出
-                    identity: SlideModifier(offset: 0, opacity: 1)
+                    active: SmoothSlideModifier(
+                        offsetX: isHorizontal ? slideDistance : 0,
+                        offsetY: isHorizontal ? 0 : slideDistance,  // 下一年：旧内容向下退出
+                        scale: 0.95,
+                        opacity: fadeThreshold
+                    ),
+                    identity: SmoothSlideModifier(offsetX: 0, offsetY: 0, scale: 1.0, opacity: 1.0)
                 )
             )
         case .backward:
-            // 后退：新月份从左侧慢速滑入，旧月份向右侧快速滑出
+            // 后退动画：月份减小（从右向左）或年份减小（上一年）
             return .asymmetric(
                 insertion: .modifier(
-                    active: SlideModifier(offset: -1.2, opacity: 0),  // 新月份：远距离进入
-                    identity: SlideModifier(offset: 0, opacity: 1)
+                    active: SmoothSlideModifier(
+                        offsetX: isHorizontal ? slideDistance : 0,
+                        offsetY: isHorizontal ? 0 : slideDistance,   // 上一年：新内容从下方进入
+                        scale: 0.95,
+                        opacity: fadeThreshold
+                    ),
+                    identity: SmoothSlideModifier(offsetX: 0, offsetY: 0, scale: 1.0, opacity: 1.0)
                 ),
                 removal: .modifier(
-                    active: SlideModifier(offset: 0.8, opacity: 0),   // 旧月份：近距离退出
-                    identity: SlideModifier(offset: 0, opacity: 1)
+                    active: SmoothSlideModifier(
+                        offsetX: isHorizontal ? -slideDistance : 0,
+                        offsetY: isHorizontal ? 0 : -slideDistance,  // 上一年：旧内容向上退出
+                        scale: 0.95,
+                        opacity: fadeThreshold
+                    ),
+                    identity: SmoothSlideModifier(offsetX: 0, offsetY: 0, scale: 1.0, opacity: 1.0)
                 )
             )
         case .none:
-            // 无方向（如跳转到今天）：快速淡入淡出
-            return .opacity
+            // 无方向动画：简单的缩放淡入
+            return .asymmetric(
+                insertion: .modifier(
+                    active: SmoothSlideModifier(offsetX: 0, offsetY: 0, scale: 0.9, opacity: 0.0),
+                    identity: SmoothSlideModifier(offsetX: 0, offsetY: 0, scale: 1.0, opacity: 1.0)
+                ),
+                removal: .modifier(
+                    active: SmoothSlideModifier(offsetX: 0, offsetY: 0, scale: 1.1, opacity: 0.0),
+                    identity: SmoothSlideModifier(offsetX: 0, offsetY: 0, scale: 1.0, opacity: 1.0)
+                )
+            )
         }
     }
 
@@ -245,16 +278,23 @@ struct CalendarGridView: View {
     }
 }
 
-// MARK: - 自定义滑动修饰器（支持差速动画）
+// MARK: - 平滑动效修饰器（解决频闪问题）
 
-struct SlideModifier: ViewModifier {
-    let offset: CGFloat  // 偏移倍数（相对于屏幕宽度）
-    let opacity: Double
+struct SmoothSlideModifier: ViewModifier {
+    let offsetX: CGFloat      // X轴偏移
+    let offsetY: CGFloat      // Y轴偏移
+    let scale: CGFloat        // 缩放比例
+    let opacity: Double       // 透明度
 
     func body(content: Content) -> some View {
         content
-            .offset(x: offset * (NSScreen.main?.frame.width ?? 400))
+            .scaleEffect(scale)
+            .offset(x: offsetX, y: offsetY)
             .opacity(opacity)
+            .animation(.easeInOut(duration: 0.35), value: offsetX)
+            .animation(.easeInOut(duration: 0.35), value: offsetY)
+            .animation(.easeInOut(duration: 0.25), value: scale)
+            .animation(.easeInOut(duration: 0.2), value: opacity)
     }
 }
 

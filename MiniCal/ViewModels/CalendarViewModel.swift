@@ -10,9 +10,16 @@ import Combine
 
 // MARK: - Navigation Direction
 enum NavigationDirection {
-    case forward  // 向下个月前进
-    case backward // 向上个月后退
+    case forward  // 前进
+    case backward // 后退
     case none     // 无方向（如跳转到今天）
+}
+
+// MARK: - Navigation Type
+enum NavigationType {
+    case month  // 月份切换（使用上下动效）
+    case year   // 年份切换（使用左右动效）
+    case none   // 无类型
 }
 
 class CalendarViewModel: ObservableObject {
@@ -21,6 +28,11 @@ class CalendarViewModel: ObservableObject {
     @Published var monthYearText: String = ""
     @Published var selectedDate: Date?
     @Published var navigationDirection: NavigationDirection = .none
+    @Published var navigationType: NavigationType = .none
+
+    // 立即生效的导航状态，解决动效方向切换延迟问题
+    var currentNavigationType: NavigationType = .none
+    var currentNavigationDirection: NavigationDirection = .none
 
     private let calendarService: CalendarService
     private let settingsManager: SettingsManager
@@ -76,6 +88,12 @@ class CalendarViewModel: ObservableObject {
             calendarDates = await calendarService.generateMonth(for: currentMonth, secondaryCalendar: secondaryCalendar)
             monthYearText = calendarService.monthYearText(for: currentMonth)
 
+            // 动画完成后重置立即生效的状态
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                self.currentNavigationType = .none
+                self.currentNavigationDirection = .none
+            }
+
             complete()
         }
     }
@@ -84,6 +102,9 @@ class CalendarViewModel: ObservableObject {
 
     func goToPreviousMonth() {
         navigationDirection = .backward
+        navigationType = .month
+        currentNavigationType = .month      // 立即设置，确保动效计算时使用正确值
+        currentNavigationDirection = .backward // 立即设置，确保动效方向正确
         Logger.measureTime(operation: "Navigate to previous month", category: Logger.performance) {
             currentMonth = calendarService.previousMonth(from: currentMonth)
         }
@@ -92,6 +113,9 @@ class CalendarViewModel: ObservableObject {
 
     func goToNextMonth() {
         navigationDirection = .forward
+        navigationType = .month
+        currentNavigationType = .month       // 立即设置，确保动效计算时使用正确值
+        currentNavigationDirection = .forward  // 立即设置，确保动效方向正确
         Logger.measureTime(operation: "Navigate to next month", category: Logger.performance) {
             currentMonth = calendarService.nextMonth(from: currentMonth)
         }
@@ -100,6 +124,9 @@ class CalendarViewModel: ObservableObject {
 
     func goToToday() {
         navigationDirection = .none
+        navigationType = .none
+        currentNavigationType = .none         // 立即设置，确保动效计算时使用正确值
+        currentNavigationDirection = .none    // 立即设置，确保动效方向正确
         currentMonth = calendarService.today()
         selectedDate = currentMonth
         loadCurrentMonth()
@@ -107,6 +134,9 @@ class CalendarViewModel: ObservableObject {
 
     func goToPreviousYear() {
         navigationDirection = .backward
+        navigationType = .year
+        currentNavigationType = .year       // 立即设置，确保动效计算时使用正确值
+        currentNavigationDirection = .backward // 立即设置，确保动效方向正确
         Logger.measureTime(operation: "Navigate to previous year", category: Logger.performance) {
             let calendar = Calendar.current
             currentMonth = calendar.date(byAdding: .year, value: -1, to: currentMonth) ?? currentMonth
@@ -116,6 +146,9 @@ class CalendarViewModel: ObservableObject {
 
     func goToNextYear() {
         navigationDirection = .forward
+        navigationType = .year
+        currentNavigationType = .year        // 立即设置，确保动效计算时使用正确值
+        currentNavigationDirection = .forward  // 立即设置，确保动效方向正确
         Logger.measureTime(operation: "Navigate to next year", category: Logger.performance) {
             let calendar = Calendar.current
             currentMonth = calendar.date(byAdding: .year, value: 1, to: currentMonth) ?? currentMonth

@@ -14,7 +14,7 @@
 
 ### 1. CalendarDate
 
-**描述**: 表示日历中的单个日期,包含公历日期和副日历信息
+**描述**: 表示日历中的单个日期,包含公历日期和本地历法信息
 
 **字段**:
 
@@ -25,7 +25,7 @@
 | `month` | `Int` | ✅ | 月份 (1-12) |
 | `day` | `Int` | ✅ | 日期 (1-31) |
 | `weekday` | `Int` | ✅ | 星期 (1=周日, 7=周六) |
-| `secondaryDate` | `SecondaryDateInfo?` | ❌ | 副日历信息 (可选) |
+| `secondaryDate` | `SecondaryDateInfo?` | ❌ | 本地历法信息 (可选) |
 | `isToday` | `Bool` | ✅ | 是否为今天 |
 | `isCurrentMonth` | `Bool` | ✅ | 是否属于当前显示月份 |
 | `events` | `[DateEvent]` | ✅ | 当天的事件列表 |
@@ -73,7 +73,7 @@ struct CalendarDate: Identifiable, Codable {
 
 ### 2. SecondaryDateInfo
 
-**描述**: 副日历日期信息
+**描述**: 本地历法日期信息
 
 **字段**:
 
@@ -81,9 +81,9 @@ struct CalendarDate: Identifiable, Codable {
 |--------|------|------|------|
 | `calendarType` | `CalendarType` | ✅ | 历法类型 |
 | `displayText` | `String` | ✅ | 显示文本 (如"初一", "Muharram 15") |
-| `year` | `Int?` | ❌ | 副日历年份 (可选,部分历法不显示年) |
-| `month` | `Int?` | ❌ | 副日历月份 |
-| `day` | `Int?` | ❌ | 副日历日 |
+| `year` | `Int?` | ❌ | 本地历法年份 (可选,部分历法不显示年) |
+| `month` | `Int?` | ❌ | 本地历法月份 |
+| `day` | `Int?` | ❌ | 本地历法日 |
 | `festival` | `String?` | ❌ | 节日名称 (如"春节", "Eid al-Fitr") |
 
 **Swift实现**:
@@ -408,7 +408,7 @@ struct ThemeColors: Codable {
 | `menuBarFormat` | `MenuBarFormat` | ✅ | `.dateTime` | 菜单栏显示格式 |
 | `show24Hour` | `Bool` | ✅ | `false` | 是否使用24小时制 |
 | `showWeekday` | `Bool` | ✅ | `false` | 是否显示星期 |
-| `secondaryCalendarType` | `CalendarType?` | ❌ | `nil` | 副日历类型 (nil=不显示) |
+| `secondaryCalendarType` | `CalendarType?` | ❌ | `nil` | 本地历法类型 (nil=不显示) |
 | `themeId` | `String` | ✅ | `"system"` | 当前主题ID |
 | `hoverToShowEnabled` | `Bool` | ✅ | `true` | 鼠标悬停是否展开日历 |
 | `hoverDelay` | `Double` | ✅ | `0.5` | 悬停延迟 (秒) |

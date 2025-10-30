@@ -75,19 +75,37 @@ struct CalendarView: View {
         }
     }
 
-    // MARK: - Settings Key Monitor
+    // MARK: - Keyboard Shortcuts Monitor
 
     private func setupSettingsKeyMonitor() {
         // 移除旧监听器（如果存在）
         removeSettingsKeyMonitor()
 
-        // 添加 Command+, 快捷键监听
+        // 添加快捷键监听（Command+,, Command+/-, Command+=）
         settingsKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+            // 必须按下 Command 键
+            guard event.modifierFlags.contains(.command) else {
+                return event
+            }
+
+            let key = event.charactersIgnoringModifiers ?? ""
+
             // Command+, 打开设置
-            if event.modifierFlags.contains(.command) && event.charactersIgnoringModifiers == "," {
+            if key == "," {
                 openSettingsAction?()
                 return nil
             }
+            // Command+- 减小日历尺寸
+            else if key == "-" {
+                settingsManager.decreaseCalendarSize()
+                return nil
+            }
+            // Command+= 或 Command++ 增大日历尺寸
+            else if key == "=" || key == "+" {
+                settingsManager.increaseCalendarSize()
+                return nil
+            }
+
             return event
         }
     }

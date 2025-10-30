@@ -9,9 +9,51 @@ import Foundation
 
 class SecondaryCalendarConverter {
 
+    // MARK: - Calendar Recommendation
+
+    /// 根据系统区域推荐合适的本地历法类型
+    /// - Parameter locale: 系统区域设置
+    /// - Returns: 推荐的本地历法类型，如果无匹配则返回 nil
+    static func recommendCalendar(for locale: Locale) -> CalendarType? {
+        let regionCode = locale.region?.identifier ?? ""
+        let languageCode = locale.language.languageCode?.identifier ?? ""
+
+        // 中国大陆、香港、澳门、台湾 -> 农历
+        if regionCode == "CN" || regionCode == "HK" || regionCode == "MO" || regionCode == "TW" {
+            return .chinese
+        }
+        // 中文语言环境 -> 农历（兜底）
+        else if languageCode.hasPrefix("zh") {
+            return .chinese
+        }
+        // 日本 -> 和历
+        else if regionCode == "JP" || languageCode == "ja" {
+            return .japanese
+        }
+        // 伊斯兰国家/地区 -> 伊斯兰历
+        else if ["SA", "AE", "IQ", "IR", "EG", "TR", "PK", "AF", "BD", "MY", "ID"].contains(regionCode) {
+            return .islamic
+        }
+        // 以色列 -> 希伯来历
+        else if regionCode == "IL" || languageCode == "he" {
+            return .hebrew
+        }
+        // 伊朗 -> 波斯历（注意：伊朗可能匹配伊斯兰历或波斯历，优先波斯历）
+        else if regionCode == "IR" || languageCode == "fa" {
+            return .persian
+        }
+        // 泰国、缅甸、斯里兰卡等 -> 佛历
+        else if ["TH", "MM", "LK", "KH", "LA"].contains(regionCode) {
+            return .buddhist
+        }
+
+        // 其他地区不自动推荐
+        return nil
+    }
+
     // MARK: - Single Date Conversion
 
-    /// 将公历日期转换为指定副日历类型
+    /// 将公历日期转换为指定本地历法类型
     func convert(gregorianDate: Date, to calendarType: CalendarType) -> SecondaryDateInfo? {
         guard let identifier = calendarType.identifier else { return nil }
 

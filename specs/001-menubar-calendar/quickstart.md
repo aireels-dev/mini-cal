@@ -137,7 +137,7 @@ class MenuBarController: NSObject {
 }
 ```
 
-### 3. 副日历转换
+### 3. 本地历法转换
 
 使用Foundation的Calendar API:
 
@@ -259,15 +259,15 @@ struct CalendarDayCell: View {
 
 ---
 
-### Path 3: 副日历显示 (P2)
+### Path 3: 本地历法显示 (P2)
 
-**目标**: 在日期下方显示农历等副日历
+**目标**: 在日期下方显示农历等本地历法
 
 **步骤**:
 1. 实现 `SecondaryCalendarConverter`
-2. 在 `CalendarEngine` 中批量转换副日历
-3. 更新 `CalendarDayCell` 显示副日历文本
-4. 在设置中添加副日历选择
+2. 在 `CalendarEngine` 中批量转换本地历法
+3. 更新 `CalendarDayCell` 显示本地历法文本
+4. 在设置中添加本地历法选择
 
 **关键代码**:
 ```swift
@@ -302,8 +302,8 @@ class SecondaryCalendarConverter {
 
 **测试验证**:
 - [ ] 选择农历后每个日期显示对应农历日期
-- [ ] 切换不同副日历类型正确显示
-- [ ] 关闭副日历后不显示任何副日历信息
+- [ ] 切换不同本地历法类型正确显示
+- [ ] 关闭本地历法后不显示任何本地历法信息
 
 ---
 
@@ -401,7 +401,7 @@ class EventService {
 }
 ```
 
-### Q2: 副日历转换性能问题?
+### Q2: 本地历法转换性能问题?
 
 **A**: 使用批量转换和缓存:
 
@@ -468,7 +468,7 @@ if holidayProvider.isDataOutdated() {
 2. **实现P1功能**: 菜单栏显示 + 月视图展开
 3. **编写单元测试**: 为 `CalendarEngine` 和 `SettingsManager` 编写测试
 4. **UI测试**: 验证菜单栏交互和浮窗显示
-5. **实现P2功能**: 副日历和状态标记
+5. **实现P2功能**: 本地历法和状态标记
 6. **性能优化**: 确保所有操作满足性能目标
 
 ---

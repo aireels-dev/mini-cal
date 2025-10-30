@@ -77,7 +77,7 @@ enum CalendarSize: String, CaseIterable, Codable {
         }
     }
 
-    /// 副日历字体大小（细体显示，降低层级）
+    /// 本地历法字体大小（细体显示，降低层级）
     var secondaryFontSize: CGFloat {
         switch self {
         case .compact:

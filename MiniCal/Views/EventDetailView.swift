@@ -49,6 +49,13 @@ struct EventDetailView: View {
                 }
                 .frame(maxHeight: 300)
             }
+
+            // 颜色图例说明
+            Divider()
+                .background(themeColors.borderColor)
+                .padding(.top, 4)
+
+            ColorLegendView(themeColors: themeColors)
         }
         .padding(16)
         .frame(width: 300)
@@ -68,6 +75,50 @@ struct EventDetailView: View {
         formatter.locale = Locale(identifier: "zh_CN")
         formatter.dateFormat = "M月d日 EEEE"
         return formatter.string(from: date.gregorianDate)
+    }
+}
+
+// MARK: - Color Legend Component
+
+struct ColorLegendView: View {
+    let themeColors: ThemeColors
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("圆点含义")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundColor(themeColors.secondaryTextColor)
+
+            HStack(spacing: 16) {
+                LegendItem(color: .red, label: "假期", themeColors: themeColors)
+                LegendItem(color: .orange, label: "节日", themeColors: themeColors)
+                LegendItem(color: .blue, label: "会议", themeColors: themeColors)
+            }
+
+            HStack(spacing: 16) {
+                LegendItem(color: .purple, label: "生日", themeColors: themeColors)
+                LegendItem(color: .green, label: "自定义", themeColors: themeColors)
+            }
+        }
+        .padding(.vertical, 8)
+    }
+}
+
+struct LegendItem: View {
+    let color: Color
+    let label: String
+    let themeColors: ThemeColors
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Circle()
+                .fill(color)
+                .frame(width: 6, height: 6)
+
+            Text(label)
+                .font(.system(size: 10))
+                .foregroundColor(themeColors.secondaryTextColor)
+        }
     }
 }
 

@@ -49,7 +49,7 @@ class MenuBarController: NSObject {
 
 ---
 
-### 2. 副日历实现方案
+### 2. 本地历法实现方案
 
 **Decision**: 使用 `Foundation.Calendar` + 自定义转换算法
 
@@ -258,7 +258,7 @@ class EventService {
 
 **Rationale**:
 - 月视图数据量小 (最多42个单元格),但需要避免不必要的计算
-- 副日历转换和节假日查询可以缓存
+- 本地历法转换和节假日查询可以缓存
 - 用户快速切换月份时需要防抖
 
 **Optimization Techniques**:
@@ -395,7 +395,7 @@ Model / UserDefaults / EventKit
 
 | 风险 | 缓解措施 | 验证方式 |
 |------|---------|---------|
-| **副日历精度** | 使用Foundation官方API,参考Apple文档验证 | 单元测试覆盖已知日期转换 |
+| **本地历法精度** | 使用Foundation官方API,参考Apple文档验证 | 单元测试覆盖已知日期转换 |
 | **EventKit权限** | 优雅降级,权限拒绝时隐藏相关功能 | UI测试验证无权限场景 |
 | **性能瓶颈** | 缓存机制,防抖处理,SwiftUI优化 | 性能测试验证响应时间<300ms |
 | **主题切换** | 监听系统外观变化,即时响应 | 集成测试验证切换流畅性 |

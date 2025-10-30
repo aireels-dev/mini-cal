@@ -337,7 +337,8 @@ struct ShortcutRow: View {
                 .font(.system(.caption, design: .monospaced))
                 .fontWeight(.semibold)
                 .foregroundColor(.primary)
-                .frame(width: 30, height: 20)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 4)
                 .background(Color.secondary.opacity(0.15))
                 .cornerRadius(4)
 
@@ -457,22 +458,44 @@ struct AppearanceSettingsView: View {
             }
 
             Section("快捷键与手势") {
-                VStack(alignment: .leading, spacing: 12) {
-                    // 键盘快捷键
+                VStack(alignment: .leading, spacing: 8) {
+                    // 日期切换（键盘快捷键）
                     Group {
-                        Text("键盘快捷键")
+                        Text("日期切换")
                             .font(.caption)
                             .fontWeight(.semibold)
                             .foregroundColor(.primary)
 
-                        ShortcutRow(key: "←", description: "上个月")
-                        ShortcutRow(key: "→", description: "下个月")
-                        ShortcutRow(key: "↑", description: "上一年")
-                        ShortcutRow(key: "↓", description: "下一年")
+                        HStack(spacing: 20) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                ShortcutRow(key: "←", description: "上个月")
+                                ShortcutRow(key: "↑", description: "上一年")
+                            }
+                            VStack(alignment: .leading, spacing: 2) {
+                                ShortcutRow(key: "→", description: "下个月")
+                                ShortcutRow(key: "↓", description: "下一年")
+                            }
+                        }
                     }
 
                     Divider()
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 2)
+
+                    // 缩放调整
+                    Group {
+                        Text("缩放调整")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
+
+                        HStack(spacing: 20) {
+                            ShortcutRow(key: "⌘-", description: "缩小")
+                            ShortcutRow(key: "⌘+", description: "放大")
+                        }
+                    }
+
+                    Divider()
+                        .padding(.vertical, 2)
 
                     // 触摸板手势
                     Group {
@@ -481,11 +504,13 @@ struct AppearanceSettingsView: View {
                             .fontWeight(.semibold)
                             .foregroundColor(.primary)
 
-                        GestureRow(gesture: "左右滑动", description: "月份切换")
-                        GestureRow(gesture: "上下滑动", description: "年份切换")
+                        HStack(spacing: 20) {
+                            GestureRow(gesture: "左右滑动", description: "月份切换")
+                            GestureRow(gesture: "上下滑动", description: "年份切换")
+                        }
                     }
                 }
-                .padding(.vertical, 4)
+                .padding(.vertical, 2)
             }
 
             Section("说明") {

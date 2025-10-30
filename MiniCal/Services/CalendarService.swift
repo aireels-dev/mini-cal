@@ -69,7 +69,7 @@ class CalendarService {
             }
         }
 
-        // 批量转换副日历信息（性能优化）
+        // 批量转换本地历法信息（性能优化）
         var secondaryInfoMap: [Date: SecondaryDateInfo] = [:]
         if let calendarType = secondaryCalendar {
             secondaryInfoMap = secondaryCalendarConverter.batchConvert(dates: dates, to: calendarType)

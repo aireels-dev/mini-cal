@@ -128,6 +128,46 @@ class SettingsManager: ObservableObject {
         saveSettings(updatedSettings)
     }
 
+    // MARK: - Calendar Size Management
+
+    /// 增大日历尺寸（切换到下一档位）
+    func increaseCalendarSize() {
+        let allSizes = CalendarSize.allCases
+        guard let currentIndex = allSizes.firstIndex(of: currentSettings.calendarSize) else { return }
+
+        // 如果已经是最大档位，不做变化
+        guard currentIndex < allSizes.count - 1 else {
+            Logger.info("Already at maximum calendar size", category: Logger.settings)
+            return
+        }
+
+        let newSize = allSizes[currentIndex + 1]
+        var updatedSettings = currentSettings
+        updatedSettings.calendarSize = newSize
+        updatedSettings.lastUpdated = Date()
+        saveSettings(updatedSettings)
+        Logger.info("Calendar size increased to \(newSize.displayName)", category: Logger.settings)
+    }
+
+    /// 减小日历尺寸（切换到上一档位）
+    func decreaseCalendarSize() {
+        let allSizes = CalendarSize.allCases
+        guard let currentIndex = allSizes.firstIndex(of: currentSettings.calendarSize) else { return }
+
+        // 如果已经是最小档位，不做变化
+        guard currentIndex > 0 else {
+            Logger.info("Already at minimum calendar size", category: Logger.settings)
+            return
+        }
+
+        let newSize = allSizes[currentIndex - 1]
+        var updatedSettings = currentSettings
+        updatedSettings.calendarSize = newSize
+        updatedSettings.lastUpdated = Date()
+        saveSettings(updatedSettings)
+        Logger.info("Calendar size decreased to \(newSize.displayName)", category: Logger.settings)
+    }
+
     // MARK: - Reset Settings
 
     func resetToDefaults() {

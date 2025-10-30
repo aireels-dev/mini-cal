@@ -34,7 +34,8 @@ struct UserSettings: Codable, Equatable {
         lastUpdated: Date()
     )
 
-    /// 根据系统区域自动检测默认本地日历
+    /// 根据系统区域自动检测默认本地历法
+    /// 使用 SecondaryCalendarConverter 的推荐逻辑
     private static func detectDefaultCalendar() -> CalendarType? {
         let locale = Locale.current
         let regionCode = locale.region?.identifier ?? ""
@@ -42,36 +43,7 @@ struct UserSettings: Codable, Equatable {
 
         Logger.info("Detecting default calendar - Region: \(regionCode), Language: \(languageCode)", category: Logger.settings)
 
-        var detectedCalendar: CalendarType? = nil
-
-        // 中国大陆、香港、澳门、台湾 -> 农历
-        if regionCode == "CN" || regionCode == "HK" || regionCode == "MO" || regionCode == "TW" {
-            detectedCalendar = .chinese
-        }
-        // 中文语言环境 -> 农历（兜底）
-        else if languageCode.hasPrefix("zh") {
-            detectedCalendar = .chinese
-        }
-        // 日本 -> 和历
-        else if regionCode == "JP" || languageCode == "ja" {
-            detectedCalendar = .japanese
-        }
-        // 伊斯兰国家/地区 -> 伊斯兰历
-        else if ["SA", "AE", "IQ", "IR", "EG", "TR", "PK", "AF", "BD", "MY", "ID"].contains(regionCode) {
-            detectedCalendar = .islamic
-        }
-        // 以色列 -> 希伯来历
-        else if regionCode == "IL" || languageCode == "he" {
-            detectedCalendar = .hebrew
-        }
-        // 伊朗 -> 波斯历
-        else if regionCode == "IR" || languageCode == "fa" {
-            detectedCalendar = .persian
-        }
-        // 泰国、缅甸、斯里兰卡等 -> 佛历
-        else if ["TH", "MM", "LK", "KH", "LA"].contains(regionCode) {
-            detectedCalendar = .buddhist
-        }
+        let detectedCalendar = SecondaryCalendarConverter.recommendCalendar(for: locale)
 
         if let calendar = detectedCalendar {
             Logger.info("Auto-detected local calendar: \(calendar.displayName)", category: Logger.settings)
