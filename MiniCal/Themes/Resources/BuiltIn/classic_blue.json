@@ -1,0 +1,61 @@
+{
+  "id": "classic_blue",
+  "name": "Classic Blue",
+  "displayName": "经典蓝",
+  "category": "light",
+  "isBuiltIn": true,
+  "primary": {
+    "main": "#4285F4",
+    "light": "#5A95F5",
+    "dark": "#357AE8",
+    "alpha": 1.0
+  },
+  "secondary": {
+    "main": "#34A853",
+    "light": "#4CB565",
+    "dark": "#2D8F47",
+    "alpha": 1.0
+  },
+  "accent": {
+    "main": "#FBBC04",
+    "light": "#FCC934",
+    "dark": "#F9AB00",
+    "alpha": 1.0
+  },
+  "background": {
+    "main": "#FFFFFF",
+    "light": "#FAFAFA",
+    "dark": "#F5F5F5",
+    "alpha": 1.0
+  },
+  "surface": {
+    "main": "#F8F9FA",
+    "light": "#F1F3F4",
+    "dark": "#E8EAED",
+    "alpha": 1.0
+  },
+  "text": {
+    "primary": "#202124",
+    "secondary": "#5F6368",
+    "disabled": "#9AA0A6",
+    "inverse": "#FFFFFF"
+  },
+  "calendar": {
+    "todayBackground": "#E8F0FE",
+    "todayText": "#1967D2",
+    "selectedBackground": "#4285F4",
+    "selectedText": "#FFFFFF",
+    "weekendText": "#EA4335",
+    "eventIndicator": "#FBBC04"
+  },
+  "status": {
+    "success": "#34A853",
+    "warning": "#FBBC04",
+    "error": "#EA4335",
+    "info": "#4285F4"
+  },
+  "author": "MiniCal Team",
+  "version": "1.0",
+  "description": "Chrome风格的经典蓝色主题，清新专业",
+  "previewColors": ["#4285F4", "#FFFFFF", "#202124", "#34A853"]
+}
