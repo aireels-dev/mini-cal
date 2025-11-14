@@ -19,33 +19,56 @@ struct CalendarView: View {
 
     private var effectiveColors: ThemeColors {
         // 使用ThemeManager获取当前有效的主题颜色（处理系统跟随）
-        themeManager.effectiveColors()
+        themeManager.effectiveColors
     }
 
     private var calendarSize: CalendarSize {
         settingsManager.currentSettings.calendarSize
     }
 
-    var body: some View {
-        VStack(spacing: 0) {
-            // 日历头部（通过颜色和间距区分层级）
-            CalendarHeaderView(
-                viewModel: viewModel,
-                themeColors: effectiveColors
-            )
-            .padding(.bottom, 12)
+    private var calendarOpacity: Double {
+        settingsManager.currentSettings.calendarOpacity
+    }
 
-            // 日历网格
-            CalendarGridView(
-                viewModel: viewModel,
-                themeColors: effectiveColors,
-                calendarSize: calendarSize,
-                onDateTap: { date in
-                    selectedDateForDetail = date
-                    showEventDetail = true
-                }
-            )
-            .padding(.bottom, 16)
+    var body: some View {
+        ZStack {
+            // 背景层（应用不透明度）
+            ZStack {
+                // 第一层：Glass 效果背景
+                VisualEffectView(
+                    material: .hudWindow,
+                    blendingMode: .behindWindow,
+                    state: .active
+                )
+
+                // 第二层：主题表面色 - 使用 surface 而不是 background
+                Color(hex: effectiveColors.surface)
+                    .opacity(0.92)
+            }
+            .cornerRadius(12)
+            .opacity(calendarOpacity)  // 背景层不透明度
+
+            // 内容层（不应用不透明度，保持文字清晰）
+            VStack(spacing: 0) {
+                // 日历头部（通过颜色和间距区分层级）
+                CalendarHeaderView(
+                    viewModel: viewModel,
+                    themeColors: effectiveColors
+                )
+                .padding(.bottom, 12)
+
+                // 日历网格
+                CalendarGridView(
+                    viewModel: viewModel,
+                    themeColors: effectiveColors,
+                    calendarSize: calendarSize,
+                    onDateTap: { date in
+                        selectedDateForDetail = date
+                        showEventDetail = true
+                    }
+                )
+                .padding(.bottom, 16)
+            }
         }
         .frame(width: calendarSize.width, height: calendarSize.height)
         .sheet(isPresented: $showEventDetail) {
@@ -59,14 +82,6 @@ struct CalendarView: View {
                 )
             }
         }
-        .background(
-            // Glass 效果背景
-            VisualEffectView(
-                material: .hudWindow,
-                blendingMode: .behindWindow,
-                state: .active
-            )
-        )
         .onAppear {
             setupSettingsKeyMonitor()
         }

@@ -22,7 +22,7 @@
 
 - **MUST** UI 交互响应时间 < 300ms (SC-002)
 - **MUST** 月视图切换响应时间 < 200ms (SC-007)
-- **MUST** 主题切换完成时间 < 200ms (SC-005)
+- **MUST** 主题切换完成时间 < 100ms (SC-005)
 - **MUST** 应用内存占用 < 50MB (SC-008)
 - **MUST** 空闲状态 CPU 占用率 < 1% (SC-008)
 - **MUST** 使用缓存优化重复计算（NSCache for month data）
@@ -135,7 +135,7 @@
 |------|---------|---------|---------|
 | 菜单栏图标点击到日历显示 | < 300ms | Instruments Time Profiler | SC-002 |
 | 月视图切换（上一月/下一月） | < 200ms | Instruments Time Profiler | SC-007 |
-| 主题切换完成 | < 200ms | 手动测试 + 秒表 | SC-005 |
+| 主题切换完成 | < 100ms | 手动测试 + 秒表 | SC-005 |
 | 设置窗口打开 | < 300ms | 手动测试 | SC-003 |
 
 ### Resource Constraints
@@ -289,7 +289,7 @@
 
 ---
 
-**Version**: 1.0.0
+**Version**: 1.0.1
 **Ratified**: 2025-10-28
-**Last Amended**: 2025-10-28
+**Last Amended**: 2025-11-01
 **Next Review**: 项目完成后或发现重大架构问题时

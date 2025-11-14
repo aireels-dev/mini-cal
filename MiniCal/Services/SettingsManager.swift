@@ -113,6 +113,37 @@ class SettingsManager: ObservableObject {
         saveSettings(updatedSettings)
     }
 
+    // MARK: - Theme Settings
+
+    /// 更新主题模式（浅色/自动/深色）
+    func updateThemeMode(_ mode: ThemeMode) {
+        var updatedSettings = currentSettings
+        updatedSettings.themeMode = mode
+        updatedSettings.lastUpdated = Date()
+        saveSettings(updatedSettings)
+        Logger.info("Theme mode updated to '\(mode.displayName)'", category: Logger.settings)
+    }
+
+    /// 更新浅色主题
+    func updateLightTheme(_ themeId: String) {
+        var updatedSettings = currentSettings
+        updatedSettings.lightThemeId = themeId
+        updatedSettings.lastUpdated = Date()
+        saveSettings(updatedSettings)
+        Logger.info("Light theme updated to '\(themeId)'", category: Logger.settings)
+    }
+
+    /// 更新深色主题
+    func updateDarkTheme(_ themeId: String) {
+        var updatedSettings = currentSettings
+        updatedSettings.darkThemeId = themeId
+        updatedSettings.lastUpdated = Date()
+        saveSettings(updatedSettings)
+        Logger.info("Dark theme updated to '\(themeId)'", category: Logger.settings)
+    }
+
+    /// 更新主题（已废弃，保留以兼容旧代码）
+    @available(*, deprecated, message: "Use updateLightTheme() or updateDarkTheme() instead")
     func updateTheme(_ themeId: String) {
         var updatedSettings = currentSettings
         updatedSettings.themeId = themeId

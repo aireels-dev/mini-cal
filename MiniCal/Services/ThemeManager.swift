@@ -2,7 +2,8 @@
 //  ThemeManager.swift
 //  MiniCal
 //
-//  Created on 2025/10/28.
+//  Created by MiniCal on 2025/11/13.
+//  统一的主题管理器，支持浅色/自动/深色模式
 //
 
 import SwiftUI
@@ -17,8 +18,56 @@ class ThemeManager: ObservableObject {
 
     // MARK: - Published Properties
 
-    @Published private(set) var currentTheme: Theme
-    @Published private(set) var availableThemes: [Theme] = []
+    /// 当前主题模式（浅色/自动/深色）
+    @Published private(set) var themeMode: ThemeMode = .auto
+
+    /// 当前浅色主题
+    @Published private(set) var currentLightTheme: ThemeConfiguration
+
+    /// 当前深色主题
+    @Published private(set) var currentDarkTheme: ThemeConfiguration
+
+    // MARK: - Available Themes
+
+    /// 所有可用的浅色主题
+    let lightThemes: [ThemeConfiguration] = BuiltInThemes.lightThemes
+
+    /// 所有可用的深色主题
+    let darkThemes: [ThemeConfiguration] = BuiltInThemes.darkThemes
+
+    // MARK: - Computed Properties
+
+    /// 当前有效的主题配置（根据模式和系统外观）
+    var effectiveTheme: ThemeConfiguration {
+        switch themeMode {
+        case .light:
+            return currentLightTheme
+        case .dark:
+            return currentDarkTheme
+        case .auto:
+            return isSystemDarkMode ? currentDarkTheme : currentLightTheme
+        }
+    }
+
+    /// 当前有效的主题颜色
+    var effectiveColors: ThemeColors {
+        return effectiveTheme.colors
+    }
+
+    /// 当前浅色主题ID
+    var currentLightThemeId: String {
+        currentLightTheme.id
+    }
+
+    /// 当前深色主题ID
+    var currentDarkThemeId: String {
+        currentDarkTheme.id
+    }
+
+    /// 系统是否处于深色模式
+    private var isSystemDarkMode: Bool {
+        NSApp.effectiveAppearance.name == .darkAqua
+    }
 
     // MARK: - Private Properties
 
@@ -29,86 +78,160 @@ class ThemeManager: ObservableObject {
     // MARK: - Initialization
 
     private init() {
-        // 加载主题数据
-        let themes = ThemeManager.loadThemes()
-        self.availableThemes = themes
+        // 从设置加载主题配置
+        let settings = settingsManager.currentSettings
 
-        // 根据设置获取初始主题
-        let themeId = settingsManager.currentSettings.themeId
-        let initialTheme = themes.first { $0.id == themeId } ?? themes.first { $0.id == "system" } ?? Theme(
-            id: "system",
-            name: "跟随系统",
-            colors: ThemeColors(
-                background: "#FFFFFF",
-                text: "#000000",
-                secondaryText: "#666666",
-                border: "#E0E0E0",
-                todayHighlight: "#007AFF",
-                weekendText: "#FF3B30",
-                selectedDate: "#007AFF"
-            ),
-            isSystemTheme: true
-        )
-        self.currentTheme = initialTheme
+        self.themeMode = settings.themeMode
+
+        // 加载浅色主题
+        if let lightTheme = lightThemes.first(where: { $0.id == settings.lightThemeId }) {
+            self.currentLightTheme = lightTheme
+        } else {
+            self.currentLightTheme = BuiltInThemes.defaultLightTheme
+            Logger.warning("Light theme '\(settings.lightThemeId)' not found, using default", category: Logger.theme)
+        }
+
+        // 加载深色主题
+        if let darkTheme = darkThemes.first(where: { $0.id == settings.darkThemeId }) {
+            self.currentDarkTheme = darkTheme
+        } else {
+            self.currentDarkTheme = BuiltInThemes.defaultDarkTheme
+            Logger.warning("Dark theme '\(settings.darkThemeId)' not found, using default", category: Logger.theme)
+        }
+
+        // 如果是自动模式，开始监听系统外观
+        if themeMode == .auto {
+            startObservingSystemAppearance()
+        }
 
         // 监听设置变化
         settingsManager.$currentSettings
-            .map { $0.themeId }
-            .removeDuplicates()
-            .sink { [weak self] newThemeId in
-                self?.applyTheme(withId: newThemeId)
+            .sink { [weak self] newSettings in
+                self?.handleSettingsChange(newSettings)
             }
             .store(in: &cancellables)
+
+        Logger.info("ThemeManager initialized - Mode: \(themeMode.displayName), Light: \(currentLightTheme.displayName), Dark: \(currentDarkTheme.displayName)", category: Logger.theme)
     }
 
     // MARK: - Public Methods
 
-    /// 应用指定ID的主题
-    func applyTheme(withId id: String) {
-        Logger.measureTime(operation: "Apply theme '\(id)'", category: Logger.performance) {
-            guard let theme = self.theme(withId: id) else {
-                Logger.warning("Theme with id '\(id)' not found, using default", category: Logger.theme)
-                self.currentTheme = defaultTheme()
-                return
-            }
+    /// 设置主题模式
+    func setThemeMode(_ mode: ThemeMode) {
+        guard themeMode != mode else { return }
 
-            self.currentTheme = theme
+        Logger.info("Setting theme mode to '\(mode.displayName)'", category: Logger.theme)
 
-            // 如果是"跟随系统"主题，开始监听系统外观变化
-            if id == "system" {
-                startObservingSystemAppearance()
-            } else {
-                stopObservingSystemAppearance()
-            }
+        themeMode = mode
 
-            Logger.info("Applied theme: \(theme.name)", category: Logger.theme)
+        // 保存到设置
+        var settings = settingsManager.currentSettings
+        settings.themeMode = mode
+        settings.lastUpdated = Date()
+        settingsManager.saveSettings(settings)
+
+        // 更新系统外观监听
+        if mode == .auto {
+            startObservingSystemAppearance()
+        } else {
+            stopObservingSystemAppearance()
+        }
+
+        // 通知UI更新
+        objectWillChange.send()
+        postThemeChangeNotification()
+    }
+
+    /// 设置浅色主题
+    func setLightTheme(_ theme: ThemeConfiguration) {
+        guard theme.category == .light else {
+            Logger.warning("Attempted to set non-light theme '\(theme.id)' as light theme", category: Logger.theme)
+            return
+        }
+
+        Logger.info("Setting light theme to '\(theme.displayName)'", category: Logger.theme)
+
+        currentLightTheme = theme
+
+        // 保存到设置
+        var settings = settingsManager.currentSettings
+        settings.lightThemeId = theme.id
+        settings.lastUpdated = Date()
+        settingsManager.saveSettings(settings)
+
+        // 如果当前应该显示浅色主题，通知更新
+        if shouldShowLightTheme {
+            objectWillChange.send()
+            postThemeChangeNotification()
         }
     }
 
-    /// 根据ID查找主题
-    func theme(withId id: String) -> Theme? {
-        return availableThemes.first { $0.id == id }
+    /// 设置深色主题
+    func setDarkTheme(_ theme: ThemeConfiguration) {
+        guard theme.category == .dark else {
+            Logger.warning("Attempted to set non-dark theme '\(theme.id)' as dark theme", category: Logger.theme)
+            return
+        }
+
+        Logger.info("Setting dark theme to '\(theme.displayName)'", category: Logger.theme)
+
+        currentDarkTheme = theme
+
+        // 保存到设置
+        var settings = settingsManager.currentSettings
+        settings.darkThemeId = theme.id
+        settings.lastUpdated = Date()
+        settingsManager.saveSettings(settings)
+
+        // 如果当前应该显示深色主题，通知更新
+        if !shouldShowLightTheme {
+            objectWillChange.send()
+            postThemeChangeNotification()
+        }
     }
 
-    /// 获取当前有效的主题颜色（处理系统跟随）
-    func effectiveColors() -> ThemeColors {
-        if currentTheme.id == "system" {
-            // 检测当前系统外观
-            let isDarkMode = NSApp.effectiveAppearance.name == .darkAqua
-            let effectiveTheme = theme(withId: isDarkMode ? "dark" : "light") ?? defaultTheme()
-            return effectiveTheme.colors
-        }
-        return currentTheme.colors
+    /// 重置为默认主题
+    func resetToDefault() {
+        Logger.info("Resetting themes to default", category: Logger.theme)
+
+        themeMode = .auto
+        currentLightTheme = BuiltInThemes.defaultLightTheme
+        currentDarkTheme = BuiltInThemes.defaultDarkTheme
+
+        // 保存到设置
+        var settings = settingsManager.currentSettings
+        settings.themeMode = .auto
+        settings.lightThemeId = currentLightTheme.id
+        settings.darkThemeId = currentDarkTheme.id
+        settings.lastUpdated = Date()
+        settingsManager.saveSettings(settings)
+
+        // 开始监听系统外观
+        startObservingSystemAppearance()
+
+        // 通知UI更新
+        objectWillChange.send()
+        postThemeChangeNotification()
     }
+
+    /// 根据ID查找主题（兼容旧API）
+    func theme(withId id: String) -> ThemeConfiguration? {
+        return BuiltInThemes.allThemes.first { $0.id == id }
+    }
+
+    // MARK: - System Appearance Observation
 
     /// 开始监听系统外观变化
     func startObservingSystemAppearance() {
         guard appearanceObserver == nil else { return }
 
-        appearanceObserver = NSApp.observe(\.effectiveAppearance, options: [.new]) { [weak self] _, _ in
-            // 系统外观变化时，触发UI更新
+        appearanceObserver = NSApp.observe(
+            \.effectiveAppearance,
+            options: [.new]
+        ) { [weak self] _, _ in
             DispatchQueue.main.async {
                 self?.objectWillChange.send()
+                self?.postThemeChangeNotification()
             }
         }
 
@@ -124,88 +247,63 @@ class ThemeManager: ObservableObject {
 
     // MARK: - Private Methods
 
-    /// 加载主题配置文件
-    private static func loadThemes() -> [Theme] {
-        guard let url = Bundle.main.url(forResource: "themes", withExtension: "json", subdirectory: "Resources/Themes") else {
-            Logger.warning("themes.json not found, using default themes", category: Logger.theme)
-            return defaultThemes()
-        }
-
-        do {
-            let data = try Data(contentsOf: url)
-            let decoder = JSONDecoder()
-            let themes = try decoder.decode([Theme].self, from: data)
-            Logger.info("Loaded \(themes.count) themes from themes.json", category: Logger.theme)
-            return themes
-        } catch {
-            Logger.error("Failed to load themes.json", error: error, category: Logger.theme)
-            return defaultThemes()
+    /// 当前是否应该显示浅色主题
+    private var shouldShowLightTheme: Bool {
+        switch themeMode {
+        case .light:
+            return true
+        case .dark:
+            return false
+        case .auto:
+            return !isSystemDarkMode
         }
     }
 
-    /// 默认主题列表（当加载失败时使用）
-    private static func defaultThemes() -> [Theme] {
-        return [
-            Theme(
-                id: "system",
-                name: "跟随系统",
-                colors: ThemeColors(
-                    background: "#FFFFFF",
-                    text: "#000000",
-                    secondaryText: "#666666",
-                    border: "#E0E0E0",
-                    todayHighlight: "#007AFF",
-                    weekendText: "#FF3B30",
-                    selectedDate: "#007AFF"
-                ),
-                isSystemTheme: true
-            ),
-            Theme(
-                id: "light",
-                name: "浅色",
-                colors: ThemeColors(
-                    background: "#FFFFFF",
-                    text: "#000000",
-                    secondaryText: "#666666",
-                    border: "#E0E0E0",
-                    todayHighlight: "#007AFF",
-                    weekendText: "#FF3B30",
-                    selectedDate: "#007AFF"
-                ),
-                isSystemTheme: false
-            ),
-            Theme(
-                id: "dark",
-                name: "深色",
-                colors: ThemeColors(
-                    background: "#1C1C1E",
-                    text: "#FFFFFF",
-                    secondaryText: "#EBEBF5",
-                    border: "#38383A",
-                    todayHighlight: "#0A84FF",
-                    weekendText: "#FF453A",
-                    selectedDate: "#0A84FF"
-                ),
-                isSystemTheme: false
-            )
-        ]
+    /// 处理设置变化
+    private func handleSettingsChange(_ newSettings: UserSettings) {
+        var needsUpdate = false
+
+        // 检查主题模式变化
+        if newSettings.themeMode != themeMode {
+            themeMode = newSettings.themeMode
+            needsUpdate = true
+
+            if themeMode == .auto {
+                startObservingSystemAppearance()
+            } else {
+                stopObservingSystemAppearance()
+            }
+
+            Logger.debug("Theme mode changed to '\(themeMode.displayName)'", category: Logger.theme)
+        }
+
+        // 检查浅色主题变化
+        if let newLightTheme = lightThemes.first(where: { $0.id == newSettings.lightThemeId }),
+           newLightTheme.id != currentLightTheme.id {
+            currentLightTheme = newLightTheme
+            needsUpdate = true
+            Logger.debug("Light theme changed to '\(newLightTheme.displayName)'", category: Logger.theme)
+        }
+
+        // 检查深色主题变化
+        if let newDarkTheme = darkThemes.first(where: { $0.id == newSettings.darkThemeId }),
+           newDarkTheme.id != currentDarkTheme.id {
+            currentDarkTheme = newDarkTheme
+            needsUpdate = true
+            Logger.debug("Dark theme changed to '\(newDarkTheme.displayName)'", category: Logger.theme)
+        }
+
+        if needsUpdate {
+            objectWillChange.send()
+            postThemeChangeNotification()
+        }
     }
 
-    /// 获取默认主题
-    private func defaultTheme() -> Theme {
-        return availableThemes.first { $0.id == "system" } ?? Theme(
-            id: "system",
-            name: "跟随系统",
-            colors: ThemeColors(
-                background: "#FFFFFF",
-                text: "#000000",
-                secondaryText: "#666666",
-                border: "#E0E0E0",
-                todayHighlight: "#007AFF",
-                weekendText: "#FF3B30",
-                selectedDate: "#007AFF"
-            ),
-            isSystemTheme: true
+    /// 发送主题变化通知
+    private func postThemeChangeNotification() {
+        NotificationCenter.default.post(
+            name: .themeDidChange,
+            object: effectiveTheme
         )
     }
 
@@ -214,4 +312,14 @@ class ThemeManager: ObservableObject {
     deinit {
         stopObservingSystemAppearance()
     }
+}
+
+// MARK: - Notification Name
+
+extension Notification.Name {
+    /// 主题变化通知
+    static let themeDidChange = Notification.Name("ThemeDidChange")
+
+    /// 主题预览请求通知（用于触发日历浮窗显示）
+    static let themePreviewRequested = Notification.Name("ThemePreviewRequested")
 }

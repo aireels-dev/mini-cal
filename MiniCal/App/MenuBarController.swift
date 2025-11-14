@@ -22,6 +22,8 @@ class MenuBarController: NSObject {
     private var isMouseInside = false
     private var contextMenu: NSMenu!
     private var cancellables = Set<AnyCancellable>()
+    private var autoCloseTimer: Timer?
+    private var isThemePreviewMode = false  // 标记是否处于主题预览模式
 
     override init() {
         super.init()
@@ -30,6 +32,7 @@ class MenuBarController: NSObject {
         setupPopover()
         setupContextMenu()
         observeSettingsChanges()
+        observeThemePreview()
     }
 
     private func setupViewModel() {
@@ -169,6 +172,16 @@ class MenuBarController: NSObject {
             .store(in: &cancellables)
     }
 
+    private func observeThemePreview() {
+        // 监听主题预览通知
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleThemePreview),
+            name: .themePreviewRequested,
+            object: nil
+        )
+    }
+
     private func updateMenuBarTitle() {
         if let button = statusItem.button {
             button.title = menuBarViewModel.displayText
@@ -210,6 +223,8 @@ class MenuBarController: NSObject {
             if popover.isShown {
                 closePopover()
             } else {
+                // 正常显示（非预览模式）
+                popover.behavior = .transient
                 showPopover()
             }
         }
@@ -218,10 +233,88 @@ class MenuBarController: NSObject {
     func showPopover() {
         guard let button = statusItem.button else { return }
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+
+        // 激活应用并使浮窗获得焦点
+        NSApp.activate(ignoringOtherApps: true)
+
+        // 确保 popover 的内容视图成为 first responder
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            if let contentViewController = self.popover.contentViewController {
+                contentViewController.view.window?.makeKey()
+            }
+        }
     }
 
     func closePopover() {
         popover.close()
+        // 清除自动关闭定时器
+        cancelAutoCloseTimer()
+
+        // 退出主题预览模式，恢复默认行为
+        if isThemePreviewMode {
+            isThemePreviewMode = false
+            popover.behavior = .transient
+            Logger.debug("Exited preview mode, restored transient behavior", category: Logger.ui)
+        }
+    }
+
+    // MARK: - Theme Preview
+
+    @objc private func handleThemePreview() {
+        // 进入主题预览模式
+        isThemePreviewMode = true
+
+        // 收到主题预览请求
+        if popover.isShown {
+            // 如果浮窗已显示，重置定时器（延长显示时间）
+            Logger.debug("Calendar already shown, refreshing timer", category: Logger.ui)
+            startAutoCloseTimer()
+        } else {
+            // 如果浮窗未显示，显示浮窗
+            showPopoverForPreview()
+            startAutoCloseTimer()
+        }
+    }
+
+    private func showPopoverForPreview() {
+        guard let button = statusItem.button else { return }
+
+        // 设置为 applicationDefined 模式，防止点击其他窗口时自动关闭
+        popover.behavior = .applicationDefined
+
+        popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+
+        // 激活应用并使浮窗获得焦点
+        NSApp.activate(ignoringOtherApps: true)
+
+        // 确保 popover 的内容视图成为 first responder
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            if let contentViewController = self.popover.contentViewController {
+                contentViewController.view.window?.makeKey()
+            }
+        }
+
+        Logger.debug("Popover shown in preview mode with applicationDefined behavior", category: Logger.ui)
+    }
+
+    private func startAutoCloseTimer() {
+        // 取消之前的定时器
+        cancelAutoCloseTimer()
+
+        // 创建5秒定时器
+        autoCloseTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { [weak self] _ in
+            Logger.debug("Auto-closing calendar preview after 5 seconds", category: Logger.ui)
+            self?.closePopover()
+        }
+
+        Logger.debug("Started 5-second auto-close timer for theme preview", category: Logger.ui)
+    }
+
+    private func cancelAutoCloseTimer() {
+        autoCloseTimer?.invalidate()
+        autoCloseTimer = nil
     }
 
     // MARK: - Settings Window
@@ -321,7 +414,10 @@ class MenuBarController: NSObject {
         // 创建新的定时器
         let delay = settingsManager.currentSettings.hoverDelay
         hoverTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
-            self?.showPopover()
+            guard let self = self else { return }
+            // 悬浮显示使用正常模式
+            self.popover.behavior = .transient
+            self.showPopover()
         }
     }
 

@@ -75,6 +75,7 @@ description: "Task list template for feature implementation"
 - [x] T017 [US1] Implement theme mode switching logic in EnhancedThemeManager.switchToMode()
 - [x] T018 [US1] Implement theme selection for categories in EnhancedThemeManager.setTheme()
 - [x] T019 [US1] Implement theme persistence in EnhancedThemeManager.savePreferences() and loadPreferences()
+- [ ] T019a [US1] Implement smooth theme transition animations in EnhancedThemeManager (FR-009)
 - [x] T020 [P] [US1] Create theme settings view in MiniCal/Themes/Views/ThemeSettingsView.swift
 - [x] T021 [US1] Implement theme mode selection UI in ThemeSettingsView (segmented control or radio buttons)
 - [x] T022 [P] [US1] Create theme selection UI components in MiniCal/Themes/Views/ThemeCard.swift
@@ -82,7 +83,7 @@ description: "Task list template for feature implementation"
 - [ ] T023a [US1] Add reset to default theme button in ThemeSettingsView (FR-010)
 - [x] T024 [US1] Update existing SettingsView.swift to include theme tab
 - [x] T025 [US1] Integrate theme manager with app lifecycle in MiniCal/App/MenuBarController.swift
-- [ ] T025a [US1] Implement theme restoration on app launch in EnhancedThemeManager.restoreTheme() (FR-007)
+- [ ] T025a [US1] Implement theme restoration on app launch in EnhancedThemeManager.restoreTheme() (FR-007) - **HIGH PRIORITY**
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently ✅
 
@@ -127,6 +128,8 @@ description: "Task list template for feature implementation"
 
 - [ ] T034 [P] [US3] Unit test for independent theme preferences in Tests/ThemeTests/IndependentThemeTests.swift
 - [ ] T035 [US3] Integration test for system appearance response in Tests/ThemeTests/SystemAppearanceTests.swift
+- [ ] T036a [US3] Integration test for theme persistence in Tests/ThemeTests/ThemePersistenceTests.swift
+- [ ] T036b [US3] Integration test for mode-specific theme switching in Tests/ThemeTests/ModeSwitchingTests.swift
 
 ### Implementation for User Story 3
 
@@ -152,6 +155,9 @@ description: "Task list template for feature implementation"
 
 - [ ] T043 [P] [US4] Unit test for theme preview state management in Tests/ThemeTests/ThemePreviewStateTests.swift
 - [ ] T044 [US4] UI test for theme preview interaction in Tests/ThemeUITests/ThemePreviewUITests.swift
+- [ ] T044a [US4] Integration test for theme preview on hover in Tests/ThemeTests/PreviewHoverTests.swift
+- [ ] T044b [US4] Integration test for preview theme application in Tests/ThemeTests/PreviewApplicationTests.swift
+- [ ] T044c [US4] Integration test for preview state persistence in Tests/ThemeTests/PreviewPersistenceTests.swift
 
 ### Implementation for User Story 4
 
@@ -172,10 +178,12 @@ description: "Task list template for feature implementation"
 
 **Purpose**: Integrate theme system with existing calendar functionality
 
+**Important**: 主题切换不影响系统菜单栏表示，菜单栏显示依赖系统进行调度。仅日历弹窗窗口（popover）应用主题。
+
 - [ ] T053 [P] Update CalendarView.swift to use theme-aware colors and styles
-- [ ] T054 [P] Update MenuBarController.swift to respond to theme changes
+- [ ] T054 [P] Update MenuBarController.swift - Calendar popover window applies theme, menu bar icon remains system-controlled
 - [ ] T055 Update existing UI components to use ThemeableComponents
-- [ ] T056 Implement theme-aware color extensions for all UI elements
+- [ ] T056 Implement theme-aware color extensions for all UI elements (excluding system menu bar)
 - [ ] T057 Add theme notification observers to existing view controllers
 
 ---
@@ -203,6 +211,7 @@ description: "Task list template for feature implementation"
 - [ ] T067 [P] Create UI tests for theme settings interaction in Tests/ThemeUITests/
 - [ ] T068 Create performance tests for theme switching speed
 - [ ] T069 Create memory leak tests for theme cache management
+- [ ] T069a Create UI integrity validation tests for theme switching (FR-012) in Tests/ThemeTests/UIIntegrityTests.swift
 - [ ] T070 Create accessibility tests for theme selection interface
 - [ ] T071 Create integration tests for system appearance changes
 - [ ] T072 Create visual regression tests for theme appearance

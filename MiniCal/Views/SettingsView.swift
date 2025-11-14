@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct SettingsView: View {
     @ObservedObject private var settingsManager = SettingsManager.shared
@@ -31,7 +32,7 @@ struct SettingsView: View {
                     Label("外观", systemImage: "paintbrush")
                 }
         }
-        .frame(width: 500, height: 400)
+        .frame(width: 580, height: 700)
         .padding()
     }
 }
@@ -50,17 +51,52 @@ struct MenuBarSettingsView: View {
 
     var body: some View {
         Form {
-            // 预览区域 - 移到最上方
-            Section("预览") {
-                Text(previewText)
-                    .font(.system(size: 13))
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.secondary.opacity(0.1))
-                    .cornerRadius(8)
+            // 应用设置
+            Section("应用设置") {
+                // 全局快捷键
+                Toggle("启用全局快捷键", isOn: $localSettings.globalHotkeyEnabled)
+                    .onChange(of: localSettings.globalHotkeyEnabled) { newValue in
+                        var updated = settingsManager.currentSettings
+                        updated.globalHotkeyEnabled = newValue
+                        updated.lastUpdated = Date()
+                        settingsManager.saveSettings(updated)
+                    }
+
+                if localSettings.globalHotkeyEnabled {
+                    HotkeyRecorder()
+                }
+
+                // 开机自启动
+                Toggle("开机自动启动", isOn: $localSettings.launchAtLogin)
+                    .onChange(of: localSettings.launchAtLogin) { newValue in
+                        var updated = settingsManager.currentSettings
+                        updated.launchAtLogin = newValue
+                        updated.lastUpdated = Date()
+                        settingsManager.saveSettings(updated)
+                        // 应用设置
+                        LaunchAtLoginManager.shared.setLaunchAtLogin(newValue)
+                    }
             }
 
-            Section("显示格式") {
+            // 菜单栏显示
+            Section("菜单栏显示") {
+                // 实时预览
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("实时预览")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Text(previewText)
+                        .font(.system(size: 13))
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 12)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.secondary.opacity(0.1))
+                        .cornerRadius(6)
+                }
+                .padding(.bottom, 8)
+
+                // 显示格式
                 Picker("格式", selection: $localSettings.menuBarFormat) {
                     ForEach(MenuBarFormat.allCases, id: \.self) { format in
                         Text(format.displayName).tag(format)
@@ -114,7 +150,8 @@ struct MenuBarSettingsView: View {
                     }
             }
 
-            Section("鼠标悬浮展示日历") {
+            // 日历交互
+            Section("日历交互") {
                 Toggle("启用悬浮展示", isOn: $localSettings.hoverToShowEnabled)
                     .onChange(of: localSettings.hoverToShowEnabled) { newValue in
                         settingsManager.updateHoverSettings(enabled: newValue, delay: localSettings.hoverDelay)
@@ -383,6 +420,7 @@ struct AppearanceSettingsView: View {
     @ObservedObject var settingsManager: SettingsManager
     @ObservedObject private var themeManager = ThemeManager.shared
     @State private var localSettings: UserSettings
+    @State private var isSystemDarkMode: Bool = NSApp.effectiveAppearance.name == .darkAqua
 
     init(settingsManager: SettingsManager) {
         self.settingsManager = settingsManager
@@ -428,31 +466,128 @@ struct AppearanceSettingsView: View {
                 }
             }
 
-            Section("主题选择") {
-                // 动态加载所有可用主题
-                Picker("主题", selection: $localSettings.themeId) {
-                    ForEach(themeManager.availableThemes, id: \.id) { theme in
-                        Text(theme.name).tag(theme.id)
+            // 不透明度设置
+            Section("浮窗透明度") {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("不透明度")
+                            .font(.body)
+                        Spacer()
+                        Text("\(Int(localSettings.calendarOpacity * 100))%")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .frame(width: 40, alignment: .trailing)
+                    }
+
+                    Slider(
+                        value: Binding(
+                            get: { localSettings.calendarOpacity },
+                            set: { newValue in
+                                localSettings.calendarOpacity = newValue
+                                // 保存设置
+                                var updated = settingsManager.currentSettings
+                                updated.calendarOpacity = newValue
+                                updated.lastUpdated = Date()
+                                settingsManager.saveSettings(updated)
+                                // 触发预览
+                                NotificationCenter.default.post(name: .themePreviewRequested, object: nil)
+                            }
+                        ),
+                        in: 0.0...1.0,
+                        step: 0.05
+                    )
+
+                    HStack {
+                        Text("更透明")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Text("更不透明")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                 }
-                .onChange(of: localSettings.themeId) { newThemeId in
-                    // 当主题ID变化时，应用新主题并保存
-                    themeManager.applyTheme(withId: newThemeId)
-                    settingsManager.updateTheme(newThemeId)
-                }
+                .padding(.vertical, 4)
             }
 
-            Section("主题预览") {
-                // 显示所有可用主题的预览卡片
-                ForEach(themeManager.availableThemes, id: \.id) { theme in
-                    ThemePreviewCard(
-                        theme: theme,
-                        isSelected: localSettings.themeId == theme.id
-                    )
-                    .onTapGesture {
-                        localSettings.themeId = theme.id
-                        themeManager.applyTheme(withId: theme.id)
-                        settingsManager.updateTheme(theme.id)
+            // 主题选择（统一控制）
+            Section("主题") {
+                VStack(alignment: .leading, spacing: 12) {
+                    // 主题模式选择和重置按钮
+                    HStack(spacing: 8) {
+                        ForEach(ThemeMode.allCases, id: \.self) { mode in
+                            ThemeModeButton(
+                                mode: mode,
+                                isSelected: localSettings.themeMode == mode,
+                                action: {
+                                    localSettings.themeMode = mode
+                                    themeManager.setThemeMode(mode)
+                                }
+                            )
+                        }
+                    }
+
+                    // 模式描述和重置按钮
+                    HStack {
+                        Text(localSettings.themeMode.description)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+
+                        Spacer()
+
+                        Button(action: resetToDefault) {
+                            Label("重置", systemImage: "arrow.counterclockwise")
+                                .font(.caption)
+                        }
+                        .buttonStyle(.borderless)
+                        .foregroundColor(.blue)
+                        .help("重置为默认主题（自动模式 + 经典蓝/午夜蓝）")
+                    }
+
+                    // 根据模式显示对应的主题选择
+                    if localSettings.themeMode == .light {
+                        // 浅色模式：仅显示浅色主题
+                        ThemeSelectionGrid(
+                            themes: themeManager.lightThemes,
+                            selectedThemeId: themeManager.currentLightTheme.id,
+                            onThemeSelect: { theme in
+                                handleThemeSelection(theme)
+                            }
+                        )
+                    } else if localSettings.themeMode == .dark {
+                        // 深色模式：仅显示深色主题
+                        ThemeSelectionGrid(
+                            themes: themeManager.darkThemes,
+                            selectedThemeId: themeManager.currentDarkTheme.id,
+                            onThemeSelect: { theme in
+                                handleThemeSelection(theme)
+                            }
+                        )
+                    } else {
+                        // 自动模式：根据当前系统外观显示对应主题
+                        if isSystemDarkMode {
+                            ThemeSelectionGrid(
+                                themes: themeManager.darkThemes,
+                                selectedThemeId: themeManager.currentDarkTheme.id,
+                                onThemeSelect: { theme in
+                                    handleThemeSelection(theme)
+                                }
+                            )
+                        } else {
+                            ThemeSelectionGrid(
+                                themes: themeManager.lightThemes,
+                                selectedThemeId: themeManager.currentLightTheme.id,
+                                onThemeSelect: { theme in
+                                    handleThemeSelection(theme)
+                                }
+                            )
+                        }
+
+                        // 自动模式提示
+                        Text("💡 系统外观变化时，将自动切换到对应模式下您选择的主题")
+                            .font(.caption)
+                            .foregroundColor(.blue)
+                            .padding(.top, 4)
                     }
                 }
             }
@@ -522,83 +657,221 @@ struct AppearanceSettingsView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.top, 4)
-
-                Text("自动适配系统外观")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
             }
         }
         .formStyle(.grouped)
         .onAppear {
             localSettings = settingsManager.currentSettings
+            isSystemDarkMode = NSApp.effectiveAppearance.name == .darkAqua
         }
         .onChange(of: settingsManager.currentSettings) { newValue in
             localSettings = newValue
         }
-    }
-}
-
-// MARK: - 主题预览卡片
-
-struct ThemePreviewCard: View {
-    let theme: Theme
-    let isSelected: Bool
-
-    var body: some View {
-        HStack(spacing: 12) {
-            // 主题名称
-            VStack(alignment: .leading, spacing: 4) {
-                Text(theme.name)
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(.primary)
-
-                Text(theme.id)
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
-            }
-
-            Spacer()
-
-            // 颜色预览块
-            HStack(spacing: 6) {
-                ColorPreviewDot(color: theme.colors.backgroundColor)
-                ColorPreviewDot(color: theme.colors.textColor)
-                ColorPreviewDot(color: theme.colors.todayHighlightColor)
-                ColorPreviewDot(color: theme.colors.weekendTextColor)
-            }
-
-            // 选中标记
-            if isSelected {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(.blue)
-                    .font(.system(size: 16))
+        .onReceive(NotificationCenter.default.publisher(for: .themeDidChange)) { _ in
+            // 监听主题变化，更新系统外观状态
+            DispatchQueue.main.async {
+                isSystemDarkMode = NSApp.effectiveAppearance.name == .darkAqua
             }
         }
-        .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(isSelected ? Color.blue.opacity(0.1) : Color.secondary.opacity(0.05))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
-        )
+    }
+
+    // 处理主题选择
+    private func handleThemeSelection(_ theme: ThemeConfiguration) {
+        // 根据主题类别调用不同的设置方法
+        if theme.category == .light {
+            themeManager.setLightTheme(theme)
+        } else {
+            themeManager.setDarkTheme(theme)
+        }
+
+        // 更新本地设置
+        var updated = settingsManager.currentSettings
+        if theme.category == .light {
+            updated.lightThemeId = theme.id
+        } else {
+            updated.darkThemeId = theme.id
+        }
+        updated.lastUpdated = Date()
+        settingsManager.saveSettings(updated)
+
+        // 发送主题预览请求通知，触发日历浮窗显示
+        NotificationCenter.default.post(name: .themePreviewRequested, object: nil)
+
+        Logger.debug("Theme preview requested for '\(theme.displayName)'", category: Logger.ui)
+    }
+
+    // 重置为默认主题
+    private func resetToDefault() {
+        // 调用 ThemeManager 重置
+        themeManager.resetToDefault()
+
+        // 更新本地状态
+        localSettings = settingsManager.currentSettings
+
+        // 发送主题预览请求通知，触发日历浮窗显示
+        NotificationCenter.default.post(name: .themePreviewRequested, object: nil)
+
+        Logger.info("Theme reset to default (Auto mode + Classic Blue/Midnight Blue)", category: Logger.ui)
     }
 }
 
-// MARK: - 颜色预览圆点
+// MARK: - 主题卡片视图（方案C：分层设计）
 
-struct ColorPreviewDot: View {
-    let color: Color
+struct ThemeCard: View {
+    let theme: ThemeConfiguration
+    let isSelected: Bool
+    let onTap: () -> Void
+
+    @State private var isHovering = false
 
     var body: some View {
-        Circle()
-            .fill(color)
-            .frame(width: 16, height: 16)
-            .overlay(
-                Circle()
-                    .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
+        VStack(spacing: 8) {
+            // 分层预览卡片
+            ZStack {
+                // 第一层：Background 背景色
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color(hex: theme.colors.background))
+                    .frame(width: 130, height: 86)
+
+                // 第二层：Surface 卡片层（内嵌，带阴影）
+                VStack(spacing: 8) {
+                    Spacer()
+
+                    // 中央：Accent 今日标记
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(Color(hex: theme.colors.accent))
+                            .frame(width: 80, height: 32)
+
+                        HStack(spacing: 4) {
+                            Text("今日")
+                                .font(.system(size: 11, weight: .medium))
+                            Text("13")
+                                .font(.system(size: 14, weight: .semibold))
+                        }
+                        .foregroundColor(.white)
+                    }
+
+                    // 底部：星期文字
+                    HStack(spacing: 6) {
+                        ForEach(["日", "一", "二", "三", "四"], id: \.self) { day in
+                            Text(day)
+                                .font(.system(size: 9))
+                                .foregroundColor(Color(hex: theme.colors.textSecondary))
+                        }
+                    }
+
+                    Spacer()
+                }
+                .frame(width: 114, height: 70)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color(hex: theme.colors.surface))
+                        .shadow(
+                            color: Color.black.opacity(isHovering ? 0.15 : 0.1),
+                            radius: isHovering ? 4 : 3,
+                            x: 0,
+                            y: 2
+                        )
+                )
+            }
+
+            // 主题名称
+            Text(theme.displayName)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundColor(.primary)
+                .lineLimit(1)
+
+            // 选中标记
+            HStack(spacing: 4) {
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 10))
+                        .foregroundColor(Color(hex: theme.colors.accent))
+                    Text("当前主题")
+                        .font(.system(size: 10))
+                        .foregroundColor(Color(hex: theme.colors.accent))
+                }
+            }
+            .frame(height: 14)  // 固定高度避免跳动
+        }
+        .frame(width: 130, height: 120)
+        .padding(8)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.clear)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(
+                    isSelected ? Color.accentColor : (isHovering ? Color.gray.opacity(0.3) : Color.clear),
+                    lineWidth: isSelected ? 2 : (isHovering ? 1 : 0)
+                )
+        )
+        .scaleEffect(isSelected || isHovering ? 1.02 : 1.0)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
+        .animation(.easeInOut(duration: 0.2), value: isHovering)
+        .onHover { hovering in
+            isHovering = hovering
+        }
+        .onTapGesture {
+            onTap()
+        }
+    }
+}
+
+// MARK: - 主题模式按钮
+
+struct ThemeModeButton: View {
+    let mode: ThemeMode
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Image(systemName: mode.icon)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(isSelected ? .white : .primary)
+
+                Text(mode.displayName)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(isSelected ? .white : .primary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 10)
+            .padding(.horizontal, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isSelected ? Color.accentColor : Color.secondary.opacity(0.1))
             )
+        }
+        .buttonStyle(PlainButtonStyle())
+        .animation(.easeInOut(duration: 0.2), value: isSelected)
+    }
+}
+
+// MARK: - 主题选择网格
+
+struct ThemeSelectionGrid: View {
+    let themes: [ThemeConfiguration]
+    let selectedThemeId: String
+    let onThemeSelect: (ThemeConfiguration) -> Void
+
+    var body: some View {
+        // 主题网格（3列布局，方案C）
+        LazyVGrid(
+            columns: Array(repeating: GridItem(.fixed(146), spacing: 20), count: 3),
+            spacing: 20
+        ) {
+            ForEach(themes, id: \.id) { theme in
+                ThemeCard(
+                    theme: theme,
+                    isSelected: theme.id == selectedThemeId,
+                    onTap: { onThemeSelect(theme) }
+                )
+            }
+        }
     }
 }
 

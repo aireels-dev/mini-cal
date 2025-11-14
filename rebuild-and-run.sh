@@ -5,7 +5,7 @@
 
 set -e  # 遇到错误立即退出
 
-PROJECT_DIR="/Users/lixingmao/Documents/Developer/WebSpace/mini-cal"
+PROJECT_DIR="/Users/lixingmao/Documents/Developer/WebSpace/mini-cal-theme"
 APP_NAME="MiniCal"
 SCHEME="MiniCal"
 

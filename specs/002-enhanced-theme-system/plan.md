@@ -350,9 +350,33 @@
 - 支持主题插件系统
 - 实现跨平台主题同步
 
+## 阶段执行顺序
+
+**MUST** 按照以下顺序执行 phases（适配主题系统US1-US4）：
+
+1. **Phase 1: Setup** (T001-T004) - 项目初始化
+2. **Phase 2: Foundational** (T005-T012) - **BLOCKING** 所有后续工作
+3. **Phase 3: User Story 1 - 模式主题选择体系** (T013-T025) - MVP 第一步
+4. **Phase 4: User Story 2 - Chrome风格主题库** (T026-T032) - MVP 第二步
+5. **Phase 5: User Story 3 - 黑夜白天主题独立性** (T033-T042) - 增强功能第一步
+6. **Phase 6: User Story 4 - 主题即时预览功能** (T043-T052) - 增强功能第二步
+7. **Phase 7: Integration with Existing Components** (T053-T057) - 系统集成
+8. **Phase 8: Performance Optimization & Polish** (T058-T065) - 性能优化
+9. **Phase 9: Testing & Quality Assurance** (T066-T072) - 全面测试
+10. **Phase 10: Documentation & Release** (完成所有实现后的文档和发布)
+
+**Checkpoints**:
+- Checkpoint 1 (after Phase 2): Foundation ready - 所有模型可用，编译成功
+- Checkpoint 2 (after Phase 3-4): MVP complete - 主题模式选择和Chrome主题库功能可用
+- Checkpoint 3 (after Phase 5-6): Full features - 主题独立性和预览功能完整
+- Checkpoint 4 (after Phase 7): Integration complete - 与现有组件完整集成
+- Checkpoint 5 (after Phase 8): Performance optimized - 性能指标达标
+- Checkpoint 6 (after Phase 9): QA passed - 所有测试通过
+- Checkpoint 7 (after Phase 10): Ready for release - 文档完善，可以发布
+
 ## 总结
 
-本实施计划详细规划了增强主题系统的开发流程，包括 7 个主要阶段，预计总开发时间 14-18 天。通过系统化的项目管理、风险控制和质量保证，确保项目能够按时、按质量要求完成，为 MiniCal 用户提供专业级的主题体验功能。
+本实施计划详细规划了增强主题系统的开发流程，包括 10 个主要阶段，预计总开发时间 14-18 天。通过系统化的项目管理、风险控制和质量保证，确保项目能够按时、按质量要求完成，为 MiniCal 用户提供专业级的主题体验功能。
 
 关键成功因素：
 1. **清晰的架构设计**: 基于协议和依赖注入的模块化架构

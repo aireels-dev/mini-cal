@@ -14,7 +14,37 @@ struct UserSettings: Codable, Equatable {
     var showWeekday: Bool
     var showSeconds: Bool
     var secondaryCalendarType: CalendarType?
-    var themeId: String
+
+    // MARK: - 主题设置
+
+    /// 主题模式（浅色/自动/深色）
+    var themeMode: ThemeMode
+
+    /// 浅色模式下的主题ID
+    var lightThemeId: String
+
+    /// 深色模式下的主题ID
+    var darkThemeId: String
+
+    /// 兼容旧版本：当前主题ID（已废弃，保留用于迁移）
+    var themeId: String?
+
+    /// 日历浮窗不透明度（0.0 - 1.0）
+    var calendarOpacity: Double
+
+    // MARK: - 全局快捷键设置
+
+    /// 是否启用全局快捷键
+    /// 注意：实际快捷键由 KeyboardShortcuts 库管理，存储在独立的 UserDefaults key 中
+    var globalHotkeyEnabled: Bool
+
+    // MARK: - 系统设置
+
+    /// 开机自动启动
+    var launchAtLogin: Bool
+
+    // MARK: - 其他设置
+
     var hoverToShowEnabled: Bool
     var hoverDelay: Double
     var calendarSize: CalendarSize
@@ -27,7 +57,13 @@ struct UserSettings: Codable, Equatable {
         showWeekday: false,
         showSeconds: false,
         secondaryCalendarType: detectDefaultCalendar(),
-        themeId: "system",
+        themeMode: .auto,
+        lightThemeId: "classic_blue",
+        darkThemeId: "midnight_blue",
+        themeId: nil,
+        calendarOpacity: 0.5,
+        globalHotkeyEnabled: true,
+        launchAtLogin: true,
         hoverToShowEnabled: true,
         hoverDelay: 0.5,
         calendarSize: .standard,
