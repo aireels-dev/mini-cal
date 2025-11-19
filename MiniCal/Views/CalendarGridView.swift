@@ -101,6 +101,11 @@ struct CalendarGridView: View {
 
     /// 键盘快捷键处理（彻底优化版）
     private func handleKeyPress(_ event: NSEvent) -> NSEvent? {
+        // 检查窗口焦点：只在日历浮窗有焦点时响应
+        guard isCalendarWindowActive() else {
+            return event
+        }
+
         // 检查当前是否有文本输入框获得焦点（避免拦截设置窗口的输入）
         if NSApp.keyWindow?.firstResponder as? NSTextView != nil {
             return event
@@ -141,6 +146,11 @@ struct CalendarGridView: View {
 
     /// 滚动事件处理（触摸板手势，彻底优化版）
     private func handleScrollEvent(_ event: NSEvent) -> NSEvent? {
+        // 检查窗口焦点：只在日历浮窗有焦点时响应
+        guard isCalendarWindowActive() else {
+            return event
+        }
+
         // 检查是否是触摸板手势（不是鼠标滚轮）
         guard event.hasPreciseScrollingDeltas else {
             return event
@@ -262,6 +272,15 @@ struct CalendarGridView: View {
                 )
             )
         }
+    }
+
+    // MARK: - Window Focus Check
+
+    /// 检查日历窗口是否处于活动状态
+    private func isCalendarWindowActive() -> Bool {
+        guard let keyWindow = NSApp.keyWindow else { return false }
+        // 检查是否是 NSPopover 的窗口（日历浮窗）
+        return keyWindow.className.contains("NSPopover")
     }
 
     // MARK: - Week Header

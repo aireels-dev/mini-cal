@@ -71,22 +71,31 @@ struct CalendarView: View {
             }
         }
         .frame(width: calendarSize.width, height: calendarSize.height)
-        .sheet(isPresented: $showEventDetail) {
+        .popover(isPresented: $showEventDetail, arrowEdge: .bottom) {
             if let selectedDate = selectedDateForDetail {
-                EventDetailView(
-                    date: selectedDate,
+                DayEventListView(
+                    date: selectedDate.gregorianDate,
+                    events: selectedDate.calendarEvents,
                     themeColors: effectiveColors,
-                    onClose: {
+                    onEventTap: { event in
+                        // 事件点击处理 - 可以显示事件详情
+                        print("Event tapped: \(event.title)")
+                    },
+                    onManageEvents: {
+                        // 打开事件管理界面
                         showEventDetail = false
+                        // TODO: 打开事件详情/编辑界面
                     }
                 )
             }
         }
         .onAppear {
             setupSettingsKeyMonitor()
+            setupResetNotification()
         }
         .onDisappear {
             removeSettingsKeyMonitor()
+            removeResetNotification()
         }
     }
 
@@ -98,6 +107,16 @@ struct CalendarView: View {
 
         // 添加快捷键监听（Command+,, Command+/-, Command+=）
         settingsKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+            // 检查窗口焦点：只在日历浮窗有焦点时响应
+            guard self.isCalendarWindowActive() else {
+                return event
+            }
+
+            // 检查文本输入焦点：避免拦截文本框输入
+            if NSApp.keyWindow?.firstResponder as? NSTextView != nil {
+                return event
+            }
+
             // 必须按下 Command 键
             guard event.modifierFlags.contains(.command) else {
                 return event
@@ -107,17 +126,17 @@ struct CalendarView: View {
 
             // Command+, 打开设置
             if key == "," {
-                openSettingsAction?()
+                self.openSettingsAction?()
                 return nil
             }
             // Command+- 减小日历尺寸
             else if key == "-" {
-                settingsManager.decreaseCalendarSize()
+                self.settingsManager.decreaseCalendarSize()
                 return nil
             }
             // Command+= 或 Command++ 增大日历尺寸
             else if key == "=" || key == "+" {
-                settingsManager.increaseCalendarSize()
+                self.settingsManager.increaseCalendarSize()
                 return nil
             }
 
@@ -125,11 +144,38 @@ struct CalendarView: View {
         }
     }
 
+    /// 检查日历窗口是否处于活动状态
+    private func isCalendarWindowActive() -> Bool {
+        guard let keyWindow = NSApp.keyWindow else { return false }
+        // 检查是否是 NSPopover 的窗口（日历浮窗）
+        return keyWindow.className.contains("NSPopover")
+    }
+
     private func removeSettingsKeyMonitor() {
         if let monitor = settingsKeyMonitor {
             NSEvent.removeMonitor(monitor)
             settingsKeyMonitor = nil
         }
+    }
+
+    // MARK: - Reset Notification
+
+    private func setupResetNotification() {
+        NotificationCenter.default.addObserver(
+            forName: .resetCalendarToToday,
+            object: nil,
+            queue: .main
+        ) { [weak viewModel] _ in
+            viewModel?.goToToday()
+        }
+    }
+
+    private func removeResetNotification() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .resetCalendarToToday,
+            object: nil
+        )
     }
 }
 

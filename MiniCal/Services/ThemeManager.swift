@@ -322,4 +322,7 @@ extension Notification.Name {
 
     /// 主题预览请求通知（用于触发日历浮窗显示）
     static let themePreviewRequested = Notification.Name("ThemePreviewRequested")
+
+    /// 重置日历到今天通知
+    static let resetCalendarToToday = Notification.Name("ResetCalendarToToday")
 }
