@@ -17,8 +17,8 @@ enum NavigationDirection {
 
 // MARK: - Navigation Type
 enum NavigationType {
-    case month  // 月份切换（使用上下动效）
-    case year   // 年份切换（使用左右动效）
+    case month  // 月份切换（使用左右动效）
+    case year   // 年份切换（使用上下动效）
     case none   // 无类型
 }
 

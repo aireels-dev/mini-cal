@@ -594,9 +594,9 @@ struct AppearanceSettingsView: View {
 
             Section("快捷键与手势") {
                 VStack(alignment: .leading, spacing: 8) {
-                    // 日期切换（键盘快捷键）
+                    // 日期切换（箭头键）
                     Group {
-                        Text("日期切换")
+                        Text("箭头键切换")
                             .font(.caption)
                             .fontWeight(.semibold)
                             .foregroundColor(.primary)
@@ -604,11 +604,33 @@ struct AppearanceSettingsView: View {
                         HStack(spacing: 20) {
                             VStack(alignment: .leading, spacing: 2) {
                                 ShortcutRow(key: "←", description: "上个月")
-                                ShortcutRow(key: "↑", description: "上一年")
+                                ShortcutRow(key: "↑", description: "下一年")
                             }
                             VStack(alignment: .leading, spacing: 2) {
                                 ShortcutRow(key: "→", description: "下个月")
-                                ShortcutRow(key: "↓", description: "下一年")
+                                ShortcutRow(key: "↓", description: "上一年")
+                            }
+                        }
+                    }
+
+                    Divider()
+                        .padding(.vertical, 2)
+
+                    // WASD键切换
+                    Group {
+                        Text("WASD键切换")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
+
+                        HStack(spacing: 20) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                ShortcutRow(key: "A", description: "上个月")
+                                ShortcutRow(key: "W", description: "下一年")
+                            }
+                            VStack(alignment: .leading, spacing: 2) {
+                                ShortcutRow(key: "D", description: "下个月")
+                                ShortcutRow(key: "S", description: "上一年")
                             }
                         }
                     }
@@ -639,9 +661,11 @@ struct AppearanceSettingsView: View {
                             .fontWeight(.semibold)
                             .foregroundColor(.primary)
 
-                        HStack(spacing: 20) {
-                            GestureRow(gesture: "左右滑动", description: "月份切换")
-                            GestureRow(gesture: "上下滑动", description: "年份切换")
+                        VStack(alignment: .leading, spacing: 2) {
+                            GestureRow(gesture: "左滑", description: "下个月")
+                            GestureRow(gesture: "右滑", description: "上个月")
+                            GestureRow(gesture: "上滑", description: "下一年")
+                            GestureRow(gesture: "下滑", description: "上一年")
                         }
                     }
                 }

@@ -122,17 +122,45 @@ struct CalendarGridView: View {
             }
             return nil
         }
-        // 上箭头 = 上一年（年份减小）
+        // 上箭头 = 下一年（年份增大）
         else if event.keyCode == 126 { // Up arrow
+            withAnimation(animation) {
+                viewModel.goToNextYear()
+            }
+            return nil
+        }
+        // 下箭头 = 上一年（年份减小）
+        else if event.keyCode == 125 { // Down arrow
             withAnimation(animation) {
                 viewModel.goToPreviousYear()
             }
             return nil
         }
-        // 下箭头 = 下一年（年份增大）
-        else if event.keyCode == 125 { // Down arrow
+        // W键 = 下一年（年份增大）
+        else if event.keyCode == 13 { // W key
             withAnimation(animation) {
                 viewModel.goToNextYear()
+            }
+            return nil
+        }
+        // A键 = 上一个月（月份减小）
+        else if event.keyCode == 0 { // A key
+            withAnimation(animation) {
+                viewModel.goToPreviousMonth()
+            }
+            return nil
+        }
+        // S键 = 上一年（年份减小）
+        else if event.keyCode == 1 { // S key
+            withAnimation(animation) {
+                viewModel.goToPreviousYear()
+            }
+            return nil
+        }
+        // D键 = 下一个月（月份增大）
+        else if event.keyCode == 2 { // D key
+            withAnimation(animation) {
+                viewModel.goToNextMonth()
             }
             return nil
         }
@@ -162,9 +190,11 @@ struct CalendarGridView: View {
             if abs(scrollDeltaX) > abs(scrollDeltaY) && abs(scrollDeltaX) > threshold {
                 withAnimation(animation) {
                     if scrollDeltaX < 0 {
-                        viewModel.goToPreviousMonth()
-                    } else {
+                        // 左滑（手指向左滑）→ 月份增大
                         viewModel.goToNextMonth()
+                    } else {
+                        // 右滑（手指向右滑）→ 月份减小
+                        viewModel.goToPreviousMonth()
                     }
                 }
             }
@@ -172,9 +202,11 @@ struct CalendarGridView: View {
             else if abs(scrollDeltaY) > abs(scrollDeltaX) && abs(scrollDeltaY) > threshold {
                 withAnimation(animation) {
                     if scrollDeltaY < 0 {
-                        viewModel.goToPreviousYear()
-                    } else {
+                        // 上滑（手指向上滑）→ 年份增大
                         viewModel.goToNextYear()
+                    } else {
+                        // 下滑（手指向下滑）→ 年份减小
+                        viewModel.goToPreviousYear()
                     }
                 }
             }
@@ -206,12 +238,12 @@ struct CalendarGridView: View {
 
         switch effectiveDirection {
         case .forward:
-            // 前进动画：月份增大（从左向右）或年份增大（下一年）
+            // 前进动画：月份增大（从右向左）或年份增大（从下到上）
             return .asymmetric(
                 insertion: .modifier(
                     active: SmoothSlideModifier(
-                        offsetX: isHorizontal ? -slideDistance : 0,
-                        offsetY: isHorizontal ? 0 : -slideDistance,  // 下一年：新内容从上方进入
+                        offsetX: isHorizontal ? slideDistance : 0,   // 月份增大：新内容从右侧进入
+                        offsetY: isHorizontal ? 0 : slideDistance,   // 年份增大：新内容从下方进入
                         scale: 0.95,
                         opacity: fadeThreshold
                     ),
@@ -219,8 +251,8 @@ struct CalendarGridView: View {
                 ),
                 removal: .modifier(
                     active: SmoothSlideModifier(
-                        offsetX: isHorizontal ? slideDistance : 0,
-                        offsetY: isHorizontal ? 0 : slideDistance,  // 下一年：旧内容向下退出
+                        offsetX: isHorizontal ? -slideDistance : 0,  // 月份增大：旧内容向左退出
+                        offsetY: isHorizontal ? 0 : -slideDistance,  // 年份增大：旧内容向上退出
                         scale: 0.95,
                         opacity: fadeThreshold
                     ),
@@ -228,12 +260,12 @@ struct CalendarGridView: View {
                 )
             )
         case .backward:
-            // 后退动画：月份减小（从右向左）或年份减小（上一年）
+            // 后退动画：月份减小（从左向右）或年份减小（从上到下）
             return .asymmetric(
                 insertion: .modifier(
                     active: SmoothSlideModifier(
-                        offsetX: isHorizontal ? slideDistance : 0,
-                        offsetY: isHorizontal ? 0 : slideDistance,   // 上一年：新内容从下方进入
+                        offsetX: isHorizontal ? -slideDistance : 0,  // 月份减小：新内容从左侧进入
+                        offsetY: isHorizontal ? 0 : -slideDistance,  // 年份减小：新内容从上方进入
                         scale: 0.95,
                         opacity: fadeThreshold
                     ),
@@ -241,8 +273,8 @@ struct CalendarGridView: View {
                 ),
                 removal: .modifier(
                     active: SmoothSlideModifier(
-                        offsetX: isHorizontal ? -slideDistance : 0,
-                        offsetY: isHorizontal ? 0 : -slideDistance,  // 上一年：旧内容向上退出
+                        offsetX: isHorizontal ? slideDistance : 0,   // 月份减小：旧内容向右退出
+                        offsetY: isHorizontal ? 0 : slideDistance,   // 年份减小：旧内容向下退出
                         scale: 0.95,
                         opacity: fadeThreshold
                     ),
