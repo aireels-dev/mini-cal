@@ -1,0 +1,524 @@
+openapi: 3.0.3
+info:
+  title: MiniCal Calendar Subscription Service
+  description: 日历订阅管理服务API合约
+  version: 1.0.0
+  contact:
+    name: MiniCal Development Team
+  license:
+    name: MIT
+
+paths:
+  /subscriptions:
+    get:
+      summary: 获取所有订阅源
+      operationId: getAllSubscriptions
+      tags:
+        - Subscriptions
+      responses:
+        '200':
+          description: 成功返回订阅源列表
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CalendarSubscription'
+        '500':
+          description: 服务器内部错误
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: 添加新的订阅源
+      operationId: addSubscription
+      tags:
+        - Subscriptions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubscriptionRequest'
+      responses:
+        '201':
+          description: 成功创建订阅源
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarSubscription'
+        '400':
+          description: 请求参数错误
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: 订阅源已存在
+          $ref: '#/components/responses/Conflict'
+        '500':
+          description: 服务器内部错误
+          $ref: '#/components/responses/InternalServerError'
+
+  /subscriptions/{subscriptionId}:
+    get:
+      summary: 获取指定订阅源
+      operationId: getSubscription
+      tags:
+        - Subscriptions
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: 成功返回订阅源
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarSubscription'
+        '404':
+          description: 订阅源不存在
+          $ref: '#/components/responses/NotFound'
+        '500':
+          description: 服务器内部错误
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: 更新订阅源
+      operationId: updateSubscription
+      tags:
+        - Subscriptions
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSubscriptionRequest'
+      responses:
+        '200':
+          description: 成功更新订阅源
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarSubscription'
+        '400':
+          description: 请求参数错误
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: 订阅源不存在
+          $ref: '#/components/responses/NotFound'
+        '500':
+          description: 服务器内部错误
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: 删除订阅源
+      operationId: deleteSubscription
+      tags:
+        - Subscriptions
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: 成功删除订阅源
+        '404':
+          description: 订阅源不存在
+          $ref: '#/components/responses/NotFound'
+        '500':
+          description: 服务器内部错误
+          $ref: '#/components/responses/InternalServerError'
+
+  /subscriptions/validate:
+    post:
+      summary: 验证外部订阅URL
+      operationId: validateSubscriptionURL
+      tags:
+        - Subscriptions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateURLRequest'
+      responses:
+        '200':
+          description: URL验证结果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/URLValidationResult'
+        '400':
+          description: 请求参数错误
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          description: 服务器内部错误
+          $ref: '#/components/responses/InternalServerError'
+
+  /subscriptions/{subscriptionId}/sync:
+    post:
+      summary: 手动同步订阅源
+      operationId: syncSubscription
+      tags:
+        - Sync
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: 同步结果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncResult'
+        '404':
+          description: 订阅源不存在
+          $ref: '#/components/responses/NotFound'
+        '500':
+          description: 服务器内部错误
+          $ref: '#/components/responses/InternalServerError'
+
+  /subscriptions/sync-all:
+    post:
+      summary: 同步所有活跃订阅源
+      operationId: syncAllActiveSubscriptions
+      tags:
+        - Sync
+      responses:
+        '200':
+          description: 批量同步结果
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SyncResult'
+        '500':
+          description: 服务器内部错误
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    CalendarSubscription:
+      type: object
+      required:
+        - id
+        - title
+        - color
+        - isActive
+        - subscriptionType
+        - syncStatus
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: 订阅源唯一标识符
+        title:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: 订阅源标题
+        url:
+          type: string
+          format: uri
+          nullable: true
+          description: 外部订阅URL
+        calendarIdentifier:
+          type: string
+          nullable: true
+          description: EventKit日历标识符
+        color:
+          $ref: '#/components/schemas/EventColor'
+        isActive:
+          type: boolean
+          description: 是否启用
+        subscriptionType:
+          $ref: '#/components/schemas/SubscriptionType'
+        syncStatus:
+          $ref: '#/components/schemas/SyncStatus'
+        lastSyncDate:
+          type: string
+          format: date-time
+          nullable: true
+          description: 最后同步时间
+        nextSyncDate:
+          type: string
+          format: date-time
+          nullable: true
+          description: 下次同步时间
+        errorMessage:
+          type: string
+          nullable: true
+          description: 错误信息
+        createdAt:
+          type: string
+          format: date-time
+          description: 创建时间
+        updatedAt:
+          type: string
+          format: date-time
+          description: 更新时间
+
+    CreateSubscriptionRequest:
+      type: object
+      required:
+        - title
+        - subscriptionType
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: 订阅源标题
+        url:
+          type: string
+          format: uri
+          description: 外部订阅URL（外部订阅时必填）
+        calendarIdentifier:
+          type: string
+          description: EventKit日历标识符（系统日历时必填）
+        color:
+          $ref: '#/components/schemas/EventColor'
+        subscriptionType:
+          $ref: '#/components/schemas/SubscriptionType'
+
+    UpdateSubscriptionRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: 订阅源标题
+        color:
+          $ref: '#/components/schemas/EventColor'
+        isActive:
+          type: boolean
+          description: 是否启用
+
+    ValidateURLRequest:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          format: uri
+          description: 待验证的URL
+
+    URLValidationResult:
+      type: object
+      required:
+        - isValid
+      properties:
+        isValid:
+          type: boolean
+          description: URL是否有效
+        calendarType:
+          $ref: '#/components/schemas/CalendarType'
+          nullable: true
+        title:
+          type: string
+          nullable: true
+          description: 日历标题
+        estimatedEventCount:
+          type: integer
+          minimum: 0
+          nullable: true
+          description: 预估事件数量
+        error:
+          $ref: '#/components/schemas/ValidationError'
+          nullable: true
+
+    SyncResult:
+      type: object
+      required:
+        - subscriptionId
+        - eventsAdded
+        - eventsUpdated
+        - eventsDeleted
+        - duration
+      properties:
+        subscriptionId:
+          type: string
+          format: uuid
+          description: 订阅源ID
+        eventsAdded:
+          type: integer
+          minimum: 0
+          description: 新增事件数量
+        eventsUpdated:
+          type: integer
+          minimum: 0
+          description: 更新事件数量
+        eventsDeleted:
+          type: integer
+          minimum: 0
+          description: 删除事件数量
+        duration:
+          type: number
+          format: double
+          minimum: 0
+          description: 同步耗时（秒）
+        error:
+          $ref: '#/components/schemas/ApiError'
+          nullable: true
+
+    EventColor:
+      type: string
+      enum:
+        - red
+        - orange
+        - blue
+        - purple
+        - green
+        - gray
+        - pink
+        - teal
+        - indigo
+        - mint
+        - cyan
+        - yellow
+
+    SubscriptionType:
+      type: string
+      enum:
+        - system
+        - external
+        - local
+
+    CalendarType:
+      type: string
+      enum:
+        - ical
+        - googleCalendar
+        - outlook
+        - other
+
+    SyncStatus:
+      type: object
+      required:
+        - state
+        - consecutiveFailures
+        - syncCount
+        - successRate
+      properties:
+        state:
+          $ref: '#/components/schemas/SyncState'
+        lastSyncDate:
+          type: string
+          format: date-time
+          nullable: true
+        lastSuccessDate:
+          type: string
+          format: date-time
+          nullable: true
+        lastErrorDate:
+          type: string
+          format: date-time
+          nullable: true
+        lastErrorMessage:
+          type: string
+          nullable: true
+        consecutiveFailures:
+          type: integer
+          minimum: 0
+        syncCount:
+          type: integer
+          minimum: 0
+        successRate:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+
+    SyncState:
+      type: string
+      enum:
+        - idle
+        - syncing
+        - success
+        - failed
+        - disabled
+        - rateLimited
+
+    ValidationError:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          enum:
+            - INVALID_URL
+            - UNSUPPORTED_FORMAT
+            - NETWORK_ERROR
+            - ACCESS_DENIED
+        message:
+          type: string
+          description: 错误描述
+
+    ApiError:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+          description: 错误描述
+
+  responses:
+    BadRequest:
+      description: 请求参数错误
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+
+    NotFound:
+      description: 资源不存在
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+
+    Conflict:
+      description: 资源冲突
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+
+    InternalServerError:
+      description: 服务器内部错误
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+
+tags:
+  - name: Subscriptions
+    description: 订阅源管理
+  - name: Sync
+    description: 同步管理

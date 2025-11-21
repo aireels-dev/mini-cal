@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import EventKit
 
 struct SettingsView: View {
     @ObservedObject private var settingsManager = SettingsManager.shared
@@ -322,6 +323,14 @@ struct FormatExampleView: View {
 struct CalendarSettingsView: View {
     @ObservedObject var settingsManager: SettingsManager
     @State private var localSettings: UserSettings
+    @StateObject private var permissionManager = PermissionManager.shared
+    @StateObject private var subscriptionViewModel = SubscriptionManagerViewModel()
+    @StateObject private var themeManager = ThemeManager.shared
+
+    @State private var showingAddSubscription = false
+    @State private var showingAddError = false
+    @State private var addErrorMessage = ""
+    @State private var isAddingSubscription = false
 
     init(settingsManager: SettingsManager) {
         self.settingsManager = settingsManager
@@ -330,7 +339,8 @@ struct CalendarSettingsView: View {
 
     var body: some View {
         Form {
-            Section("本地日历") {
+            // Section 1: 本地历法
+            Section("本地历法") {
                 Picker("历法类型", selection: $localSettings.secondaryCalendarType) {
                     Text("不显示").tag(nil as CalendarType?)
                     ForEach(CalendarType.allCases.filter { $0 != .gregorian }, id: \.self) { type in
@@ -340,24 +350,428 @@ struct CalendarSettingsView: View {
                 .onChange(of: localSettings.secondaryCalendarType) { newValue in
                     settingsManager.updateSecondaryCalendar(newValue)
                 }
-            }
 
-            Section("说明") {
                 Text("在公历日期下方显示本地历法")
                     .font(.caption)
                     .foregroundColor(.secondary)
+            }
 
-                Text("中国用户推荐选择「农历」")
-                    .font(.caption)
-                    .foregroundColor(.blue)
+            // Section 2: 系统日历同步
+            Section {
+                systemCalendarSyncContent
+            } header: {
+                HStack {
+                    Text("系统日历同步")
+                    Spacer()
+                    permissionStatusBadge
+                }
+            }
+
+            // Section 3: 外部订阅（包含按钮）
+            Section("外部订阅") {
+                externalSubscriptionContent
             }
         }
         .formStyle(.grouped)
         .onAppear {
             localSettings = settingsManager.currentSettings
+            subscriptionViewModel.loadSubscriptions()
         }
         .onChange(of: settingsManager.currentSettings) { newValue in
             localSettings = newValue
+        }
+        .sheet(isPresented: $showingAddSubscription) {
+            AddSubscriptionSheetView(
+                isProcessing: $isAddingSubscription,
+                onAdd: { urlString in
+                    print("📅 [Subscription] Adding subscription: \(urlString)")
+                    Logger.info("Adding subscription: \(urlString)", category: Logger.calendar)
+                    isAddingSubscription = true
+                    Task {
+                        do {
+                            print("🔄 [Subscription] Calling addSubscription...")
+                            try await subscriptionViewModel.addSubscription(urlString: urlString)
+                            print("✅ [Subscription] Successfully added subscription")
+                            Logger.info("Successfully added subscription", category: Logger.calendar)
+                            await MainActor.run {
+                                isAddingSubscription = false
+                                showingAddSubscription = false
+                            }
+                        } catch {
+                            print("❌ [Subscription] Failed to add subscription: \(error.localizedDescription)")
+                            Logger.error("Failed to add subscription: \(error.localizedDescription)", category: Logger.calendar)
+                            await MainActor.run {
+                                isAddingSubscription = false
+                                showingAddSubscription = false  // 关闭弹窗
+                                addErrorMessage = error.localizedDescription
+                                showingAddError = true
+                            }
+                        }
+                    }
+                },
+                onCancel: {
+                    showingAddSubscription = false
+                }
+            )
+        }
+        .alert("添加订阅失败", isPresented: $showingAddError) {
+            Button("确定", role: .cancel) {
+                showingAddError = false
+            }
+        } message: {
+            Text(addErrorMessage)
+        }
+    }
+
+    // MARK: - System Calendar Sync Content
+
+    @ViewBuilder
+    private var systemCalendarSyncContent: some View {
+        if !permissionManager.isAuthorized {
+            // 未授权状态
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 8) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(.orange)
+                        .font(.system(size: 14))
+
+                    Text("需要访问日历权限")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(.primary)
+                }
+
+                Text("授权后可同步 iCloud 和本地日历的事件")
+                    .font(.system(size: 12))
+                    .foregroundColor(.secondary)
+
+                Button(action: {
+                    print("🔘 [UI] Permission request button clicked")
+                    Logger.info("Permission request button clicked", category: Logger.app)
+                    Task {
+                        print("🔄 [UI] Task started, calling requestEventKitAccess()")
+                        Logger.info("Calling permissionManager.requestEventKitAccess()", category: Logger.app)
+                        let granted = await permissionManager.requestEventKitAccess()
+                        print("📬 [UI] requestEventKitAccess() returned: \(granted)")
+                        Logger.info("requestEventKitAccess() returned: \(granted)", category: Logger.app)
+                        if !granted && permissionManager.authorizationStatus == .denied {
+                            // 权限被拒绝,已自动打开系统设置
+                            print("⚠️ [UI] Permission denied, System Preferences should be opened")
+                            Logger.info("Permission denied, opened System Preferences", category: Logger.app)
+                        }
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: permissionManager.authorizationStatus == .denied ? "gear" : "lock.open.fill")
+                        Text(permissionManager.authorizationStatus == .denied ? "打开系统设置" : "请求权限")
+                    }
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(permissionManager.authorizationStatus == .denied ? Color.orange : Color.blue)
+                    .cornerRadius(6)
+                }
+                .buttonStyle(PlainButtonStyle())
+
+                if permissionManager.authorizationStatus == .denied {
+                    Text("提示:点击按钮将打开系统设置,在「隐私与安全性」>「日历」中授权")
+                        .font(.system(size: 11))
+                        .foregroundColor(.orange)
+                        .padding(.top, 4)
+                }
+            }
+            .padding(.vertical, 8)
+        } else {
+            // 已授权状态 - 显示系统日历列表
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(permissionManager.systemCalendars, id: \.calendarIdentifier) { calendar in
+                    SystemCalendarRow(
+                        calendar: calendar,
+                        isEnabled: .constant(true),
+                        themeColors: themeManager.effectiveColors,
+                        permissionManager: permissionManager,
+                        onToggle: {
+                            // TODO: 实现切换系统日历启用状态
+                        },
+                        onColorUpdate: { newColor in
+                            permissionManager.updateCalendarColor(
+                                calendarIdentifier: calendar.calendarIdentifier,
+                                color: newColor
+                            )
+                        }
+                    )
+                }
+
+                if permissionManager.systemCalendars.isEmpty {
+                    Text("暂无可用的系统日历")
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                        .padding(.vertical, 8)
+                }
+            }
+        }
+    }
+
+    // MARK: - External Subscription Content
+
+    @ViewBuilder
+    private var externalSubscriptionContent: some View {
+        VStack(spacing: 0) {
+            // 订阅列表或空状态
+            if subscriptionViewModel.subscriptions.isEmpty {
+                // 空状态提示
+                VStack(spacing: 8) {
+                    Image(systemName: "calendar.badge.plus")
+                        .font(.system(size: 32))
+                        .foregroundColor(.secondary)
+
+                    VStack(spacing: 4) {
+                        Text("暂无外部订阅")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.secondary)
+
+                        Text("点击下方「添加订阅」按钮开始")
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 20)
+            } else {
+                // 订阅列表
+                ForEach(subscriptionViewModel.subscriptions) { subscription in
+                    ExternalSubscriptionCompactRow(
+                        subscription: subscription,
+                        themeColors: themeManager.effectiveColors,
+                        onToggle: {
+                            Task {
+                                await subscriptionViewModel.toggleSubscription(subscription.id)
+                            }
+                        },
+                        onUpdate: { updatedSubscription in
+                            Task {
+                                await subscriptionViewModel.updateSubscription(updatedSubscription)
+                            }
+                        },
+                        onDelete: {
+                            subscriptionViewModel.confirmDelete(subscription)
+                        }
+                    )
+                }
+            }
+
+            // 操作按钮（在列表底部）
+            Divider()
+                .padding(.top, 8)
+                .padding(.bottom, 8)
+
+            HStack(spacing: 12) {
+                // 添加订阅按钮（主按钮）
+                Button(action: {
+                    showingAddSubscription = true
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 13))
+                        Text("添加订阅")
+                    }
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 7)
+                    .background(Color.blue)
+                    .cornerRadius(6)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .help("添加新的外部日历订阅")
+
+                // 刷新全部按钮（仅在有订阅时显示）
+                if !subscriptionViewModel.subscriptions.isEmpty {
+                    Button(action: {
+                        Task {
+                            await subscriptionViewModel.refreshAllSubscriptions()
+                        }
+                    }) {
+                        HStack(spacing: 6) {
+                            if subscriptionViewModel.isRefreshing {
+                                ProgressView()
+                                    .scaleEffect(0.6)
+                                    .frame(width: 12, height: 12)
+                            } else {
+                                Image(systemName: "arrow.clockwise")
+                                    .font(.system(size: 12))
+                            }
+                            Text("刷新全部")
+                        }
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.blue)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 7)
+                        .background(Color.blue.opacity(0.1))
+                        .cornerRadius(6)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .disabled(subscriptionViewModel.isRefreshing)
+                    .help("刷新所有订阅的日历数据")
+                }
+
+                Spacer()
+            }
+        }
+    }
+
+    // MARK: - Permission Status Badge
+
+    private var permissionStatusBadge: some View {
+        HStack(spacing: 4) {
+            statusIcon
+            Text(statusText)
+                .font(.system(size: 10))
+                .foregroundColor(statusColor)
+        }
+        .padding(.horizontal, 6)
+        .padding(.vertical, 3)
+        .background(statusColor.opacity(0.1))
+        .cornerRadius(4)
+    }
+
+    private var statusIcon: some View {
+        Group {
+            switch permissionManager.authorizationStatus {
+            case .authorized:
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 8))
+            case .denied, .restricted:
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 8))
+            case .notDetermined:
+                Image(systemName: "questionmark.circle")
+                    .font(.system(size: 8))
+            @unknown default:
+                Image(systemName: "exclamationmark.circle")
+                    .font(.system(size: 8))
+            }
+        }
+    }
+
+    private var statusText: String {
+        switch permissionManager.authorizationStatus {
+        case .authorized:
+            return "已授权"
+        case .denied:
+            return "已拒绝"
+        case .restricted:
+            return "受限"
+        case .notDetermined:
+            return "未询问"
+        @unknown default:
+            return "未知"
+        }
+    }
+
+    private var statusColor: Color {
+        switch permissionManager.authorizationStatus {
+        case .authorized:
+            return .green
+        case .denied, .restricted:
+            return .red
+        case .notDetermined:
+            return .gray
+        @unknown default:
+            return .orange
+        }
+    }
+}
+
+// MARK: - Add Subscription Sheet View
+
+struct AddSubscriptionSheetView: View {
+    @Binding var isProcessing: Bool
+    let onAdd: (String) -> Void
+    let onCancel: () -> Void
+
+    @State private var urlString = ""
+    @FocusState private var isURLFieldFocused: Bool
+
+    var body: some View {
+        ZStack {
+            // 主内容
+            VStack(spacing: 20) {
+                // 标题
+                Text("添加外部订阅")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+
+                // URL 输入
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("订阅 URL")
+                        .font(.headline)
+
+                    TextField("https://calendar.example.com/calendar.ics", text: $urlString)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .focused($isURLFieldFocused)
+                        .disabled(isProcessing)
+                        .onSubmit {
+                            // 回车键提交
+                            if !urlString.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isProcessing {
+                                onAdd(urlString)
+                            }
+                        }
+
+                    Text("支持 http://、https:// 和 webcal:// 协议")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+
+                // 按钮
+                HStack(spacing: 12) {
+                    Button("取消") {
+                        onCancel()
+                    }
+                    .keyboardShortcut(.escape, modifiers: [])
+                    .disabled(isProcessing)
+
+                    Spacer()
+
+                    Button("添加") {
+                        onAdd(urlString)
+                    }
+                    .disabled(urlString.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isProcessing)
+                }
+            }
+            .padding(24)
+            .frame(width: 400)
+            .opacity(isProcessing ? 0.5 : 1.0)
+            .allowsHitTesting(!isProcessing)
+
+            // Loading 遮罩
+            if isProcessing {
+                VStack(spacing: 16) {
+                    ProgressView()
+                        .scaleEffect(1.5)
+                        .frame(width: 40, height: 40)
+
+                    VStack(spacing: 4) {
+                        Text("正在添加订阅...")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.primary)
+
+                        Text("正在验证并下载日历数据")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .padding(24)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.background)
+                        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
+                )
+            }
+        }
+        .frame(width: 400)
+        .onAppear {
+            isURLFieldFocused = true
         }
     }
 }

@@ -18,38 +18,45 @@ struct CalendarDayCell: View {
 
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: 3) {
-                // 公历日期（加粗提升层级）
-                Text("\(date.day)")
-                    .font(.system(size: calendarSize.dateFontSize, weight: date.isToday ? .bold : .semibold))
-                    .foregroundColor(textColor)
+            ZStack {
+                // 主要内容
+                VStack(spacing: 3) {
+                    // 公历日期（加粗提升层级）
+                    Text("\(date.day)")
+                        .font(.system(size: calendarSize.dateFontSize, weight: date.isToday ? .bold : .semibold))
+                        .foregroundColor(textColor)
 
-                // 副历日期或事件指示点
-                if let secondaryDate = date.secondaryDate {
-                    // 如果有节日，显示节日名称并高亮
-                    if let festival = secondaryDate.festival {
-                        Text(festival)
-                            .font(.system(size: calendarSize.secondaryFontSize, weight: .medium))
-                            .foregroundColor(Color.orange.opacity(0.9))
-                            .lineLimit(1)
-                    } else {
-                        Text(secondaryDate.displayText)
-                            .font(.system(size: calendarSize.secondaryFontSize, weight: .light))
-                            .foregroundColor(themeColors.secondaryTextColor.opacity(0.6))
-                            .lineLimit(1)
-                    }
-                } else if !date.events.isEmpty {
-                    // 圆润的事件指示器（胶囊形状）
-                    HStack(spacing: 3) {
-                        ForEach(date.events.prefix(3)) { event in
-                            Capsule()
-                                .fill(event.color.swiftUIColor.opacity(0.8))
-                                .frame(width: calendarSize.eventIndicatorSize * 1.5,
-                                       height: calendarSize.eventIndicatorSize)
-                                .shadow(color: event.color.swiftUIColor.opacity(0.3), radius: 1, y: 0.5)
+                    // 副历日期
+                    if let secondaryDate = date.secondaryDate {
+                        // 如果有节日，显示节日名称并高亮
+                        if let festival = secondaryDate.festival {
+                            Text(festival)
+                                .font(.system(size: calendarSize.secondaryFontSize, weight: .medium))
+                                .foregroundColor(Color.orange.opacity(0.9))
+                                .lineLimit(1)
+                        } else {
+                            Text(secondaryDate.displayText)
+                                .font(.system(size: calendarSize.secondaryFontSize, weight: .light))
+                                .foregroundColor(themeColors.secondaryTextColor.opacity(0.6))
+                                .lineLimit(1)
                         }
+                    } else {
+                        // 占位空间，保持布局一致
+                        Spacer()
+                            .frame(height: calendarSize.secondaryFontSize)
                     }
-                    .padding(.bottom, 2)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                // 事件指示器 - 固定在底部中央
+                if let indicatorColor = date.eventIndicatorColor {
+                    VStack {
+                        Spacer()
+                        Circle()
+                            .fill(indicatorColor)
+                            .frame(width: 4, height: 4)
+                            .padding(.bottom, 4)
+                    }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

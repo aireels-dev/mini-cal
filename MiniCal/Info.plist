@@ -20,5 +20,7 @@
 	<string>11.0</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>MiniCal需要访问您的日历以显示会议和事件。</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>MiniCal需要完全访问您的日历以同步和管理事件、订阅外部日历。</string>
 </dict>
 </plist>

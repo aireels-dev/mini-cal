@@ -46,16 +46,7 @@ class CalendarViewModel: ObservableObject {
         return calendar.isDate(currentMonth, equalTo: today, toGranularity: .month)
     }
 
-    init(calendarService: CalendarService = CalendarService(),
-         settingsManager: SettingsManager = SettingsManager.shared) {
-        self.calendarService = calendarService
-        self.settingsManager = settingsManager
-        self.currentMonth = Date()
-
-        setupObservers()
-        loadCurrentMonth()
-    }
-
+  
     // MARK: - Setup
 
     private func setupObservers() {
@@ -88,6 +79,9 @@ class CalendarViewModel: ObservableObject {
             calendarDates = await calendarService.generateMonth(for: currentMonth, secondaryCalendar: secondaryCalendar)
             monthYearText = calendarService.monthYearText(for: currentMonth)
 
+            // 加载当月事件并填充到 calendarDates
+            await loadAndPopulateEvents()
+
             // 动画完成后重置立即生效的状态
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                 self.currentNavigationType = .none
@@ -95,6 +89,44 @@ class CalendarViewModel: ObservableObject {
             }
 
             complete()
+        }
+    }
+
+    /// 加载当月事件并填充到日历日期中
+    private func loadAndPopulateEvents() async {
+        let calendar = Calendar.current
+        guard let startDate = calendar.dateInterval(of: .month, for: currentMonth)?.start,
+              let endDate = calendar.date(byAdding: .month, value: 1, to: startDate) else {
+            Logger.error("Failed to calculate date range for month", category: Logger.calendar)
+            return
+        }
+
+        do {
+            let fetchedEvents = try await eventService.getEvents(in: DateRange(startDate: startDate, endDate: endDate))
+
+            await MainActor.run {
+                events = fetchedEvents
+
+                // 将事件填充到对应的 calendarDates
+                for index in calendarDates.indices {
+                    let date = calendarDates[index].gregorianDate
+                    let dayEvents = fetchedEvents.filter { event in
+                        calendar.isDate(event.startDate, inSameDayAs: date)
+                    }
+                    calendarDates[index].calendarEvents = dayEvents
+                }
+
+                isLoadingEvents = false
+                eventLoadError = nil
+            }
+
+            Logger.debug("Loaded \(fetchedEvents.count) events for current month", category: Logger.calendar)
+        } catch {
+            await MainActor.run {
+                isLoadingEvents = false
+                eventLoadError = error
+            }
+            Logger.error("Failed to load events for month: \(error)", category: Logger.calendar)
         }
     }
 
@@ -171,5 +203,134 @@ class CalendarViewModel: ObservableObject {
 
     func weekdayHeaders() -> [String] {
         return ["周日", "周一", "周二", "周三", "周四", "周五", "周六"]
+    }
+
+    // MARK: - Event Management
+
+    @Published var events: [CalendarEvent] = []
+    @Published var isLoadingEvents = false
+    @Published var eventLoadError: Error?
+
+    private let eventService: CalendarEventService
+    private let subscriptionService: CalendarSubscriptionService
+    let syncStatusMonitor: SyncStatusMonitor
+
+    init(calendarService: CalendarService = CalendarService(),
+         settingsManager: SettingsManager = SettingsManager.shared,
+         eventService: CalendarEventService = CalendarEventService(),
+         subscriptionService: CalendarSubscriptionService = CalendarSubscriptionService(),
+         syncStatusMonitor: SyncStatusMonitor = SyncStatusMonitor()) {
+        self.calendarService = calendarService
+        self.settingsManager = settingsManager
+        self.eventService = eventService
+        self.subscriptionService = subscriptionService
+        self.syncStatusMonitor = syncStatusMonitor
+        self.currentMonth = Date()
+
+        setupObservers()
+        loadCurrentMonth()
+        setupEventObservers()
+    }
+
+    private func setupEventObservers() {
+        // 监听同步状态变化
+        syncStatusMonitor.$overallSyncStatus
+            .sink { [weak self] status in
+                if status == .idle {
+                    self?.loadEventsForCurrentMonth()
+                }
+            }
+            .store(in: &cancellables)
+
+        // 监听选中的日期变化，加载对应日期的事件
+        $selectedDate
+            .compactMap { $0 }
+            .sink { [weak self] date in
+                self?.loadEvents(for: date)
+            }
+            .store(in: &cancellables)
+    }
+
+    func loadEventsForCurrentMonth() {
+        let calendar = Calendar.current
+        let startDate = calendar.dateInterval(of: .month, for: currentMonth)?.start ?? currentMonth
+        let endDate = calendar.date(byAdding: .month, value: 1, to: startDate)!
+
+        loadEvents(in: DateRange(startDate: startDate, endDate: endDate))
+    }
+
+    func loadEvents(for date: Date) {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: date)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+
+        loadEvents(in: DateRange(startDate: startOfDay, endDate: endOfDay))
+    }
+
+    func loadEvents(in dateRange: DateRange) {
+        isLoadingEvents = true
+        eventLoadError = nil
+
+        Task { @MainActor in
+            do {
+                let fetchedEvents = try await eventService.getEvents(in: dateRange)
+                events = fetchedEvents
+                isLoadingEvents = false
+            } catch {
+                eventLoadError = error
+                isLoadingEvents = false
+                Logger.error("Failed to load events: \(error)", category: Logger.calendar)
+            }
+        }
+    }
+
+    func getEventsForDate(_ date: Date) -> [CalendarEvent] {
+        let calendar = Calendar.current
+        return events.filter { event in
+            calendar.isDate(event.startDate, inSameDayAs: date)
+        }
+    }
+
+    func refreshEvents() {
+        loadEventsForCurrentMonth()
+    }
+
+    // MARK: - Event Actions
+
+    func createEvent(_ event: CalendarEvent) async throws {
+        try await eventService.createEvent(event)
+        refreshEvents()
+    }
+
+    func updateEvent(_ event: CalendarEvent) async throws {
+        try await eventService.updateEvent(event)
+        refreshEvents()
+    }
+
+    func deleteEvent(_ event: CalendarEvent) async throws {
+        try await eventService.deleteEvent(event.id)
+        refreshEvents()
+    }
+
+    // MARK: - Subscription Management
+
+    func refreshAllSubscriptions() async {
+        do {
+            try await subscriptionService.getAllSubscriptions()
+                .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+                .store(in: &cancellables)
+        } catch {
+            Logger.error("Failed to refresh subscriptions: \(error)", category: Logger.calendar)
+        }
+    }
+
+    func addSubscription(_ subscription: CalendarSubscription) async throws {
+        try await subscriptionService.addSubscription(subscription)
+        refreshEvents()
+    }
+
+    func removeSubscription(_ subscriptionId: UUID) async throws {
+        try await subscriptionService.removeSubscription(subscriptionId)
+        refreshEvents()
     }
 }
