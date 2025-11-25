@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CalendarView: View {
-    @StateObject private var viewModel = CalendarViewModel()
+    @ObservedObject var viewModel: CalendarViewModel
     @ObservedObject private var settingsManager = SettingsManager.shared
     @ObservedObject private var themeManager = ThemeManager.shared
     @State private var selectedDateForDetail: CalendarDate?
@@ -16,6 +16,10 @@ struct CalendarView: View {
     @State private var settingsKeyMonitor: Any?
 
     var openSettingsAction: (() -> Void)?
+
+    init(viewModel: CalendarViewModel? = nil) {
+        self.viewModel = viewModel ?? CalendarViewModel()
+    }
 
     private var effectiveColors: ThemeColors {
         // 使用ThemeManager获取当前有效的主题颜色（处理系统跟随）
@@ -82,9 +86,49 @@ struct CalendarView: View {
                         print("Event tapped: \(event.title)")
                     },
                     onManageEvents: {
-                        // 打开事件管理界面
+                        // 关闭事件详情弹窗
                         showEventDetail = false
-                        // TODO: 打开事件详情/编辑界面
+                        // 打开设置窗口（订阅管理部分）
+                        openSettingsAction?()
+                        // 发送通知定位到订阅管理标签
+                        NotificationCenter.default.post(name: .openSubscriptionManagement, object: nil)
+                    },
+                    onSaveEvent: { event in
+                        Task {
+                            do {
+                                try await viewModel.createEvent(event)
+                                Logger.info("Created local event: \(event.title)", category: Logger.calendar)
+
+                                // 保存选中的日期
+                                let savedDate = selectedDateForDetail?.gregorianDate ?? Date()
+
+                                // 立即刷新日历数据
+                                await MainActor.run {
+                                    viewModel.loadCurrentMonth()
+                                }
+
+                                // 等待数据加载完成后重新打开Popover显示更新后的事件
+                                try await Task.sleep(nanoseconds: 300_000_000)  // 0.3秒
+
+                                await MainActor.run {
+                                    // 关闭Popover
+                                    showEventDetail = false
+
+                                    // 短暂延迟后重新打开，显示更新后的数据
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        // 重新查找更新后的日期数据
+                                        if let updatedDate = viewModel.calendarDates.first(where: {
+                                            Calendar.current.isDate($0.gregorianDate, inSameDayAs: savedDate)
+                                        }) {
+                                            selectedDateForDetail = updatedDate
+                                            showEventDetail = true
+                                        }
+                                    }
+                                }
+                            } catch {
+                                Logger.error("Failed to create event: \(error)", category: Logger.calendar)
+                            }
+                        }
                     }
                 )
             }

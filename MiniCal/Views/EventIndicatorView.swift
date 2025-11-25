@@ -25,7 +25,7 @@ struct EventIndicatorView: View {
     private func indicatorCircle(color: EventColor, index: Int) -> some View {
         Circle()
             .fill(color.swiftUIColor)
-            .frame(width: 6, height: 6)
+            .frame(width: 5.5, height: 5.5)
             .scaleEffect(1.0)
             .animation(
                 .easeInOut(duration: 0.3).delay(Double(index) * 0.1),
@@ -94,7 +94,7 @@ struct MultiEventIndicatorView: View {
                     let color = index < colors.count ? colors[index] : .blue
                     Circle()
                         .fill(color.swiftUIColor)
-                        .frame(width: 6, height: 6)
+                        .frame(width: 5.5, height: 5.5)
                 }
             }
         }
@@ -127,7 +127,7 @@ struct MultiEventIndicatorView: View {
                     let color = index < colors.count ? colors[index] : .blue
                     Circle()
                         .fill(color.swiftUIColor)
-                        .frame(width: 6, height: 6)
+                        .frame(width: 5.5, height: 5.5)
                 }
                 if count > 3 {
                     Text("+\(count - 3)")
@@ -148,7 +148,7 @@ struct MultiEventIndicatorView: View {
                     let color = index < colors.count ? colors[index] : .blue
                     Circle()
                         .fill(color.swiftUIColor)
-                        .frame(width: 6, height: 6)
+                        .frame(width: 5.5, height: 5.5)
                 }
                 if count > 3 {
                     Text("+\(count - 3)")
@@ -183,7 +183,7 @@ struct MultiEventIndicatorView: View {
 
                     Circle()
                         .fill(color.swiftUIColor)
-                        .frame(width: 6, height: 6)
+                        .frame(width: 5.5, height: 5.5)
                         .offset(x: x, y: y)
                 }
 

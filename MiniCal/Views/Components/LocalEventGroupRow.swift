@@ -1,30 +1,21 @@
 //
-//  SystemCalendarRow.swift
+//  LocalEventGroupRow.swift
 //  MiniCal
 //
-//  系统日历行视图组件（支持行内颜色编辑）
+//  本地事件组行视图（组级别管理）
 //
 
 import SwiftUI
-import EventKit
 
-struct SystemCalendarRow: View {
-    let calendar: EKCalendar
-    @Binding var isEnabled: Bool
+struct LocalEventGroupRow: View {
     let themeColors: ThemeColors
-    let permissionManager: PermissionManager  // 新增：PermissionManager引用
-    let eventCount: Int  // 事件数
-    let onToggle: () -> Void
-    let onColorUpdate: (EventColor) -> Void  // 新增：颜色更新回调
+    let groupConfig: LocalEventGroupConfig
+    let eventCount: Int
+    let onColorUpdate: (EventColor) -> Void
 
     @State private var isHovered = false
     @State private var isEditingColor = false
     @State private var editColor: EventColor = .blue
-
-    // 计算显示颜色
-    private var displayColor: NSColor {
-        permissionManager.getDisplayColor(for: calendar)
-    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -53,12 +44,12 @@ struct SystemCalendarRow: View {
 
     private var normalView: some View {
         HStack(spacing: 12) {
-            // 日历颜色指示器（可点击编辑）
+            // 组颜色指示器（可点击编辑）
             Button(action: {
                 startEditingColor()
             }) {
                 Circle()
-                    .fill(Color(displayColor))
+                    .fill(groupConfig.color.swiftUIColor)
                     .frame(width: 12, height: 12)
                     .overlay(
                         Circle()
@@ -68,41 +59,32 @@ struct SystemCalendarRow: View {
             .buttonStyle(PlainButtonStyle())
             .help("点击编辑颜色")
 
-            // 日历标题
+            // 组标题和事件数
             VStack(alignment: .leading, spacing: 2) {
-                Text(calendar.title)
+                Text(groupConfig.title)
                     .font(.system(size: 13, weight: .medium))
                     .foregroundColor(themeColors.textColor)
 
                 HStack(spacing: 8) {
-                    // 日历来源
-                    if let source = calendar.source?.title {
-                        Text(localizedSourceName(source))
-                            .font(.system(size: 11))
-                            .foregroundColor(themeColors.secondaryTextColor)
-                    }
-
                     // 事件数量
                     if eventCount > 0 {
                         Text("\(eventCount) 个事件")
                             .font(.system(size: 11))
                             .foregroundColor(themeColors.secondaryTextColor)
+                    } else {
+                        Text("暂无事件")
+                            .font(.system(size: 11))
+                            .foregroundColor(themeColors.secondaryTextColor.opacity(0.6))
                     }
                 }
             }
 
             Spacer()
 
-            // 启用/禁用开关
-            Toggle("", isOn: $isEnabled)
-                .toggleStyle(.switch)
-                .tint(themeColors.accentColor)
-                .labelsHidden()
-                .onChange(of: isEnabled) { oldValue, newValue in
-                    if oldValue != newValue {
-                        onToggle()
-                    }
-                }
+            // 启用状态（始终启用，仅显示）
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundColor(themeColors.accentColor)
+                .font(.system(size: 16))
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 8)
@@ -170,8 +152,7 @@ struct SystemCalendarRow: View {
     // MARK: - Editing Actions
 
     private func startEditingColor() {
-        // 从当前显示颜色查找最接近的 EventColor
-        editColor = findClosestEventColor(from: displayColor)
+        editColor = groupConfig.color
         isEditingColor = true
     }
 
@@ -187,54 +168,24 @@ struct SystemCalendarRow: View {
             isEditingColor = false
         }
     }
-
-    /// 从 NSColor 查找最接近的 EventColor
-    private func findClosestEventColor(from nsColor: NSColor) -> EventColor {
-        let color = Color(nsColor)
-
-        // 尝试匹配系统预设颜色
-        for eventColor in EventColor.allCases {
-            if eventColor.swiftUIColor == color {
-                return eventColor
-            }
-        }
-
-        // 如果没有精确匹配，返回默认蓝色
-        return .blue
-    }
-
-    /// 本地化日历源名称
-    private func localizedSourceName(_ source: String) -> String {
-        switch source {
-        case "Subscribed Calendars":
-            return "订阅的日历"
-        case "iCloud":
-            return "iCloud"
-        case "Other":
-            return "其他"
-        case "Default":
-            return "默认"
-        case "Birthdays":
-            return "生日"
-        default:
-            return source
-        }
-    }
 }
 
 #Preview {
-    let calendar = EKCalendar(for: .event, eventStore: EKEventStore())
-    calendar.title = "工作日历"
-    calendar.color = NSColor.blue
+    VStack(spacing: 8) {
+        LocalEventGroupRow(
+            themeColors: .light,
+            groupConfig: .default,
+            eventCount: 15,
+            onColorUpdate: { _ in }
+        )
 
-    return SystemCalendarRow(
-        calendar: calendar,
-        isEnabled: .constant(true),
-        themeColors: .light,
-        permissionManager: PermissionManager.shared,
-        eventCount: 15,
-        onToggle: {},
-        onColorUpdate: { _ in }
-    )
+        LocalEventGroupRow(
+            themeColors: .light,
+            groupConfig: .default,
+            eventCount: 0,
+            onColorUpdate: { _ in }
+        )
+    }
     .padding()
+    .frame(width: 500)
 }

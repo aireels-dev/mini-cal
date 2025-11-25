@@ -94,6 +94,8 @@ class CalendarViewModel: ObservableObject {
 
     /// 加载当月事件并填充到日历日期中
     private func loadAndPopulateEvents() async {
+        let performanceStart = Date()
+
         let calendar = Calendar.current
         guard let startDate = calendar.dateInterval(of: .month, for: currentMonth)?.start,
               let endDate = calendar.date(byAdding: .month, value: 1, to: startDate) else {
@@ -107,20 +109,31 @@ class CalendarViewModel: ObservableObject {
             await MainActor.run {
                 events = fetchedEvents
 
-                // 将事件填充到对应的 calendarDates
+                // 将事件追加到对应的 calendarDates（保留节假日和系统日历事件）
                 for index in calendarDates.indices {
                     let date = calendarDates[index].gregorianDate
                     let dayEvents = fetchedEvents.filter { event in
                         calendar.isDate(event.startDate, inSameDayAs: date)
                     }
-                    calendarDates[index].calendarEvents = dayEvents
+
+                    // 重要：追加而不是覆盖，保留 CalendarService 已填充的节假日
+                    // 先去重（避免重复添加）
+                    let existingIds = Set(calendarDates[index].calendarEvents.map { $0.id })
+                    let newEvents = dayEvents.filter { !existingIds.contains($0.id) }
+                    calendarDates[index].calendarEvents.append(contentsOf: newEvents)
                 }
 
                 isLoadingEvents = false
                 eventLoadError = nil
             }
 
-            Logger.debug("Loaded \(fetchedEvents.count) events for current month", category: Logger.calendar)
+            let duration = Date().timeIntervalSince(performanceStart)
+            Logger.debug("Loaded \(fetchedEvents.count) events for current month in \(String(format: "%.2f", duration))s", category: Logger.calendar)
+
+            // 性能警告：如果加载时间超过1秒
+            if duration > 1.0 {
+                Logger.warning("Event loading took \(String(format: "%.2f", duration))s, consider optimization", category: Logger.performance)
+            }
         } catch {
             await MainActor.run {
                 isLoadingEvents = false
@@ -242,13 +255,8 @@ class CalendarViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
-        // 监听选中的日期变化，加载对应日期的事件
-        $selectedDate
-            .compactMap { $0 }
-            .sink { [weak self] date in
-                self?.loadEvents(for: date)
-            }
-            .store(in: &cancellables)
+        // 移除重复的 selectedDate 观察者逻辑
+        // 事件加载由 loadCurrentMonth() 统一处理
     }
 
     func loadEventsForCurrentMonth() {
@@ -285,10 +293,13 @@ class CalendarViewModel: ObservableObject {
     }
 
     func getEventsForDate(_ date: Date) -> [CalendarEvent] {
-        let calendar = Calendar.current
-        return events.filter { event in
-            calendar.isDate(event.startDate, inSameDayAs: date)
+        // 优化：直接从 calendarDates 获取，避免重复过滤
+        guard let calendarDate = calendarDates.first(where: {
+            Calendar.current.isDate($0.gregorianDate, inSameDayAs: date)
+        }) else {
+            return []
         }
+        return calendarDate.calendarEvents
     }
 
     func refreshEvents() {

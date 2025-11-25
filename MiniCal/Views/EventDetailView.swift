@@ -14,6 +14,8 @@ struct EventDetailView: View {
     @EnvironmentObject var viewModel: CalendarViewModel
 
     @State private var showingEventCreation = false
+    @State private var showingEventDetail = false
+    @State private var selectedEvent: CalendarEvent?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -131,8 +133,12 @@ struct EventDetailView: View {
                 }
             )
         }
-        .onAppear {
-            viewModel.loadEvents(for: date.gregorianDate)
+        // 移除重复加载：事件已由 CalendarViewModel 统一加载
+        .sheet(isPresented: $showingEventDetail) {
+            if let event = selectedEvent {
+                EventDetailModalView(event: event)
+                    .environmentObject(viewModel)
+            }
         }
     }
 
@@ -144,8 +150,8 @@ struct EventDetailView: View {
     }
 
     private func handleEventTap(_ event: CalendarEvent) {
-        // 这里可以实现事件详情显示或其他操作
-        print("Event tapped: \(event.title)")
+        selectedEvent = event
+        showingEventDetail = true
     }
 }
 

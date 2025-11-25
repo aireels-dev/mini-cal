@@ -35,9 +35,8 @@ struct CalendarGridView: View {
                         calendarSize: calendarSize,
                         onTap: {
                             viewModel.selectDate(date)
-                            if !date.events.isEmpty {
-                                onDateTap?(date)
-                            }
+                            // 所有日期均可点击，显示事件详情（即使没有事件）
+                            onDateTap?(date)
                         }
                     )
                     .frame(height: calendarSize.cellSize)

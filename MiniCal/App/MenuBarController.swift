@@ -13,6 +13,7 @@ class MenuBarController: NSObject {
     private var statusItem: NSStatusItem!
     private var popover: NSPopover!
     private var menuBarViewModel: MenuBarViewModel!
+    private var calendarViewModel: CalendarViewModel!  // 日历视图模型
     private var menuBarHostingView: NSHostingController<MenuBarView>?
     private var settingsWindow: NSWindow?
     private var settingsManager = SettingsManager.shared
@@ -45,6 +46,7 @@ class MenuBarController: NSObject {
 
     private func setupViewModel() {
         menuBarViewModel = MenuBarViewModel()
+        calendarViewModel = CalendarViewModel()
     }
 
     private func setupMenuBar() {
@@ -160,7 +162,7 @@ class MenuBarController: NSObject {
         popover.behavior = .transient
 
         // Set calendar view as popover content with settings action
-        var calendarView = CalendarView()
+        var calendarView = CalendarView(viewModel: calendarViewModel)
         calendarView.openSettingsAction = { [weak self] in
             self?.openSettings()
         }
@@ -344,7 +346,7 @@ class MenuBarController: NSObject {
             NSApp.activate(ignoringOtherApps: true)
         } else {
             // 创建新的设置窗口
-            let settingsView = SettingsView()
+            let settingsView = SettingsView(calendarViewModel: calendarViewModel)
             let hostingController = NSHostingController(rootView: settingsView)
 
             let window = NSWindow(contentViewController: hostingController)

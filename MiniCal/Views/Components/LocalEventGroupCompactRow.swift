@@ -1,17 +1,17 @@
 //
-//  ExternalSubscriptionCompactRow.swift
+//  LocalEventGroupCompactRow.swift
 //  MiniCal
 //
-//  外部订阅紧凑行视图组件（支持行内编辑）
+//  本地事件组紧凑行视图组件（支持行内编辑）
 //
 
 import SwiftUI
 
-struct ExternalSubscriptionCompactRow: View {
-    let subscription: CalendarSubscription
+struct LocalEventGroupCompactRow: View {
+    let group: LocalEventGroupConfig
+    let eventCount: Int
     let themeColors: ThemeColors
-    let onToggle: () -> Void
-    let onUpdate: (CalendarSubscription) -> Void  // 替换 onEdit
+    let onUpdate: (LocalEventGroupConfig) -> Void
     let onDelete: () -> Void
 
     @State private var isHovered = false
@@ -28,7 +28,7 @@ struct ExternalSubscriptionCompactRow: View {
                 // 颜色编辑模式
                 colorEditingView
             } else if isEditing {
-                // 编辑模式
+                // 编辑模式（仅非默认组）
                 editingView
             } else {
                 // 正常显示模式
@@ -52,7 +52,7 @@ struct ExternalSubscriptionCompactRow: View {
                 onDelete()
             }
         } message: {
-            Text("确定要删除订阅「\(subscription.title)」吗？")
+            Text("确定要删除类别「\(group.title)」吗？该组的所有事件将移动到默认中。")
         }
     }
 
@@ -60,12 +60,12 @@ struct ExternalSubscriptionCompactRow: View {
 
     private var normalView: some View {
         HStack(spacing: 12) {
-            // 订阅颜色指示器（可点击编辑）
+            // 组颜色指示器（可点击编辑）
             Button(action: {
                 startEditingColor()
             }) {
                 Circle()
-                    .fill(subscription.color.swiftUIColor)
+                    .fill(group.color.swiftUIColor)
                     .frame(width: 12, height: 12)
                     .overlay(
                         Circle()
@@ -75,23 +75,36 @@ struct ExternalSubscriptionCompactRow: View {
             .buttonStyle(PlainButtonStyle())
             .help("点击编辑颜色")
 
-            // 订阅标题
+            // 组标题
             VStack(alignment: .leading, spacing: 2) {
-                Text(subscription.title)
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(themeColors.textColor)
-                    .lineLimit(1)
+                HStack(spacing: 6) {
+                    Text(group.title)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(themeColors.textColor)
+                        .lineLimit(1)
 
-                HStack(spacing: 8) {
-                    // 同步状态
-                    syncStatusBadge
+                    // 默认组标记
+                    if group.isDefault {
+                        Text("默认")
+                            .font(.system(size: 10))
+                            .foregroundColor(themeColors.accentColor)
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 1)
+                            .background(themeColors.accentColor.opacity(0.1))
+                            .cornerRadius(3)
+                    }
                 }
+
+                // 事件数量（始终显示）
+                Text(eventCount > 0 ? "\(eventCount) 个事件" : "暂无事件")
+                    .font(.system(size: 11))
+                    .foregroundColor(themeColors.secondaryTextColor)
             }
 
             Spacer()
 
-            // 操作按钮（悬停时显示）
-            if isHovered {
+            // 操作按钮（悬停时显示，默认组不显示删除按钮）
+            if isHovered && !group.isDefault {
                 HStack(spacing: 8) {
                     // 编辑按钮
                     Button(action: {
@@ -102,7 +115,7 @@ struct ExternalSubscriptionCompactRow: View {
                             .foregroundColor(themeColors.accentColor)
                     }
                     .buttonStyle(PlainButtonStyle())
-                    .help("编辑订阅")
+                    .help("编辑类别")
 
                     // 删除按钮
                     Button(action: {
@@ -113,26 +126,15 @@ struct ExternalSubscriptionCompactRow: View {
                             .foregroundColor(.red)
                     }
                     .buttonStyle(PlainButtonStyle())
-                    .help("删除订阅")
+                    .help("删除类别")
                 }
             }
-
-            // 启用/禁用开关
-            Toggle("", isOn: .constant(subscription.isEnabled))
-                .toggleStyle(.switch)
-                .tint(themeColors.accentColor)
-                .labelsHidden()
-                .onChange(of: subscription.isEnabled) { oldValue, newValue in
-                    if oldValue != newValue {
-                        onToggle()
-                    }
-                }
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 8)
     }
 
-    // MARK: - Editing View
+    // MARK: - Editing View (仅非默认组)
 
     private var editingView: some View {
         VStack(spacing: 8) {
@@ -143,28 +145,13 @@ struct ExternalSubscriptionCompactRow: View {
                     .foregroundColor(themeColors.secondaryTextColor)
                     .frame(width: 40, alignment: .leading)
 
-                TextField("订阅名称", text: $editTitle)
+                TextField("组名称", text: $editTitle)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .focused($isTitleFieldFocused)
                     .font(.system(size: 13))
             }
 
-            // 第二行：URL 显示（只读）
-            HStack(spacing: 8) {
-                Text("URL")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(themeColors.secondaryTextColor)
-                    .frame(width: 40, alignment: .leading)
-
-                Text(subscription.url?.absoluteString ?? "")
-                    .font(.system(size: 11))
-                    .foregroundColor(themeColors.secondaryTextColor)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-
-            // 第三行：颜色选择
+            // 第二行：颜色选择
             HStack(spacing: 8) {
                 Text("颜色")
                     .font(.system(size: 12, weight: .medium))
@@ -196,7 +183,7 @@ struct ExternalSubscriptionCompactRow: View {
                 }
             }
 
-            // 第四行：操作按钮
+            // 第三行：操作按钮
             HStack(spacing: 8) {
                 Spacer()
 
@@ -218,80 +205,6 @@ struct ExternalSubscriptionCompactRow: View {
         .padding(.horizontal, 8)
         .background(themeColors.accentColor.opacity(0.05))
         .cornerRadius(6)
-    }
-
-    // MARK: - Sync Status Badge
-
-    private var syncStatusBadge: some View {
-        HStack(spacing: 3) {
-            statusIcon
-            Text(statusText)
-                .font(.system(size: 10))
-                .foregroundColor(statusColor)
-        }
-        .padding(.horizontal, 4)
-        .padding(.vertical, 2)
-        .background(statusColor.opacity(0.1))
-        .cornerRadius(3)
-    }
-
-    private var statusIcon: some View {
-        Group {
-            switch subscription.syncStatus.state {
-            case .idle:
-                Image(systemName: "pause.circle")
-                    .font(.system(size: 8))
-            case .syncing:
-                ProgressView()
-                    .scaleEffect(0.5)
-            case .success:
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 8))
-            case .failed:
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.system(size: 8))
-            case .disabled:
-                Image(systemName: "xmark.circle")
-                    .font(.system(size: 8))
-            case .rateLimited:
-                Image(systemName: "clock")
-                    .font(.system(size: 8))
-            }
-        }
-    }
-
-    private var statusText: String {
-        switch subscription.syncStatus.state {
-        case .idle:
-            return "未同步"
-        case .syncing:
-            return "同步中"
-        case .success:
-            return "完成"
-        case .failed:
-            return "失败"
-        case .disabled:
-            return "已禁用"
-        case .rateLimited:
-            return "限流"
-        }
-    }
-
-    private var statusColor: Color {
-        switch subscription.syncStatus.state {
-        case .idle:
-            return .gray
-        case .syncing:
-            return .blue
-        case .success:
-            return .green
-        case .failed:
-            return .red
-        case .disabled:
-            return .gray
-        case .rateLimited:
-            return .orange
-        }
     }
 
     // MARK: - Color Editing View
@@ -356,7 +269,7 @@ struct ExternalSubscriptionCompactRow: View {
     // MARK: - Editing Actions
 
     private func startEditingColor() {
-        editColor = subscription.color
+        editColor = group.color
         isEditingColor = true
     }
 
@@ -367,10 +280,10 @@ struct ExternalSubscriptionCompactRow: View {
     }
 
     private func saveColorChanges() {
-        var updatedSubscription = subscription
-        updatedSubscription.color = editColor
+        var updatedGroup = group
+        updatedGroup.color = editColor
 
-        onUpdate(updatedSubscription)
+        onUpdate(updatedGroup)
 
         withAnimation(.easeInOut(duration: 0.2)) {
             isEditingColor = false
@@ -378,8 +291,13 @@ struct ExternalSubscriptionCompactRow: View {
     }
 
     private func startEditing() {
-        editTitle = subscription.title
-        editColor = subscription.color
+        // 默认组不允许编辑名称
+        if group.isDefault {
+            return
+        }
+
+        editTitle = group.title
+        editColor = group.color
         isEditing = true
         // 延迟聚焦，确保 TextField 已经渲染
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -396,11 +314,11 @@ struct ExternalSubscriptionCompactRow: View {
     }
 
     private func saveChanges() {
-        var updatedSubscription = subscription
-        updatedSubscription.title = editTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-        updatedSubscription.color = editColor
+        var updatedGroup = group
+        updatedGroup.title = editTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        updatedGroup.color = editColor
 
-        onUpdate(updatedSubscription)
+        onUpdate(updatedGroup)
 
         withAnimation(.easeInOut(duration: 0.2)) {
             isEditing = false
@@ -409,34 +327,29 @@ struct ExternalSubscriptionCompactRow: View {
 }
 
 #Preview {
-    var subscription1 = CalendarSubscription(
-        title: "工作日历",
-        color: .blue,
-        subscriptionType: .external
-    )
-    subscription1.eventCount = 15
+    var defaultGroup = LocalEventGroupConfig.default
 
-    var subscription2 = CalendarSubscription(
-        title: "节假日",
-        color: .red,
-        subscriptionType: .external
+    var customGroup = LocalEventGroupConfig(
+        id: UUID(),
+        title: "工作事件",
+        color: .blue,
+        isEnabled: true,
+        isDefault: false
     )
-    subscription2.eventCount = 8
-    subscription2.syncStatus.state = .failed
 
     return VStack(spacing: 8) {
-        ExternalSubscriptionCompactRow(
-            subscription: subscription1,
+        LocalEventGroupCompactRow(
+            group: defaultGroup,
+            eventCount: 5,
             themeColors: .light,
-            onToggle: {},
             onUpdate: { _ in },
             onDelete: {}
         )
 
-        ExternalSubscriptionCompactRow(
-            subscription: subscription2,
+        LocalEventGroupCompactRow(
+            group: customGroup,
+            eventCount: 3,
             themeColors: .light,
-            onToggle: {},
             onUpdate: { _ in },
             onDelete: {}
         )

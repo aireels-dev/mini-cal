@@ -28,9 +28,9 @@ struct CalendarEvent: Identifiable, Codable, Hashable {
     var recurrenceRule: String?
     var attendees: [EventAttendee]?
 
-    var subscriptionId: UUID?
+    var subscriptionId: UUID?  // 所属组的ID（指向CalendarSubscription或系统日历）
     var eventIdentifier: String?
-    var source: EventSource
+    var source: EventSource  // 事件类别：系统同步/外部订阅/本地管理
 
     var isCreatedLocally: Bool
     var isEditable: Bool
@@ -66,18 +66,15 @@ struct CalendarEvent: Identifiable, Codable, Hashable {
 
     // MARK: - Display Properties
 
-    /// 事件显示颜色 - 从订阅中获取，或使用默认颜色
-    var displayColor: Color {
-        // 如果事件关联了订阅，从订阅中获取颜色
-        // 这里需要通过订阅服务查询，暂时返回默认颜色
-        // TODO: 实现从订阅服务获取颜色的逻辑
-        return source.defaultColor
-    }
-
     /// 事件来源名称
     var sourceName: String {
         // TODO: 对于外部订阅，从订阅服务获取实际的订阅名称
         return source.displayName
+    }
+
+    /// 获取事件显示颜色（从所属组获取）
+    func getDisplayColor() -> Color {
+        return CalendarGroupService.shared.getColor(for: self)
     }
 
     init(title: String, startDate: Date, endDate: Date, source: EventSource, isAllDay: Bool = false) {

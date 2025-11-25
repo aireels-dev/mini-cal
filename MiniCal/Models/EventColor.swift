@@ -58,4 +58,17 @@ enum EventColor: String, Codable, CaseIterable {
         case .brown: return "棕色"
         }
     }
+
+    /// 从 Color 创建 EventColor（最佳匹配）
+    init?(from color: Color) {
+        // 尝试找到最匹配的颜色
+        for eventColor in EventColor.allCases {
+            if eventColor.swiftUIColor == color {
+                self = eventColor
+                return
+            }
+        }
+        // 如果没有精确匹配，返回 nil
+        return nil
+    }
 }

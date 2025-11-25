@@ -19,7 +19,7 @@ struct DayEventRow: View {
             HStack(spacing: 12) {
                 // 事件颜色指示器
                 Circle()
-                    .fill(event.displayColor)
+                    .fill(event.getDisplayColor())
                     .frame(width: 8, height: 8)
 
                 // 事件信息
@@ -78,6 +78,7 @@ struct DayEventRow: View {
             )
         }
         .buttonStyle(PlainButtonStyle())
+        .focusable(false)  // 禁用焦点环，去除蓝色边框
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.15)) {
                 isHovered = hovering

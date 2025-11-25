@@ -16,6 +16,7 @@ class SubscriptionManagerViewModel: ObservableObject {
 
     private let subscriptionService: CalendarSubscriptionService
     private let externalCalendarService: ExternalCalendarService
+    private let eventService: CalendarEventService
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - State
@@ -24,9 +25,11 @@ class SubscriptionManagerViewModel: ObservableObject {
     private var subscriptionsToDelete: Set<UUID> = []
 
     init(subscriptionService: CalendarSubscriptionService = CalendarSubscriptionService(),
-         externalCalendarService: ExternalCalendarService = ExternalCalendarService()) {
+         externalCalendarService: ExternalCalendarService = ExternalCalendarService(),
+         eventService: CalendarEventService = CalendarEventService()) {
         self.subscriptionService = subscriptionService
         self.externalCalendarService = externalCalendarService
+        self.eventService = eventService
 
         setupObservers()
     }
@@ -41,7 +44,50 @@ class SubscriptionManagerViewModel: ObservableObject {
         Task { @MainActor in
             do {
                 let fetchedSubscriptions = try await subscriptionService.getAllSubscriptions()
-                subscriptions = fetchedSubscriptions.filter { $0.subscriptionType == .external }
+                var externalSubscriptions = fetchedSubscriptions.filter { $0.subscriptionType == .external }
+
+                // 加载每个订阅的事件数
+                for index in externalSubscriptions.indices {
+                    let subscription = externalSubscriptions[index]
+
+                    // 获取该订阅的事件数（使用一个大的日期范围）
+                    let calendar = Calendar.current
+                    let now = Date()
+                    let startDate = calendar.date(byAdding: .year, value: -1, to: now) ?? now
+                    let endDate = calendar.date(byAdding: .year, value: 2, to: now) ?? now
+
+                    do {
+                        let events: [CalendarEvent] = try await withCheckedThrowingContinuation { continuation in
+                            var cancellable: AnyCancellable?
+                            cancellable = eventService.getEvents(
+                                in: DateRange(startDate: startDate, endDate: endDate),
+                                from: [subscription.id]
+                            )
+                            .sink(
+                                receiveCompletion: { completion in
+                                    switch completion {
+                                    case .finished:
+                                        break
+                                    case .failure(let error):
+                                        continuation.resume(throwing: error)
+                                    }
+                                    cancellable?.cancel()
+                                },
+                                receiveValue: { value in
+                                    continuation.resume(returning: value)
+                                    cancellable?.cancel()
+                                }
+                            )
+                        }
+
+                        externalSubscriptions[index].eventCount = events.count
+                    } catch {
+                        Logger.warning("Failed to load event count for subscription \(subscription.title): \(error)", category: Logger.calendar)
+                        // 继续处理其他订阅，不中断整个加载流程
+                    }
+                }
+
+                subscriptions = externalSubscriptions
                 isLoading = false
             } catch {
                 handleError(error)
@@ -316,4 +362,5 @@ extension Notification.Name {
     static let subscriptionAdded = Notification.Name("SubscriptionAdded")
     static let subscriptionDeleted = Notification.Name("SubscriptionDeleted")
     static let subscriptionUpdated = Notification.Name("SubscriptionUpdated")
+    static let openSubscriptionManagement = Notification.Name("OpenSubscriptionManagement")
 }

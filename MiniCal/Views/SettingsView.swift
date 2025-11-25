@@ -11,30 +11,52 @@ import EventKit
 
 struct SettingsView: View {
     @ObservedObject private var settingsManager = SettingsManager.shared
+    @ObservedObject var calendarViewModel: CalendarViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var selectedTab = 0
+
+    init(calendarViewModel: CalendarViewModel? = nil) {
+        self.calendarViewModel = calendarViewModel ?? CalendarViewModel()
+    }
 
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             // 菜单栏设置
             MenuBarSettingsView(settingsManager: settingsManager)
                 .tabItem {
                     Label("菜单栏", systemImage: "menubar.rectangle")
                 }
+                .tag(0)
 
             // 日历设置
-            CalendarSettingsView(settingsManager: settingsManager)
+            CalendarSettingsView(settingsManager: settingsManager, calendarViewModel: calendarViewModel)
                 .tabItem {
                     Label("日历", systemImage: "calendar")
                 }
+                .tag(1)
 
             // 外观设置
             AppearanceSettingsView(settingsManager: settingsManager)
                 .tabItem {
                     Label("外观", systemImage: "paintbrush")
                 }
+                .tag(2)
         }
         .frame(width: 580, height: 700)
         .padding()
+        .onAppear {
+            setupTabNavigationNotification()
+        }
+    }
+
+    private func setupTabNavigationNotification() {
+        NotificationCenter.default.addObserver(
+            forName: .openSubscriptionManagement,
+            object: nil,
+            queue: .main
+        ) { [self] _ in
+            self.selectedTab = 1  // 切换到日历tab
+        }
     }
 }
 
@@ -322,18 +344,24 @@ struct FormatExampleView: View {
 
 struct CalendarSettingsView: View {
     @ObservedObject var settingsManager: SettingsManager
+    @ObservedObject var calendarViewModel: CalendarViewModel
     @State private var localSettings: UserSettings
     @StateObject private var permissionManager = PermissionManager.shared
     @StateObject private var subscriptionViewModel = SubscriptionManagerViewModel()
     @StateObject private var themeManager = ThemeManager.shared
+    @StateObject private var localGroupService = LocalEventGroupService.shared
 
     @State private var showingAddSubscription = false
     @State private var showingAddError = false
     @State private var addErrorMessage = ""
     @State private var isAddingSubscription = false
+    @State private var systemCalendarEventCounts: [String: Int] = [:]  // 系统日历ID -> 事件数
+    @State private var localGroupEventCounts: [UUID: Int] = [:]  // 本地组ID -> 事件数
+    @State private var showingAddLocalGroup = false
 
-    init(settingsManager: SettingsManager) {
+    init(settingsManager: SettingsManager, calendarViewModel: CalendarViewModel) {
         self.settingsManager = settingsManager
+        self.calendarViewModel = calendarViewModel
         self._localSettings = State(initialValue: settingsManager.currentSettings)
     }
 
@@ -356,12 +384,12 @@ struct CalendarSettingsView: View {
                     .foregroundColor(.secondary)
             }
 
-            // Section 2: 系统日历同步
+            // Section 2: 系统同步
             Section {
                 systemCalendarSyncContent
             } header: {
                 HStack {
-                    Text("系统日历同步")
+                    Text("系统同步")
                     Spacer()
                     permissionStatusBadge
                 }
@@ -371,14 +399,34 @@ struct CalendarSettingsView: View {
             Section("外部订阅") {
                 externalSubscriptionContent
             }
+
+            // Section 4: 本地管理
+            Section("本地管理") {
+                localEventGroupContent
+            }
         }
         .formStyle(.grouped)
         .onAppear {
             localSettings = settingsManager.currentSettings
             subscriptionViewModel.loadSubscriptions()
+            loadSystemCalendarEventCounts()
+            loadLocalGroupEventCounts()
         }
         .onChange(of: settingsManager.currentSettings) { newValue in
             localSettings = newValue
+        }
+        .onChange(of: calendarViewModel.events) { oldValue, newValue in
+            // 事件列表变化时重新统计事件数
+            loadSystemCalendarEventCounts()
+            loadLocalGroupEventCounts()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .localEventGroupsDidUpdate)) { _ in
+            // 本地组配置变化时重新加载事件数
+            loadLocalGroupEventCounts()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .subscriptionDidUpdate)) { _ in
+            // 订阅配置变化时重新加载订阅
+            subscriptionViewModel.loadSubscriptions()
         }
         .sheet(isPresented: $showingAddSubscription) {
             AddSubscriptionSheetView(
@@ -490,6 +538,7 @@ struct CalendarSettingsView: View {
                         isEnabled: .constant(true),
                         themeColors: themeManager.effectiveColors,
                         permissionManager: permissionManager,
+                        eventCount: systemCalendarEventCounts[calendar.calendarIdentifier] ?? 0,
                         onToggle: {
                             // TODO: 实现切换系统日历启用状态
                         },
@@ -620,6 +669,148 @@ struct CalendarSettingsView: View {
         }
     }
 
+    // MARK: - Local Event Group Content
+
+    @ViewBuilder
+    private var localEventGroupContent: some View {
+        VStack(spacing: 0) {
+            // 类别列表
+            ForEach(localGroupService.groups) { group in
+                LocalEventGroupCompactRow(
+                    group: group,
+                    eventCount: localGroupEventCounts[group.id] ?? 0,
+                    themeColors: themeManager.effectiveColors,
+                    onUpdate: { updatedGroup in
+                        localGroupService.updateGroup(updatedGroup)
+                        // 刷新日历视图
+                        CalendarGroupService.shared.reloadAllGroups()
+                    },
+                    onDelete: {
+                        // 删除类别并迁移事件到默认
+                        let success = localGroupService.deleteGroup(id: group.id)
+                        if success {
+                            // 迁移该类别的所有事件到默认
+                            migrateEventsToDefaultGroup(fromGroupId: group.id)
+                            // 重新加载事件数
+                            loadLocalGroupEventCounts()
+                            // 刷新日历视图
+                            CalendarGroupService.shared.reloadAllGroups()
+                        }
+                    }
+                )
+            }
+
+            // 操作按钮（在列表底部）
+            Divider()
+                .padding(.top, 8)
+                .padding(.bottom, 8)
+
+            HStack(spacing: 12) {
+                // 添加组按钮
+                Button(action: {
+                    showingAddLocalGroup = true
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 13))
+                        Text("添加类别")
+                    }
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 7)
+                    .background(Color.blue)
+                    .cornerRadius(6)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .help("添加新的本地事件类别")
+
+                Spacer()
+            }
+        }
+        .sheet(isPresented: $showingAddLocalGroup) {
+            AddLocalGroupSheetView(
+                onAdd: { title, color in
+                    localGroupService.addGroup(title: title, color: color)
+                    // 重新加载事件数
+                    loadLocalGroupEventCounts()
+                    // 刷新日历视图
+                    CalendarGroupService.shared.reloadAllGroups()
+                    showingAddLocalGroup = false
+                },
+                onCancel: {
+                    showingAddLocalGroup = false
+                }
+            )
+        }
+    }
+
+    // MARK: - Helper Methods
+
+    private func loadSystemCalendarEventCounts() {
+        // 从calendarViewModel获取所有事件，统计每个系统日历的事件数
+        let allEvents = calendarViewModel.events
+
+        var counts: [String: Int] = [:]
+        for calendar in permissionManager.systemCalendars {
+            // 统计该日历的事件数（通过eventIdentifier或calendarIdentifier匹配）
+            let count = allEvents.filter { event in
+                event.source == .eventKit &&
+                event.eventIdentifier?.contains(calendar.calendarIdentifier) == true
+            }.count
+
+            counts[calendar.calendarIdentifier] = count
+        }
+
+        systemCalendarEventCounts = counts
+    }
+
+    private func loadLocalGroupEventCounts() {
+        // 统计每个本地类别的事件数
+        let allEvents = calendarViewModel.events
+        let defaultGroupId = localGroupService.defaultGroupId
+
+        var counts: [UUID: Int] = [:]
+        for group in localGroupService.groups {
+            if group.isDefault {
+                // 默认类别：包含subscriptionId为该类别ID的事件 + subscriptionId为nil的事件
+                let count = allEvents.filter { event in
+                    event.source == .user && (event.subscriptionId == group.id || event.subscriptionId == nil)
+                }.count
+                counts[group.id] = count
+            } else {
+                // 其他类别：仅统计subscriptionId匹配的事件
+                let count = allEvents.filter { event in
+                    event.source == .user && event.subscriptionId == group.id
+                }.count
+                counts[group.id] = count
+            }
+        }
+
+        localGroupEventCounts = counts
+    }
+
+    private func migrateEventsToDefaultGroup(fromGroupId: UUID) {
+        // 将指定组的所有事件迁移到默认组
+        let defaultGroupId = localGroupService.defaultGroupId
+
+        // 获取需要迁移的事件
+        let eventsToMigrate = calendarViewModel.events.filter { event in
+            event.source == .user && event.subscriptionId == fromGroupId
+        }
+
+        // 更新每个事件的subscriptionId
+        Task {
+            for var event in eventsToMigrate {
+                event.subscriptionId = defaultGroupId
+                // 使用 calendarViewModel 更新事件
+                try? await calendarViewModel.updateEvent(event)
+            }
+
+            Logger.info("Migrated \(eventsToMigrate.count) events from group \(fromGroupId) to default group", category: Logger.calendar)
+        }
+    }
+
     // MARK: - Permission Status Badge
 
     private var permissionStatusBadge: some View {
@@ -679,6 +870,91 @@ struct CalendarSettingsView: View {
             return .gray
         @unknown default:
             return .orange
+        }
+    }
+}
+
+// MARK: - Add Local Group Sheet View
+
+struct AddLocalGroupSheetView: View {
+    let onAdd: (String, EventColor) -> Void
+    let onCancel: () -> Void
+
+    @State private var groupTitle = ""
+    @State private var selectedColor: EventColor = .blue
+    @FocusState private var isTitleFieldFocused: Bool
+
+    var body: some View {
+        VStack(spacing: 20) {
+            // 标题
+            Text("添加本地类别")
+                .font(.title2)
+                .fontWeight(.semibold)
+
+            // 类别名称输入
+            VStack(alignment: .leading, spacing: 8) {
+                Text("类别名称")
+                    .font(.headline)
+
+                TextField("例如：工作、个人、提醒", text: $groupTitle)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .focused($isTitleFieldFocused)
+                    .onSubmit {
+                        // 回车键提交
+                        if !groupTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                            onAdd(groupTitle, selectedColor)
+                        }
+                    }
+            }
+
+            // 颜色选择
+            VStack(alignment: .leading, spacing: 8) {
+                Text("颜色")
+                    .font(.headline)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        ForEach(EventColor.allCases, id: \.self) { color in
+                            Button(action: {
+                                selectedColor = color
+                            }) {
+                                ZStack {
+                                    Circle()
+                                        .fill(color.swiftUIColor)
+                                        .frame(width: 36, height: 36)
+
+                                    if color == selectedColor {
+                                        Image(systemName: "checkmark")
+                                            .font(.system(size: 14, weight: .bold))
+                                            .foregroundColor(.white)
+                                    }
+                                }
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                }
+            }
+
+            // 按钮
+            HStack(spacing: 12) {
+                Button("取消") {
+                    onCancel()
+                }
+                .keyboardShortcut(.escape, modifiers: [])
+
+                Spacer()
+
+                Button("添加") {
+                    onAdd(groupTitle, selectedColor)
+                }
+                .disabled(groupTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
+        }
+        .padding(24)
+        .frame(width: 400)
+        .onAppear {
+            isTitleFieldFocused = true
         }
     }
 }

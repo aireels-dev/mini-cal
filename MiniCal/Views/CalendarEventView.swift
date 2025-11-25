@@ -169,6 +169,7 @@ struct EventRowView: View {
                 isHovered = hovering
             }
         }
+        .focusable(false) // 禁用焦点环，去除蓝色边框
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(event.title), \(timeRangeString)")
     }
@@ -228,9 +229,8 @@ struct EventRowView: View {
     }
 
     private func eventColorForEvent(_ event: CalendarEvent) -> Color {
-        // 这里可以根据事件的订阅源或其他属性来确定颜色
-        // 简化实现，使用默认颜色
-        return .blue
+        // 根据事件来源返回对应颜色
+        return event.getDisplayColor()
     }
 }
 
@@ -238,6 +238,10 @@ struct EventRowView: View {
 struct EventDetailModalView: View {
     let event: CalendarEvent
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var viewModel: CalendarViewModel
+
+    @State private var showingEditView = false
+    @State private var showingDeleteAlert = false
 
     var body: some View {
         NavigationView {
@@ -312,12 +316,32 @@ struct EventDetailModalView: View {
             }
             .navigationTitle("事件详情")
             .toolbar {
-                ToolbarItem(placement: .automatic) {
+                ToolbarItemGroup(placement: .automatic) {
+                    if event.isEditable {
+                        // 删除按钮
+                        Button(action: { showingDeleteAlert = true }) {
+                            Image(systemName: "trash")
+                                .foregroundColor(.red)
+                        }
+                        .help("删除事件")
+                    }
+
                     Button("完成") {
                         presentationMode.wrappedValue.dismiss()
                     }
                 }
             }
+        }
+        .alert("确认删除", isPresented: $showingDeleteAlert) {
+            Button("取消", role: .cancel) {}
+            Button("删除", role: .destructive) {
+                Task {
+                    try await viewModel.deleteEvent(event)
+                    presentationMode.wrappedValue.dismiss()
+                }
+            }
+        } message: {
+            Text("确定要删除事件「\(event.title)」吗？此操作无法撤销。")
         }
     }
 
