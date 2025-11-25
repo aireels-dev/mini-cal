@@ -44,11 +44,17 @@
 
 **Out of Scope (明确禁止)**:
 - 日视图、周视图、年视图
-- 创建、编辑、删除日历事件
 - 提醒和通知功能
-- 第三方日历服务集成（Google Calendar、Outlook 等）
 - 云同步和跨设备设置同步
 - 自定义主题创建（仅预设主题）
+- 复杂的第三方服务 OAuth API 集成
+- 需要第三方 SDK 的专有协议集成
+
+**In Scope (明确允许)**:
+- ✅ 基于 EventKit 的本地日历事件创建、编辑、删除
+- ✅ 标准 iCalendar (RFC 5545) 格式的 URI 订阅
+- ✅ CalDAV 协议的日历订阅（如适用）
+- ✅ 系统日历事件的读取和同步
 
 ### IV. Modularity & Testability
 
@@ -289,7 +295,8 @@
 
 ---
 
-**Version**: 1.0.1
+**Version**: 1.1.0
 **Ratified**: 2025-10-28
-**Last Amended**: 2025-11-01
+**Last Amended**: 2025-11-14
+**Amendment Reason**: 支持功能 003-calendar-subscription 的核心需求(事件管理和标准协议订阅)
 **Next Review**: 项目完成后或发现重大架构问题时

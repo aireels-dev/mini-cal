@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CalendarView: View {
-    @StateObject private var viewModel = CalendarViewModel()
+    @ObservedObject var viewModel: CalendarViewModel
     @ObservedObject private var settingsManager = SettingsManager.shared
     @ObservedObject private var themeManager = ThemeManager.shared
     @State private var selectedDateForDetail: CalendarDate?
@@ -16,6 +16,10 @@ struct CalendarView: View {
     @State private var settingsKeyMonitor: Any?
 
     var openSettingsAction: (() -> Void)?
+
+    init(viewModel: CalendarViewModel? = nil) {
+        self.viewModel = viewModel ?? CalendarViewModel()
+    }
 
     private var effectiveColors: ThemeColors {
         // 使用ThemeManager获取当前有效的主题颜色（处理系统跟随）
@@ -71,22 +75,71 @@ struct CalendarView: View {
             }
         }
         .frame(width: calendarSize.width, height: calendarSize.height)
-        .sheet(isPresented: $showEventDetail) {
+        .popover(isPresented: $showEventDetail, arrowEdge: .bottom) {
             if let selectedDate = selectedDateForDetail {
-                EventDetailView(
-                    date: selectedDate,
+                DayEventListView(
+                    date: selectedDate.gregorianDate,
+                    events: selectedDate.calendarEvents,
                     themeColors: effectiveColors,
-                    onClose: {
+                    onEventTap: { event in
+                        // 事件点击处理 - 可以显示事件详情
+                        print("Event tapped: \(event.title)")
+                    },
+                    onManageEvents: {
+                        // 关闭事件详情弹窗
                         showEventDetail = false
+                        // 打开设置窗口（订阅管理部分）
+                        openSettingsAction?()
+                        // 发送通知定位到订阅管理标签
+                        NotificationCenter.default.post(name: .openSubscriptionManagement, object: nil)
+                    },
+                    onSaveEvent: { event in
+                        Task {
+                            do {
+                                try await viewModel.createEvent(event)
+                                Logger.info("Created local event: \(event.title)", category: Logger.calendar)
+
+                                // 保存选中的日期
+                                let savedDate = selectedDateForDetail?.gregorianDate ?? Date()
+
+                                // 立即刷新日历数据
+                                await MainActor.run {
+                                    viewModel.loadCurrentMonth()
+                                }
+
+                                // 等待数据加载完成后重新打开Popover显示更新后的事件
+                                try await Task.sleep(nanoseconds: 300_000_000)  // 0.3秒
+
+                                await MainActor.run {
+                                    // 关闭Popover
+                                    showEventDetail = false
+
+                                    // 短暂延迟后重新打开，显示更新后的数据
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        // 重新查找更新后的日期数据
+                                        if let updatedDate = viewModel.calendarDates.first(where: {
+                                            Calendar.current.isDate($0.gregorianDate, inSameDayAs: savedDate)
+                                        }) {
+                                            selectedDateForDetail = updatedDate
+                                            showEventDetail = true
+                                        }
+                                    }
+                                }
+                            } catch {
+                                Logger.error("Failed to create event: \(error)", category: Logger.calendar)
+                            }
+                        }
                     }
                 )
             }
         }
         .onAppear {
             setupSettingsKeyMonitor()
+            setupResetNotification()
         }
         .onDisappear {
             removeSettingsKeyMonitor()
+            removeResetNotification()
         }
     }
 
@@ -98,6 +151,16 @@ struct CalendarView: View {
 
         // 添加快捷键监听（Command+,, Command+/-, Command+=）
         settingsKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+            // 检查窗口焦点：只在日历浮窗有焦点时响应
+            guard self.isCalendarWindowActive() else {
+                return event
+            }
+
+            // 检查文本输入焦点：避免拦截文本框输入
+            if NSApp.keyWindow?.firstResponder as? NSTextView != nil {
+                return event
+            }
+
             // 必须按下 Command 键
             guard event.modifierFlags.contains(.command) else {
                 return event
@@ -107,17 +170,17 @@ struct CalendarView: View {
 
             // Command+, 打开设置
             if key == "," {
-                openSettingsAction?()
+                self.openSettingsAction?()
                 return nil
             }
             // Command+- 减小日历尺寸
             else if key == "-" {
-                settingsManager.decreaseCalendarSize()
+                self.settingsManager.decreaseCalendarSize()
                 return nil
             }
             // Command+= 或 Command++ 增大日历尺寸
             else if key == "=" || key == "+" {
-                settingsManager.increaseCalendarSize()
+                self.settingsManager.increaseCalendarSize()
                 return nil
             }
 
@@ -125,11 +188,38 @@ struct CalendarView: View {
         }
     }
 
+    /// 检查日历窗口是否处于活动状态
+    private func isCalendarWindowActive() -> Bool {
+        guard let keyWindow = NSApp.keyWindow else { return false }
+        // 检查是否是 NSPopover 的窗口（日历浮窗）
+        return keyWindow.className.contains("NSPopover")
+    }
+
     private func removeSettingsKeyMonitor() {
         if let monitor = settingsKeyMonitor {
             NSEvent.removeMonitor(monitor)
             settingsKeyMonitor = nil
         }
+    }
+
+    // MARK: - Reset Notification
+
+    private func setupResetNotification() {
+        NotificationCenter.default.addObserver(
+            forName: .resetCalendarToToday,
+            object: nil,
+            queue: .main
+        ) { [weak viewModel] _ in
+            viewModel?.goToToday()
+        }
+    }
+
+    private func removeResetNotification() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .resetCalendarToToday,
+            object: nil
+        )
     }
 }
 

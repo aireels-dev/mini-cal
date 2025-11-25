@@ -13,6 +13,7 @@ class MenuBarController: NSObject {
     private var statusItem: NSStatusItem!
     private var popover: NSPopover!
     private var menuBarViewModel: MenuBarViewModel!
+    private var calendarViewModel: CalendarViewModel!  // 日历视图模型
     private var menuBarHostingView: NSHostingController<MenuBarView>?
     private var settingsWindow: NSWindow?
     private var settingsManager = SettingsManager.shared
@@ -25,7 +26,14 @@ class MenuBarController: NSObject {
     private var autoCloseTimer: Timer?
     private var isThemePreviewMode = false  // 标记是否处于主题预览模式
 
+    // 同步服务
+    private let subscriptionService: CalendarSubscriptionService
+    private let syncStatusMonitor: SyncStatusMonitor
+    private var autoSyncTimer: Timer?
+
     override init() {
+        self.subscriptionService = CalendarSubscriptionService()
+        self.syncStatusMonitor = SyncStatusMonitor()
         super.init()
         setupViewModel()
         setupMenuBar()
@@ -33,10 +41,12 @@ class MenuBarController: NSObject {
         setupContextMenu()
         observeSettingsChanges()
         observeThemePreview()
+        setupAutoSync()
     }
 
     private func setupViewModel() {
         menuBarViewModel = MenuBarViewModel()
+        calendarViewModel = CalendarViewModel()
     }
 
     private func setupMenuBar() {
@@ -152,7 +162,7 @@ class MenuBarController: NSObject {
         popover.behavior = .transient
 
         // Set calendar view as popover content with settings action
-        var calendarView = CalendarView()
+        var calendarView = CalendarView(viewModel: calendarViewModel)
         calendarView.openSettingsAction = { [weak self] in
             self?.openSettings()
         }
@@ -232,6 +242,10 @@ class MenuBarController: NSObject {
 
     func showPopover() {
         guard let button = statusItem.button else { return }
+
+        // 重置日历视图到今天
+        resetCalendarViewToToday()
+
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
 
         // 激活应用并使浮窗获得焦点
@@ -244,6 +258,12 @@ class MenuBarController: NSObject {
                 contentViewController.view.window?.makeKey()
             }
         }
+    }
+
+    /// 重置日历视图到今天
+    private func resetCalendarViewToToday() {
+        // 发送通知以重置日历视图到今天
+        NotificationCenter.default.post(name: .resetCalendarToToday, object: nil)
     }
 
     func closePopover() {
@@ -326,7 +346,7 @@ class MenuBarController: NSObject {
             NSApp.activate(ignoringOtherApps: true)
         } else {
             // 创建新的设置窗口
-            let settingsView = SettingsView()
+            let settingsView = SettingsView(calendarViewModel: calendarViewModel)
             let hostingController = NSHostingController(rootView: settingsView)
 
             let window = NSWindow(contentViewController: hostingController)
@@ -427,6 +447,128 @@ class MenuBarController: NSObject {
         hoverTimer = nil
     }
 
+    // MARK: - Auto Sync
+
+    private func setupAutoSync() {
+        // 监听应用启动和前后台切换
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appDidBecomeActive),
+            name: NSApplication.didBecomeActiveNotification,
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appWillResignActive),
+            name: NSApplication.willResignActiveNotification,
+            object: nil
+        )
+
+        // 设置定期同步
+        setupPeriodicSync()
+
+        // 应用启动时执行一次同步
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            Task {
+                await self.performInitialSync()
+            }
+        }
+    }
+
+    @objc private func appDidBecomeActive() {
+        Logger.info("App became active, checking sync status", category: Logger.app)
+
+        // 应用激活时检查是否需要同步
+        Task {
+            await performSyncIfNeeded()
+        }
+    }
+
+    @objc private func appWillResignActive() {
+        Logger.info("App will resign active", category: Logger.app)
+
+        // 应用即将失去焦点时停止自动同步定时器
+        autoSyncTimer?.invalidate()
+        autoSyncTimer = nil
+    }
+
+    private func setupPeriodicSync() {
+        // 每30分钟自动同步一次
+        autoSyncTimer = Timer.scheduledTimer(withTimeInterval: 30 * 60, repeats: true) { [weak self] _ in
+            Task {
+                await self?.performPeriodicSync()
+            }
+        }
+    }
+
+    private func performInitialSync() async {
+        Logger.info("Performing initial sync", category: Logger.app)
+
+        let permissionManager = PermissionManager.shared
+
+        // 使用智能权限请求策略
+        if permissionManager.shouldRequestPermission() {
+            Logger.info("Requesting calendar permission", category: Logger.app)
+            let granted = await permissionManager.requestEventKitAccess()
+
+            if !granted {
+                Logger.info("Calendar permission denied or restricted", category: Logger.app)
+                Logger.info("Will request again after 30 days", category: Logger.app)
+                return
+            }
+
+            Logger.info("Calendar permission granted", category: Logger.app)
+        } else if !permissionManager.isAuthorized {
+            Logger.info("Calendar permission previously denied, waiting for cooldown period", category: Logger.app)
+            if let lastRequestDate = permissionManager.getLastPermissionRequestDate() {
+                let calendar = Calendar.current
+                let daysSinceLastRequest = calendar.dateComponents([.day], from: lastRequestDate, to: Date()).day ?? 0
+                let daysRemaining = max(0, 30 - daysSinceLastRequest)
+                Logger.info("Will request permission again in \(daysRemaining) days", category: Logger.app)
+            }
+            return
+        }
+
+        // 如果已授权,执行同步
+        do {
+            try await subscriptionService.refreshAllSubscriptions()
+            Logger.info("Initial sync completed", category: Logger.app)
+        } catch {
+            Logger.error("Initial sync failed: \(error)", category: Logger.app)
+        }
+    }
+
+    private func performSyncIfNeeded() async {
+        // 检查距离上次同步的时间
+        let syncInterval: TimeInterval = 5 * 60 // 5分钟
+
+        // 如果距离上次同步超过syncInterval，则执行同步
+        if shouldPerformSync(syncInterval: syncInterval) {
+            await performPeriodicSync()
+        }
+    }
+
+    private func performPeriodicSync() async {
+        Logger.info("Performing periodic sync", category: Logger.app)
+
+        do {
+            try await subscriptionService.refreshAllSubscriptions()
+            Logger.info("Periodic sync completed", category: Logger.app)
+        } catch {
+            Logger.error("Periodic sync failed: \(error)", category: Logger.app)
+        }
+    }
+
+    private func shouldPerformSync(syncInterval: TimeInterval) -> Bool {
+        // 简化实现，实际应该检查上次同步时间
+        // 这里可以根据SyncStatusMonitor的指标来决定
+        let lastSyncDate = syncStatusMonitor.syncMetrics.lastSyncDate
+        let timeSinceLastSync = Date().timeIntervalSince(lastSyncDate)
+
+        return timeSinceLastSync >= syncInterval
+    }
+
     // MARK: - Cleanup
 
     deinit {
@@ -440,6 +582,10 @@ class MenuBarController: NSObject {
 
         // 清理定时器
         hoverTimer?.invalidate()
+        autoSyncTimer?.invalidate()
+
+        // 移除通知观察者
+        NotificationCenter.default.removeObserver(self)
 
         Logger.debug("MenuBarController deinitialized", category: Logger.app)
     }

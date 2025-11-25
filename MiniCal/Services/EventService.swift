@@ -43,7 +43,7 @@ class EventService {
         }
     }
 
-    func fetchEvents(for date: Date) async -> [DateEvent] {
+    func fetchEvents(for date: Date) async -> [CalendarEvent] {
         guard isAuthorized else { return [] }
 
         let calendar = Calendar.current
@@ -56,29 +56,33 @@ class EventService {
         let ekEvents = eventStore.events(matching: predicate)
 
         return ekEvents.map { ekEvent in
-            DateEvent(
+            CalendarEvent(
                 title: ekEvent.title,
-                date: date,
-                type: .meeting,
+                startDate: ekEvent.startDate,
+                endDate: ekEvent.endDate,
                 source: .eventKit,
-                description: ekEvent.notes
+                isAllDay: ekEvent.isAllDay
             )
         }
     }
 
-    func fetchEvents(from startDate: Date, to endDate: Date) async -> [DateEvent] {
-        guard isAuthorized else { return [] }
+    func fetchEvents(from startDate: Date, to endDate: Date) async -> [CalendarEvent] {
+        guard isAuthorized else {
+            Logger.warning("⚠️ EventService not authorized to access calendar", category: Logger.calendar)
+            return []
+        }
 
         let predicate = eventStore.predicateForEvents(withStart: startDate, end: endDate, calendars: nil)
         let ekEvents = eventStore.events(matching: predicate)
+        Logger.debug("📅 EventKit returned \(ekEvents.count) events", category: Logger.calendar)
 
         return ekEvents.map { ekEvent in
-            DateEvent(
+            CalendarEvent(
                 title: ekEvent.title,
-                date: ekEvent.startDate,
-                type: .meeting,
+                startDate: ekEvent.startDate,
+                endDate: ekEvent.endDate,
                 source: .eventKit,
-                description: ekEvent.notes
+                isAllDay: ekEvent.isAllDay
             )
         }
     }

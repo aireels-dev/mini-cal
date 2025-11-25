@@ -79,17 +79,19 @@ class CalendarService {
         let year = gregorianCalendar.component(.year, from: date)
         let month = gregorianCalendar.component(.month, from: date)
         let monthHolidays = holidayProvider.getMonthHolidays(year: year, month: month, region: "CN")
+        Logger.debug("📅 Loaded \(monthHolidays.count) holidays for \(year)-\(month)", category: Logger.calendar)
 
         // 获取系统日历事件（重用已计算的monthStart）
         let monthEndDate = gregorianCalendar.lastDayOfMonth(for: date)
         let systemEvents = await eventService.fetchEvents(from: monthStart, to: monthEndDate)
+        Logger.debug("📅 Loaded \(systemEvents.count) system events from EventService", category: Logger.calendar)
 
         // 按日期分组系统事件
-        var eventsMap: [String: [DateEvent]] = [:]
+        var eventsMap: [String: [CalendarEvent]] = [:]
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         for event in systemEvents {
-            let dateString = dateFormatter.string(from: event.date)
+            let dateString = dateFormatter.string(from: event.startDate)
             eventsMap[dateString, default: []].append(event)
         }
 
@@ -105,22 +107,24 @@ class CalendarService {
                 calendarDate.secondaryDate = secondaryInfo
             }
 
-            // 添加节假日事件
+            // 添加节假日事件（转换为 CalendarEvent）
             let dateString = dateFormatter.string(from: dateValue)
             if let holiday = monthHolidays[dateString] {
-                let holidayEvent = DateEvent(
+                let holidayEvent = CalendarEvent(
                     title: holiday.name,
-                    date: dateValue,
-                    type: holiday.eventType,
+                    startDate: dateValue,
+                    endDate: dateValue,
                     source: .builtin,
-                    description: holiday.name
+                    isAllDay: true
                 )
-                calendarDate.events.append(holidayEvent)
+                calendarDate.calendarEvents.append(holidayEvent)
+                Logger.debug("  ✅ Added holiday: \(holiday.name) on \(dateString)", category: Logger.calendar)
             }
 
             // 添加系统日历事件
             if let dayEvents = eventsMap[dateString] {
-                calendarDate.events.append(contentsOf: dayEvents)
+                calendarDate.calendarEvents.append(contentsOf: dayEvents)
+                Logger.debug("  ✅ Added \(dayEvents.count) system events on \(dateString)", category: Logger.calendar)
             }
 
             calendarDates.append(calendarDate)

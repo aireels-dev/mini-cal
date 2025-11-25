@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum EventType: String, Codable {
+enum EventType: String, Codable, CaseIterable {
     case publicHoliday
     case festival
     case meeting
