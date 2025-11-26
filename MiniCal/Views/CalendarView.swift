@@ -81,6 +81,7 @@ struct CalendarView: View {
                     date: selectedDate.gregorianDate,
                     events: selectedDate.calendarEvents,
                     themeColors: effectiveColors,
+                    calendarSize: calendarSize,
                     onEventTap: { event in
                         // 事件点击处理 - 可以显示事件详情
                         print("Event tapped: \(event.title)")

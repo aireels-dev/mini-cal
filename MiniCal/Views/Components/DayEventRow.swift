@@ -10,6 +10,7 @@ import SwiftUI
 struct DayEventRow: View {
     let event: CalendarEvent
     let themeColors: ThemeColors
+    let calendarSize: CalendarSize
     let onTap: () -> Void
 
     @State private var isHovered = false
@@ -26,7 +27,7 @@ struct DayEventRow: View {
                 VStack(alignment: .leading, spacing: 4) {
                     // 标题
                     Text(event.title)
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.system(size: calendarSize.eventListTitleFontSize, weight: .medium))
                         .foregroundColor(themeColors.textColor)
                         .lineLimit(1)
 
@@ -35,27 +36,27 @@ struct DayEventRow: View {
                         // 时间范围
                         HStack(spacing: 3) {
                             Image(systemName: "clock")
-                                .font(.system(size: 10))
+                                .font(.system(size: calendarSize.eventListSubtitleFontSize - 1))
                                 .foregroundColor(themeColors.secondaryTextColor)
 
                             Text(timeRangeText)
-                                .font(.system(size: 11))
+                                .font(.system(size: calendarSize.eventListSubtitleFontSize))
                                 .foregroundColor(themeColors.secondaryTextColor)
                         }
 
                         // 分隔符
                         Text("·")
-                            .font(.system(size: 10))
+                            .font(.system(size: calendarSize.eventListSubtitleFontSize - 1))
                             .foregroundColor(themeColors.secondaryTextColor.opacity(0.5))
 
                         // 来源
                         HStack(spacing: 3) {
                             Image(systemName: sourceIcon)
-                                .font(.system(size: 10))
+                                .font(.system(size: calendarSize.eventListSubtitleFontSize - 1))
                                 .foregroundColor(themeColors.secondaryTextColor)
 
                             Text(event.sourceName)
-                                .font(.system(size: 11))
+                                .font(.system(size: calendarSize.eventListSubtitleFontSize))
                                 .foregroundColor(themeColors.secondaryTextColor)
                         }
                     }
@@ -66,7 +67,7 @@ struct DayEventRow: View {
                 // 悬停时显示箭头
                 if isHovered {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 12))
+                        .font(.system(size: calendarSize.eventListButtonFontSize))
                         .foregroundColor(themeColors.accentColor)
                 }
             }
@@ -136,6 +137,7 @@ struct DayEventRow: View {
         DayEventRow(
             event: event1,
             themeColors: .light,
+            calendarSize: .standard,
             onTap: {}
         )
 
@@ -144,6 +146,7 @@ struct DayEventRow: View {
         DayEventRow(
             event: event2,
             themeColors: .light,
+            calendarSize: .standard,
             onTap: {}
         )
     }

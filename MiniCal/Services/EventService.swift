@@ -14,6 +14,7 @@ class EventService {
     private let eventStore = EKEventStore()
     private var isAuthorized = false
     private var eventStoreObserver: NSObjectProtocol?
+    private let permissionManager = PermissionManager.shared
 
     private init() {}
 
@@ -43,6 +44,27 @@ class EventService {
         }
     }
 
+    /// 获取启用的日历列表
+    private func getEnabledCalendars() -> [EKCalendar]? {
+        let allCalendars = eventStore.calendars(for: .event)
+        let enabledCalendars = allCalendars.filter { calendar in
+            permissionManager.isCalendarEnabled(calendarIdentifier: calendar.calendarIdentifier)
+        }
+
+        // 如果没有启用的日历，返回空数组（不加载任何事件）
+        // 如果所有日历都启用，返回 nil（EventKit 默认行为，性能更好）
+        if enabledCalendars.isEmpty {
+            Logger.debug("No enabled calendars, returning empty array", category: Logger.calendar)
+            return []
+        } else if enabledCalendars.count == allCalendars.count {
+            Logger.debug("All calendars enabled, using default behavior (nil)", category: Logger.calendar)
+            return nil
+        } else {
+            Logger.debug("Filtering to \(enabledCalendars.count) enabled calendars", category: Logger.calendar)
+            return enabledCalendars
+        }
+    }
+
     func fetchEvents(for date: Date) async -> [CalendarEvent] {
         guard isAuthorized else { return [] }
 
@@ -52,7 +74,14 @@ class EventService {
             return []
         }
 
-        let predicate = eventStore.predicateForEvents(withStart: startOfDay, end: endOfDay, calendars: nil)
+        let enabledCalendars = getEnabledCalendars()
+
+        // 如果没有启用的日历，直接返回空数组
+        if let calendars = enabledCalendars, calendars.isEmpty {
+            return []
+        }
+
+        let predicate = eventStore.predicateForEvents(withStart: startOfDay, end: endOfDay, calendars: enabledCalendars)
         let ekEvents = eventStore.events(matching: predicate)
 
         return ekEvents.map { ekEvent in
@@ -72,9 +101,17 @@ class EventService {
             return []
         }
 
-        let predicate = eventStore.predicateForEvents(withStart: startDate, end: endDate, calendars: nil)
+        let enabledCalendars = getEnabledCalendars()
+
+        // 如果没有启用的日历，直接返回空数组
+        if let calendars = enabledCalendars, calendars.isEmpty {
+            Logger.debug("📅 No enabled calendars, returning empty array", category: Logger.calendar)
+            return []
+        }
+
+        let predicate = eventStore.predicateForEvents(withStart: startDate, end: endDate, calendars: enabledCalendars)
         let ekEvents = eventStore.events(matching: predicate)
-        Logger.debug("📅 EventKit returned \(ekEvents.count) events", category: Logger.calendar)
+        Logger.debug("📅 EventKit returned \(ekEvents.count) events from \(enabledCalendars?.count ?? 0) calendars", category: Logger.calendar)
 
         return ekEvents.map { ekEvent in
             CalendarEvent(

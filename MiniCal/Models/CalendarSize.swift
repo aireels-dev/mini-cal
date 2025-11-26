@@ -115,4 +115,120 @@ enum CalendarSize: String, CaseIterable, Codable {
     var shortDescription: String {
         "\(Int(width)) × \(Int(height))"
     }
+
+    // MARK: - Event List Popup Dimensions
+
+    /// 事件列表弹窗宽度
+    var eventListWidth: CGFloat {
+        switch self {
+        case .compact:
+            return 320
+        case .standard:
+            return 380
+        case .large:
+            return 440
+        case .xlarge:
+            return 500
+        }
+    }
+
+    /// 事件列表表单模式高度
+    var eventListFormHeight: CGFloat {
+        switch self {
+        case .compact:
+            return 450
+        case .standard:
+            return 500
+        case .large:
+            return 550
+        case .xlarge:
+            return 600
+        }
+    }
+
+    /// 事件列表最大滚动高度
+    var eventListMaxScrollHeight: CGFloat {
+        switch self {
+        case .compact:
+            return 260
+        case .standard:
+            return 300
+        case .large:
+            return 340
+        case .xlarge:
+            return 380
+        }
+    }
+
+    /// 事件列表表单内容高度
+    var eventListFormContentHeight: CGFloat {
+        switch self {
+        case .compact:
+            return 330
+        case .standard:
+            return 370
+        case .large:
+            return 410
+        case .xlarge:
+            return 450
+        }
+    }
+
+    // MARK: - Event List Font Sizes
+
+    /// 事件列表标题字体大小
+    var eventListTitleFontSize: CGFloat {
+        switch self {
+        case .compact:
+            return 13
+        case .standard:
+            return 14
+        case .large:
+            return 15
+        case .xlarge:
+            return 16
+        }
+    }
+
+    /// 事件列表副标题字体大小
+    var eventListSubtitleFontSize: CGFloat {
+        switch self {
+        case .compact:
+            return 11
+        case .standard:
+            return 12
+        case .large:
+            return 13
+        case .xlarge:
+            return 14
+        }
+    }
+
+    /// 事件列表按钮字体大小
+    var eventListButtonFontSize: CGFloat {
+        switch self {
+        case .compact:
+            return 12
+        case .standard:
+            return 13
+        case .large:
+            return 14
+        case .xlarge:
+            return 15
+        }
+    }
+
+    /// 事件列表图标大小
+    var eventListIconSize: CGFloat {
+        switch self {
+        case .compact:
+            return 32
+        case .standard:
+            return 36
+        case .large:
+            return 40
+        case .xlarge:
+            return 44
+        }
+    }
 }

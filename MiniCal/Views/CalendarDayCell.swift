@@ -16,6 +16,12 @@ struct CalendarDayCell: View {
 
     @State private var isHovered = false
 
+    // 计算可用的文字宽度（单元格宽度减去左右padding）
+    private var availableTextWidth: CGFloat {
+        let cellWidth = calendarSize.width / 7  // 7列
+        return cellWidth - 12  // 减去左右padding (6 * 2)
+    }
+
     var body: some View {
         Button(action: onTap) {
             // 主要内容 - 垂直布局（紧贴内容）
@@ -27,17 +33,34 @@ struct CalendarDayCell: View {
 
                 // 副历日期
                 if let secondaryDate = date.secondaryDate {
-                    // 如果有节日，显示节日名称并高亮
-                    if let festival = secondaryDate.festival {
-                        Text(festival)
-                            .font(.system(size: calendarSize.secondaryFontSize - 0.5, weight: .medium))
-                            .foregroundColor(Color.orange.opacity(0.9))
-                            .lineLimit(1)
+                    // 优先级：公历节日 > 农历节日 > 常规日期文本
+                    if let solarFestival = secondaryDate.solarFestival {
+                        // 公历节日（全局显示）- 使用滚动文本
+                        ScrollingText(
+                            text: solarFestival,
+                            font: .system(size: calendarSize.secondaryFontSize - 0.5, weight: .medium),
+                            foregroundColor: festivalColor(for: solarFestival, calendarType: .gregorian),
+                            maxWidth: availableTextWidth
+                        )
+                        .frame(height: calendarSize.secondaryFontSize - 0.5)
+                    } else if let festival = secondaryDate.festival {
+                        // 农历节日或其他历法节日 - 使用滚动文本
+                        ScrollingText(
+                            text: festival,
+                            font: .system(size: calendarSize.secondaryFontSize - 0.5, weight: .medium),
+                            foregroundColor: festivalColor(for: festival, calendarType: secondaryDate.calendarType),
+                            maxWidth: availableTextWidth
+                        )
+                        .frame(height: calendarSize.secondaryFontSize - 0.5)
                     } else {
-                        Text(secondaryDate.displayText)
-                            .font(.system(size: calendarSize.secondaryFontSize - 0.5, weight: .light))
-                            .foregroundColor(themeColors.secondaryTextColor.opacity(0.6))
-                            .lineLimit(1)
+                        // 常规日期文本 - 使用滚动文本
+                        ScrollingText(
+                            text: secondaryDate.displayText,
+                            font: .system(size: calendarSize.secondaryFontSize - 0.5, weight: .light),
+                            foregroundColor: themeColors.secondaryTextColor.opacity(0.6),
+                            maxWidth: availableTextWidth
+                        )
+                        .frame(height: calendarSize.secondaryFontSize - 0.5)
                     }
                 } else {
                     // 占位空间，保持布局一致
@@ -116,6 +139,40 @@ struct CalendarDayCell: View {
 
     private var isWeekend: Bool {
         return date.weekday == 1 || date.weekday == 7
+    }
+
+    /// 根据节日类型返回不同的颜色
+    private func festivalColor(for festival: String, calendarType: CalendarType) -> Color {
+        // 二十四节气用绿色
+        if SolarTermService.shared.isSolarTerm(festival) {
+            return Color.green.opacity(0.85)
+        }
+
+        // 根据历法类型区分颜色
+        switch calendarType {
+        case .gregorian:
+            // 公历节日用红色（西方节日，圣诞、情人节等）
+            return Color.red.opacity(0.85)
+
+        case .chinese:
+            // 农历传统节日用橙色
+            return Color.orange.opacity(0.9)
+
+        case .islamic:
+            // 伊斯兰节日用蓝色
+            return Color.blue.opacity(0.85)
+
+        case .hebrew:
+            // 犹太节日用紫色
+            if festival == "安息日" {
+                return Color.purple.opacity(0.85)
+            }
+            return Color.indigo.opacity(0.85)
+
+        default:
+            // 其他节日用橙色
+            return Color.orange.opacity(0.9)
+        }
     }
 }
 

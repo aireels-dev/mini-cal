@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import CoreLocation
+import LunarSwift
 
 class SecondaryCalendarConverter {
 
@@ -54,7 +56,16 @@ class SecondaryCalendarConverter {
     // MARK: - Single Date Conversion
 
     /// 将公历日期转换为指定本地历法类型
-    func convert(gregorianDate: Date, to calendarType: CalendarType) -> SecondaryDateInfo? {
+    /// - Parameters:
+    ///   - gregorianDate: 公历日期
+    ///   - calendarType: 目标历法类型
+    ///   - location: 地理位置（可选，用于计算礼拜时间和安息日）
+    /// - Returns: 副历日期信息
+    func convert(
+        gregorianDate: Date,
+        to calendarType: CalendarType,
+        location: CLLocationCoordinate2D? = nil
+    ) -> SecondaryDateInfo? {
         guard let identifier = calendarType.identifier else { return nil }
 
         var calendar = Calendar(identifier: identifier)
@@ -70,8 +81,40 @@ class SecondaryCalendarConverter {
             components: components
         )
 
-        // 检查是否为节日
+        // 检查是否为节日（包括节气）
         let festival = getFestivalName(for: gregorianDate, calendarType: calendarType)
+
+        // 获取公历节日（全局显示，使用 lunar-swift）
+        let solarFestival = getSolarFestivalName(for: gregorianDate)
+
+        // 计算礼拜时间信息（仅伊斯兰历）
+        var prayerInfo: PrayerInfo? = nil
+        if calendarType == .islamic, let location = location {
+            if let prayerTimes = PrayerTimeService.shared.calculatePrayerTimes(
+                for: gregorianDate,
+                location: location
+            ) {
+                if let nextPrayer = prayerTimes.getNextPrayer(from: gregorianDate) {
+                    prayerInfo = PrayerInfo(
+                        nextPrayerName: nextPrayer.name,
+                        nextPrayerTime: nextPrayer.time
+                    )
+                }
+            }
+        }
+
+        // 计算安息日信息（仅希伯来历）
+        var shabbatDisplayInfo: ShabbatDisplayInfo? = nil
+        if calendarType == .hebrew, let location = location {
+            let shabbatInfo = ShabbatService.shared.getShabbatInfo(for: gregorianDate, location: location)
+            if shabbatInfo.isShabbatDay {
+                shabbatDisplayInfo = ShabbatDisplayInfo(
+                    isShabbat: shabbatInfo.isShabbat,
+                    shabbatStart: shabbatInfo.shabbatStart,
+                    shabbatEnd: shabbatInfo.shabbatEnd
+                )
+            }
+        }
 
         return SecondaryDateInfo(
             calendarType: calendarType,
@@ -79,7 +122,10 @@ class SecondaryCalendarConverter {
             year: components.year,
             month: components.month,
             day: components.day,
-            festival: festival
+            festival: festival,
+            solarFestival: solarFestival,
+            nextPrayerInfo: prayerInfo,
+            shabbatDisplayInfo: shabbatDisplayInfo
         )
     }
 
@@ -232,32 +278,14 @@ class SecondaryCalendarConverter {
     }
 
     private func getChineseFestival(for date: Date) -> String? {
-        var calendar = Calendar(identifier: .chinese)
-        calendar.locale = Locale(identifier: "zh_CN")
-
-        let components = calendar.dateComponents([.month, .day], from: date)
-
-        guard let month = components.month, let day = components.day else { return nil }
-
-        // 主要农历节日
-        switch (month, day) {
-        case (1, 1):
-            return "春节"
-        case (1, 15):
-            return "元宵"
-        case (5, 5):
-            return "端午"
-        case (7, 7):
-            return "七夕"
-        case (8, 15):
-            return "中秋"
-        case (9, 9):
-            return "重阳"
-        case (12, 8):
-            return "腊八"
-        default:
-            return nil
+        // 1. 优先检查二十四节气（优先级最高）
+        if let solarTerm = SolarTermService.shared.getSolarTerm(for: date) {
+            return solarTerm
         }
+
+        // 2. 使用 lunar-swift 获取农历节日
+        let lunarFestivals = LunarHolidayService.shared.getLunarFestivals(for: date)
+        return lunarFestivals.first
     }
 
     private func getIslamicFestival(for date: Date) -> String? {
@@ -282,6 +310,12 @@ class SecondaryCalendarConverter {
     }
 
     private func getHebrewFestival(for date: Date) -> String? {
+        // 1. 检查使用 ShabbatService 的犹太节日
+        if let holiday = ShabbatService.shared.getJewishHoliday(for: date) {
+            return holiday
+        }
+
+        // 2. 检查农历节日（补充）
         var calendar = Calendar(identifier: .hebrew)
         calendar.locale = Locale(identifier: "zh_CN")
 
@@ -289,16 +323,18 @@ class SecondaryCalendarConverter {
 
         guard let month = components.month, let day = components.day else { return nil }
 
-        // 主要犹太节日
+        // 其他犹太节日（ShabbatService 中未包含的）
         switch (month, day) {
-        case (1, 1), (1, 2):
-            return "犹太新年"
-        case (1, 10):
-            return "赎罪日"
-        case (7, 15):
-            return "光明节"
         default:
             return nil
         }
+    }
+
+    /// 获取公历节日（全局显示，使用 lunar-swift）
+    /// - Parameter date: 公历日期
+    /// - Returns: 公历节日名称
+    private func getSolarFestivalName(for date: Date) -> String? {
+        let solarFestivals = LunarHolidayService.shared.getSolarFestivals(for: date)
+        return solarFestivals.first
     }
 }

@@ -535,12 +535,16 @@ struct CalendarSettingsView: View {
                 ForEach(permissionManager.systemCalendars, id: \.calendarIdentifier) { calendar in
                     SystemCalendarRow(
                         calendar: calendar,
-                        isEnabled: .constant(true),
+                        isEnabled: Binding(
+                            get: { permissionManager.isCalendarEnabled(calendarIdentifier: calendar.calendarIdentifier) },
+                            set: { newValue in permissionManager.setCalendarEnabled(calendarIdentifier: calendar.calendarIdentifier, enabled: newValue) }
+                        ),
                         themeColors: themeManager.effectiveColors,
                         permissionManager: permissionManager,
                         eventCount: systemCalendarEventCounts[calendar.calendarIdentifier] ?? 0,
                         onToggle: {
-                            // TODO: 实现切换系统日历启用状态
+                            // 触发日历数据重新加载
+                            NotificationCenter.default.post(name: .calendarEnabledStateChanged, object: nil)
                         },
                         onColorUpdate: { newColor in
                             permissionManager.updateCalendarColor(
@@ -1439,7 +1443,7 @@ struct ThemeCard: View {
     @State private var isHovering = false
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 6) {
             // 分层预览卡片
             ZStack {
                 // 第一层：Background 背景色
@@ -1490,27 +1494,23 @@ struct ThemeCard: View {
                 )
             }
 
-            // 主题名称
-            Text(theme.displayName)
-                .font(.system(size: 12, weight: .medium))
-                .foregroundColor(.primary)
-                .lineLimit(1)
-
-            // 选中标记
+            // 主题名称（带选中标记）
             HStack(spacing: 4) {
+                Text(theme.displayName)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.primary)
+                    .lineLimit(1)
+
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 10))
-                        .foregroundColor(Color(hex: theme.colors.accent))
-                    Text("当前主题")
-                        .font(.system(size: 10))
+                        .font(.system(size: 11))
                         .foregroundColor(Color(hex: theme.colors.accent))
                 }
             }
-            .frame(height: 14)  // 固定高度避免跳动
+            .frame(height: 18)  // 固定高度避免跳动
         }
-        .frame(width: 130, height: 120)
-        .padding(8)
+        .frame(width: 130, height: 110)
+        .padding(6)
         .background(
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color.clear)
@@ -1573,10 +1573,10 @@ struct ThemeSelectionGrid: View {
     let onThemeSelect: (ThemeConfiguration) -> Void
 
     var body: some View {
-        // 主题网格（3列布局，方案C）
+        // 主题网格（3列布局，更紧凑的间距）
         LazyVGrid(
-            columns: Array(repeating: GridItem(.fixed(146), spacing: 20), count: 3),
-            spacing: 20
+            columns: Array(repeating: GridItem(.fixed(142), spacing: 12), count: 3),
+            spacing: 12
         ) {
             ForEach(themes, id: \.id) { theme in
                 ThemeCard(

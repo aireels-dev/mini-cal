@@ -20,7 +20,21 @@ struct ExternalSubscriptionCompactRow: View {
     @State private var isEditingColor = false
     @State private var editTitle: String = ""
     @State private var editColor: EventColor = .blue
+    @State private var isEnabled: Bool
     @FocusState private var isTitleFieldFocused: Bool
+
+    init(subscription: CalendarSubscription,
+         themeColors: ThemeColors,
+         onToggle: @escaping () -> Void,
+         onUpdate: @escaping (CalendarSubscription) -> Void,
+         onDelete: @escaping () -> Void) {
+        self.subscription = subscription
+        self.themeColors = themeColors
+        self.onToggle = onToggle
+        self.onUpdate = onUpdate
+        self.onDelete = onDelete
+        self._isEnabled = State(initialValue: subscription.isEnabled)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -118,11 +132,11 @@ struct ExternalSubscriptionCompactRow: View {
             }
 
             // 启用/禁用开关
-            Toggle("", isOn: .constant(subscription.isEnabled))
+            Toggle("", isOn: $isEnabled)
                 .toggleStyle(.switch)
                 .tint(themeColors.accentColor)
                 .labelsHidden()
-                .onChange(of: subscription.isEnabled) { oldValue, newValue in
+                .onChange(of: isEnabled) { oldValue, newValue in
                     if oldValue != newValue {
                         onToggle()
                     }

@@ -21,12 +21,19 @@ class PermissionManager: ObservableObject {
     private let calendarColorOverridesKey = "SystemCalendarColorOverrides"
     @Published var colorOverrides: [String: EventColor] = [:]  // calendarIdentifier -> EventColor
 
+    // 系统日历启用/禁用状态
+    private let calendarEnabledStateKey = "SystemCalendarEnabledState"
+    @Published var calendarEnabledState: [String: Bool] = [:]  // calendarIdentifier -> isEnabled
+
     init() {
         authorizationStatus = EKEventStore.authorizationStatus(for: .event)
         isAuthorized = (authorizationStatus == .authorized)
 
         // 加载颜色覆盖
         loadColorOverrides()
+
+        // 加载日历启用状态
+        loadCalendarEnabledState()
 
         // 监听权限状态变化
         NotificationCenter.default.addObserver(
@@ -300,4 +307,56 @@ class PermissionManager: ObservableObject {
         saveColorOverrides()
         Logger.info("Removed calendar color override: \(calendarIdentifier)", category: Logger.calendar)
     }
+
+    // MARK: - Calendar Enabled State Management
+
+    /// 加载日历启用状态
+    private func loadCalendarEnabledState() {
+        guard let data = UserDefaults.standard.data(forKey: calendarEnabledStateKey),
+              let dict = try? JSONDecoder().decode([String: Bool].self, from: data) else {
+            calendarEnabledState = [:]
+            return
+        }
+
+        calendarEnabledState = dict
+    }
+
+    /// 保存日历启用状态
+    private func saveCalendarEnabledState() {
+        if let data = try? JSONEncoder().encode(calendarEnabledState) {
+            UserDefaults.standard.set(data, forKey: calendarEnabledStateKey)
+        }
+    }
+
+    /// 切换日历启用状态
+    func toggleCalendarEnabled(calendarIdentifier: String) {
+        let currentState = isCalendarEnabled(calendarIdentifier: calendarIdentifier)
+        calendarEnabledState[calendarIdentifier] = !currentState
+        saveCalendarEnabledState()
+        Logger.info("Toggled calendar enabled state: \(calendarIdentifier) -> \(!currentState)", category: Logger.calendar)
+    }
+
+    /// 设置日历启用状态
+    func setCalendarEnabled(calendarIdentifier: String, enabled: Bool) {
+        calendarEnabledState[calendarIdentifier] = enabled
+        saveCalendarEnabledState()
+        Logger.info("Set calendar enabled state: \(calendarIdentifier) -> \(enabled)", category: Logger.calendar)
+    }
+
+    /// 获取日历启用状态（默认为 true）
+    func isCalendarEnabled(calendarIdentifier: String) -> Bool {
+        return calendarEnabledState[calendarIdentifier] ?? true
+    }
+
+    /// 获取所有启用的日历标识符
+    func getEnabledCalendarIdentifiers() -> Set<String> {
+        let allCalendarIds = Set(systemCalendars.map { $0.calendarIdentifier })
+        return allCalendarIds.filter { isCalendarEnabled(calendarIdentifier: $0) }
+    }
+}
+
+// MARK: - Notification Names
+
+extension Notification.Name {
+    static let calendarEnabledStateChanged = Notification.Name("CalendarEnabledStateChanged")
 }

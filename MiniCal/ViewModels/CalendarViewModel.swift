@@ -64,6 +64,22 @@ class CalendarViewModel: ObservableObject {
                 self?.loadCurrentMonth()
             }
             .store(in: &cancellables)
+
+        // 监听日历启用状态变更，重新加载日历数据
+        NotificationCenter.default.publisher(for: .calendarEnabledStateChanged)
+            .sink { [weak self] _ in
+                Logger.info("Calendar enabled state changed, reloading calendar", category: Logger.calendar)
+                self?.loadCurrentMonth()
+            }
+            .store(in: &cancellables)
+
+        // 监听订阅更新，重新加载日历数据
+        NotificationCenter.default.publisher(for: .subscriptionUpdated)
+            .sink { [weak self] _ in
+                Logger.info("Subscription updated, reloading calendar", category: Logger.calendar)
+                self?.loadCurrentMonth()
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Data Loading
