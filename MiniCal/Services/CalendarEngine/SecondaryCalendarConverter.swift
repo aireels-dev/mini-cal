@@ -11,6 +11,10 @@ import LunarSwift
 
 class SecondaryCalendarConverter {
 
+    private let calendarLocalizer = CalendarLocalizer.shared
+    private let festivalLocalizer = FestivalLocalizer.shared
+    private let localizationManager = LocalizationManager.shared
+
     // MARK: - Calendar Recommendation
 
     /// 根据系统区域推荐合适的本地历法类型
@@ -69,7 +73,9 @@ class SecondaryCalendarConverter {
         guard let identifier = calendarType.identifier else { return nil }
 
         var calendar = Calendar(identifier: identifier)
-        calendar.locale = Locale(identifier: "zh_CN")
+        // 使用当前本地化上下文的语言环境
+        let currentLocale = localizationManager.context.effectiveCalendarLocale
+        calendar.locale = currentLocale.locale
         calendar.timeZone = TimeZone.current
 
         let components = calendar.dateComponents([.year, .month, .day], from: gregorianDate)
@@ -185,19 +191,15 @@ class SecondaryCalendarConverter {
 
     private func formatChineseDate(date: Date, calendar: Calendar) -> String {
         let components = calendar.dateComponents([.month, .day], from: date)
-        guard let day = components.day else { return "" }
+        guard let month = components.month, let day = components.day else { return "" }
 
         // 如果是每月初一，显示月份
         if day == 1 {
-            let monthFormatter = DateFormatter()
-            monthFormatter.locale = Locale(identifier: "zh_CN")
-            monthFormatter.calendar = calendar
-            monthFormatter.dateFormat = "MMM" // 月份：正月、二月...腊月
-            return monthFormatter.string(from: date)
+            return calendarLocalizer.monthName(month: month, calendarType: .chinese, style: .full)
         }
 
-        // 其他日期转换为中文表达（初二、初三...廿九、三十）
-        return convertChineseDayToText(day: day)
+        // 其他日期使用本地化格式
+        return calendarLocalizer.formatDay(day: day, calendarType: .chinese)
     }
 
     /// 将农历日期数字转换为中文表达
@@ -227,31 +229,31 @@ class SecondaryCalendarConverter {
     }
 
     private func formatIslamicDate(components: DateComponents) -> String {
-        guard let day = components.day else { return "" }
+        guard let month = components.month, let day = components.day else { return "" }
 
         // 每月初一显示月份名称，其他日期仅显示日期
         if day == 1 {
-            return CalendarMonthNames.getIslamicMonthName(components.month, short: true)
+            return calendarLocalizer.monthName(month: month, calendarType: .islamic, style: .short)
         }
         return "\(day)"
     }
 
     private func formatHebrewDate(components: DateComponents) -> String {
-        guard let day = components.day else { return "" }
+        guard let month = components.month, let day = components.day else { return "" }
 
         // 每月初一显示月份名称，其他日期仅显示日期
         if day == 1 {
-            return CalendarMonthNames.getHebrewMonthName(components.month, short: true)
+            return calendarLocalizer.monthName(month: month, calendarType: .hebrew, style: .short)
         }
         return "\(day)"
     }
 
     private func formatPersianDate(components: DateComponents) -> String {
-        guard let day = components.day else { return "" }
+        guard let month = components.month, let day = components.day else { return "" }
 
         // 每月初一显示月份名称，其他日期仅显示日期
         if day == 1 {
-            return CalendarMonthNames.getPersianMonthName(components.month, short: true)
+            return calendarLocalizer.monthName(month: month, calendarType: .persian, style: .short)
         }
         return "\(day)"
     }
@@ -290,44 +292,30 @@ class SecondaryCalendarConverter {
 
     private func getIslamicFestival(for date: Date) -> String? {
         var calendar = Calendar(identifier: .islamicCivil)
-        calendar.locale = Locale(identifier: "zh_CN")
+        calendar.locale = localizationManager.context.effectiveCalendarLocale.locale
 
         let components = calendar.dateComponents([.month, .day], from: date)
 
         guard let month = components.month, let day = components.day else { return nil }
 
-        // 主要伊斯兰节日
-        switch (month, day) {
-        case (9, 1):
-            return "斋月开始"
-        case (10, 1):
-            return "开斋节"
-        case (12, 10):
-            return "宰牲节"
-        default:
-            return nil
-        }
+        // 使用本地化节日数据库查找节日
+        let allFestivals = festivalLocalizer.festivals(for: .islamic)
+        let festivalDate = FestivalDate(month: month, day: day)
+        return allFestivals[festivalDate]
     }
 
     private func getHebrewFestival(for date: Date) -> String? {
-        // 1. 检查使用 ShabbatService 的犹太节日
-        if let holiday = ShabbatService.shared.getJewishHoliday(for: date) {
-            return holiday
-        }
-
-        // 2. 检查农历节日（补充）
         var calendar = Calendar(identifier: .hebrew)
-        calendar.locale = Locale(identifier: "zh_CN")
+        calendar.locale = localizationManager.context.effectiveCalendarLocale.locale
 
         let components = calendar.dateComponents([.month, .day], from: date)
 
         guard let month = components.month, let day = components.day else { return nil }
 
-        // 其他犹太节日（ShabbatService 中未包含的）
-        switch (month, day) {
-        default:
-            return nil
-        }
+        // 使用本地化节日数据库查找节日
+        let allFestivals = festivalLocalizer.festivals(for: .hebrew)
+        let festivalDate = FestivalDate(month: month, day: day)
+        return allFestivals[festivalDate]
     }
 
     /// 获取公历节日（全局显示，使用 lunar-swift）

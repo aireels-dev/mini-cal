@@ -14,7 +14,7 @@ import KeyboardShortcuts
 struct HotkeyRecorder: View {
     var body: some View {
         HStack {
-            Text("快捷键")
+            Text("misc.shortcut")
                 .foregroundColor(.secondary)
 
             Spacer()

@@ -1,0 +1,39 @@
+{
+  "festivals": {
+    "songkran": {
+      "id": "songkran",
+      "name": "สงกรานต์",
+      "month": 4,
+      "day": 13,
+      "importance": "major"
+    },
+    "visakha_bucha": {
+      "id": "visakha_bucha",
+      "name": "วิสาขบูชา",
+      "month": 5,
+      "day": 15,
+      "importance": "major"
+    },
+    "asalha_bucha": {
+      "id": "asalha_bucha",
+      "name": "อาสาฬหบูชา",
+      "month": 7,
+      "day": 15,
+      "importance": "major"
+    },
+    "khao_phansa": {
+      "id": "khao_phansa",
+      "name": "เข้าพรรษา",
+      "month": 7,
+      "day": 16,
+      "importance": "major"
+    },
+    "ok_phansa": {
+      "id": "ok_phansa",
+      "name": "ออกพรรษา",
+      "month": 10,
+      "day": 15,
+      "importance": "major"
+    }
+  }
+}

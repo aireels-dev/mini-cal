@@ -15,10 +15,10 @@ enum MenuBarFormat: String, Codable, CaseIterable {
 
     var displayName: String {
         switch self {
-        case .dateOnly: return "仅日期"
-        case .timeOnly: return "仅时间"
-        case .dateTime: return "日期+时间"
-        case .custom: return "自定义"
+        case .dateOnly: return NSLocalizedString("menubar_format.date_only", comment: "")
+        case .timeOnly: return NSLocalizedString("menubar_format.time_only", comment: "")
+        case .dateTime: return NSLocalizedString("menubar_format.date_time", comment: "")
+        case .custom: return NSLocalizedString("menubar_format.custom", comment: "")
         }
     }
 

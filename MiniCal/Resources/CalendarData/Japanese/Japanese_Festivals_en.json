@@ -1,0 +1,32 @@
+{
+  "festivals": {
+    "shogatsu": {
+      "id": "shogatsu",
+      "name": "New Year",
+      "month": 1,
+      "day": 1,
+      "importance": "major"
+    },
+    "coming_of_age": {
+      "id": "coming_of_age",
+      "name": "Coming of Age Day",
+      "month": 1,
+      "day": 8,
+      "importance": "major"
+    },
+    "golden_week": {
+      "id": "golden_week",
+      "name": "Golden Week",
+      "month": 5,
+      "day": 1,
+      "importance": "major"
+    },
+    "tanabata": {
+      "id": "tanabata",
+      "name": "Tanabata",
+      "month": 7,
+      "day": 7,
+      "importance": "minor"
+    }
+  }
+}

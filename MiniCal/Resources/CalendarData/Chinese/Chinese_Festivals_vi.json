@@ -1,0 +1,46 @@
+{
+  "festivals": {
+    "spring_festival": {
+      "id": "spring_festival",
+      "name": "Tết Nguyên Đán",
+      "month": 1,
+      "day": 1,
+      "importance": "major"
+    },
+    "lantern_festival": {
+      "id": "lantern_festival",
+      "name": "Tết Nguyên Tiêu",
+      "month": 1,
+      "day": 15,
+      "importance": "major"
+    },
+    "qingming": {
+      "id": "qingming",
+      "name": "Tết Thanh Minh",
+      "month": 3,
+      "day": 5,
+      "importance": "major"
+    },
+    "dragon_boat": {
+      "id": "dragon_boat",
+      "name": "Tết Đoan Ngọ",
+      "month": 5,
+      "day": 5,
+      "importance": "major"
+    },
+    "mid_autumn": {
+      "id": "mid_autumn",
+      "name": "Tết Trung Thu",
+      "month": 8,
+      "day": 15,
+      "importance": "major"
+    },
+    "new_years_eve": {
+      "id": "new_years_eve",
+      "name": "Giao Thừa",
+      "month": 12,
+      "day": 30,
+      "importance": "major"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "festivals": {
+    "songkran": {
+      "id": "songkran",
+      "name": "Songkran",
+      "month": 4,
+      "day": 13,
+      "importance": "major"
+    },
+    "visakha_bucha": {
+      "id": "visakha_bucha",
+      "name": "Visakha Bucha",
+      "month": 5,
+      "day": 15,
+      "importance": "major"
+    },
+    "asalha_bucha": {
+      "id": "asalha_bucha",
+      "name": "Asalha Bucha",
+      "month": 7,
+      "day": 15,
+      "importance": "major"
+    },
+    "khao_phansa": {
+      "id": "khao_phansa",
+      "name": "Buddhist Lent",
+      "month": 7,
+      "day": 16,
+      "importance": "major"
+    },
+    "ok_phansa": {
+      "id": "ok_phansa",
+      "name": "End of Buddhist Lent",
+      "month": 10,
+      "day": 15,
+      "importance": "major"
+    }
+  }
+}

@@ -85,7 +85,7 @@ struct LocalEventGroupCompactRow: View {
 
                     // 默认组标记
                     if group.isDefault {
-                        Text("默认")
+                        Text("misc.default")
                             .font(.system(size: 10))
                             .foregroundColor(themeColors.accentColor)
                             .padding(.horizontal, 4)
@@ -140,7 +140,7 @@ struct LocalEventGroupCompactRow: View {
         VStack(spacing: 8) {
             // 第一行：标题编辑
             HStack(spacing: 8) {
-                Text("名称")
+                Text("common.name")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(themeColors.secondaryTextColor)
                     .frame(width: 40, alignment: .leading)
@@ -153,7 +153,7 @@ struct LocalEventGroupCompactRow: View {
 
             // 第二行：颜色选择
             HStack(spacing: 8) {
-                Text("颜色")
+                Text("common.color")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(themeColors.secondaryTextColor)
                     .frame(width: 40, alignment: .leading)
@@ -213,7 +213,7 @@ struct LocalEventGroupCompactRow: View {
         VStack(spacing: 8) {
             // 颜色选择
             HStack(spacing: 8) {
-                Text("颜色")
+                Text("common.color")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(themeColors.secondaryTextColor)
                     .frame(width: 40, alignment: .leading)

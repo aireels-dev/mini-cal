@@ -1,0 +1,32 @@
+{
+  "festivals": {
+    "nowruz": {
+      "id": "nowruz",
+      "name": "Nowruz",
+      "month": 1,
+      "day": 1,
+      "importance": "major"
+    },
+    "sizdah_bedar": {
+      "id": "sizdah_bedar",
+      "name": "Sizdah Bedar",
+      "month": 1,
+      "day": 13,
+      "importance": "major"
+    },
+    "chaharshanbe_suri": {
+      "id": "chaharshanbe_suri",
+      "name": "Chaharshanbe Suri",
+      "month": 12,
+      "day": 25,
+      "importance": "major"
+    },
+    "yalda": {
+      "id": "yalda",
+      "name": "Yalda Night",
+      "month": 9,
+      "day": 30,
+      "importance": "major"
+    }
+  }
+}

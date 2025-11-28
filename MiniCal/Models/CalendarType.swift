@@ -29,14 +29,20 @@ enum CalendarType: String, Codable, CaseIterable {
     }
 
     var displayName: String {
+        // 使用本地化管理器获取名称
+        return CalendarLocalizer.shared.calendarTypeName(self)
+    }
+
+    /// 获取非本地化的名称（用于调试）
+    var rawDisplayName: String {
         switch self {
-        case .gregorian: return "公历"
-        case .chinese: return "农历"
-        case .islamic: return "伊斯兰历"
-        case .hebrew: return "希伯来历"
-        case .persian: return "波斯历"
-        case .japanese: return "和历"
-        case .buddhist: return "佛历"
+        case .gregorian: return "Gregorian"
+        case .chinese: return "Chinese Lunar"
+        case .islamic: return "Islamic"
+        case .hebrew: return "Hebrew"
+        case .persian: return "Persian"
+        case .japanese: return "Japanese"
+        case .buddhist: return "Buddhist"
         }
     }
 }

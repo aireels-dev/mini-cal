@@ -1,0 +1,32 @@
+{
+  "festivals": {
+    "nowruz": {
+      "id": "nowruz",
+      "name": "نوروز",
+      "month": 1,
+      "day": 1,
+      "importance": "major"
+    },
+    "sizdah_bedar": {
+      "id": "sizdah_bedar",
+      "name": "سیزده‌بدر",
+      "month": 1,
+      "day": 13,
+      "importance": "major"
+    },
+    "chaharshanbe_suri": {
+      "id": "chaharshanbe_suri",
+      "name": "چهارشنبه سوری",
+      "month": 12,
+      "day": 25,
+      "importance": "major"
+    },
+    "yalda": {
+      "id": "yalda",
+      "name": "شب یلدا",
+      "month": 9,
+      "day": 30,
+      "importance": "major"
+    }
+  }
+}

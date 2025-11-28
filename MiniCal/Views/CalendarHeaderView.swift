@@ -80,7 +80,7 @@ struct CalendarHeaderView: View {
                     }
                     .buttonStyle(PlainButtonStyle())
                     .focusable(false)
-                    .help("回到今天")
+                    .help("calendar.back_to_today")
                 }
             }
 

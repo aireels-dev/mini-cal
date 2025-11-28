@@ -129,3 +129,9 @@ Temporary Items
 # IDE
 .vscode/
 .idea/
+
+superdesign/
+
+# Backup files
+*.backup*
+*.backup

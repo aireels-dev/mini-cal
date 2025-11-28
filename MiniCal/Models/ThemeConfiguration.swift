@@ -18,11 +18,7 @@ enum ThemeMode: String, Codable, CaseIterable {
     case dark = "dark"     // 深色模式
 
     var displayName: String {
-        switch self {
-        case .light: return "浅色"
-        case .auto: return "自动"
-        case .dark: return "深色"
-        }
+        return NSLocalizedString("theme_mode.\(rawValue)", comment: "")
     }
 
     var icon: String {
@@ -34,14 +30,7 @@ enum ThemeMode: String, Codable, CaseIterable {
     }
 
     var description: String {
-        switch self {
-        case .light:
-            return "始终使用浅色主题，适合在明亮环境下使用"
-        case .auto:
-            return "跟随 macOS 系统外观自动切换"
-        case .dark:
-            return "始终使用深色主题，适合在昏暗环境或夜间使用"
-        }
+        return NSLocalizedString("theme_mode.\(rawValue).description", comment: "")
     }
 }
 
@@ -53,10 +42,7 @@ enum ThemeCategory: String, Codable, CaseIterable {
     case dark = "dark"
 
     var displayName: String {
-        switch self {
-        case .light: return "浅色"
-        case .dark: return "深色"
-        }
+        return NSLocalizedString("theme_mode.\(rawValue)", comment: "")
     }
 
     var icon: String {
@@ -103,6 +89,11 @@ struct ThemeConfiguration: Identifiable, Codable, Equatable {
     /// 是否为内置主题
     var isBuiltIn: Bool {
         return author == nil || author == "MiniCal"
+    }
+
+    /// 本地化的显示名称
+    var localizedDisplayName: String {
+        return NSLocalizedString("theme.\(id)", comment: "")
     }
 }
 

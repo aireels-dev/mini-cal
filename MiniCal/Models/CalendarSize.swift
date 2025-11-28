@@ -10,14 +10,14 @@ import CoreGraphics
 
 /// 日历面板尺寸档位
 enum CalendarSize: String, CaseIterable, Codable {
-    case compact = "紧凑"
-    case standard = "标准"
-    case large = "大号"
-    case xlarge = "超大"
+    case compact
+    case standard
+    case large
+    case xlarge
 
     /// 显示名称
     var displayName: String {
-        rawValue
+        NSLocalizedString("size.\(rawValue)", comment: "")
     }
 
     /// 面板尺寸（统一比例 10:11，接近正方形设计）
@@ -108,7 +108,8 @@ enum CalendarSize: String, CaseIterable, Codable {
     /// 尺寸描述（显示具体像素值和宽高比）
     var sizeDescription: String {
         let ratio = width / height
-        return "\(Int(width)) × \(Int(height)) (比例 \(String(format: "%.3f", ratio)))"
+        let ratioLabel = NSLocalizedString("settings.size_description", comment: "")
+        return "\(Int(width)) × \(Int(height)) (\(ratioLabel) \(String(format: "%.3f", ratio)))"
     }
 
     /// 简短尺寸描述

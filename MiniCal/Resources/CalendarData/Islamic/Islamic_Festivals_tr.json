@@ -1,0 +1,60 @@
+{
+  "festivals": {
+    "ramadan_start": {
+      "id": "ramadan_start",
+      "name": "Ramazan Başlangıcı",
+      "month": 9,
+      "day": 1,
+      "importance": "major"
+    },
+    "laylat_al_qadr": {
+      "id": "laylat_al_qadr",
+      "name": "Kadir Gecesi",
+      "month": 9,
+      "day": 27,
+      "importance": "major"
+    },
+    "eid_al_fitr": {
+      "id": "eid_al_fitr",
+      "name": "Ramazan Bayramı",
+      "month": 10,
+      "day": 1,
+      "importance": "major"
+    },
+    "arafat_day": {
+      "id": "arafat_day",
+      "name": "Arefe Günü",
+      "month": 12,
+      "day": 9,
+      "importance": "major"
+    },
+    "eid_al_adha": {
+      "id": "eid_al_adha",
+      "name": "Kurban Bayramı",
+      "month": 12,
+      "day": 10,
+      "importance": "major"
+    },
+    "islamic_new_year": {
+      "id": "islamic_new_year",
+      "name": "Hicri Yılbaşı",
+      "month": 1,
+      "day": 1,
+      "importance": "major"
+    },
+    "ashura": {
+      "id": "ashura",
+      "name": "Aşure Günü",
+      "month": 1,
+      "day": 10,
+      "importance": "major"
+    },
+    "mawlid": {
+      "id": "mawlid",
+      "name": "Mevlid Kandili",
+      "month": 3,
+      "day": 12,
+      "importance": "major"
+    }
+  }
+}

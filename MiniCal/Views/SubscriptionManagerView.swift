@@ -59,7 +59,7 @@ struct SubscriptionManagerView: View {
 
     private var headerView: some View {
         HStack {
-            Text("日历订阅管理")
+            Text("subscription.manager_title")
                 .font(.title2)
                 .fontWeight(.semibold)
                 .foregroundColor(themeColors.textColor)
@@ -149,11 +149,11 @@ struct SubscriptionManagerView: View {
                 .foregroundColor(themeColors.secondaryTextColor)
 
             VStack(spacing: 8) {
-                Text("还没有订阅任何日历")
+                Text("subscription.no_subscriptions")
                     .font(.headline)
                     .foregroundColor(themeColors.textColor)
 
-                Text("添加外部日历订阅来查看更多事件")
+                Text("subscription.add_to_view")
                     .font(.body)
                     .foregroundColor(themeColors.secondaryTextColor)
                     .multilineTextAlignment(.center)
@@ -164,7 +164,7 @@ struct SubscriptionManagerView: View {
             }) {
                 HStack {
                     Image(systemName: "plus.circle.fill")
-                    Text("添加订阅")
+                    Text("subscription.add")
                 }
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(.white)
@@ -188,7 +188,7 @@ struct SubscriptionManagerView: View {
             }) {
                 HStack {
                     Image(systemName: "plus")
-                    Text("添加订阅")
+                    Text("subscription.add")
                 }
                 .font(.system(size: 13, weight: .medium))
                 .foregroundColor(themeColors.accentColor)
@@ -208,7 +208,7 @@ struct SubscriptionManagerView: View {
             }) {
                 HStack {
                     Image(systemName: "arrow.clockwise")
-                    Text("全部刷新")
+                    Text("subscription.refresh_all_button")
                 }
                 .font(.system(size: 13, weight: .medium))
                 .foregroundColor(themeColors.textColor)
@@ -268,17 +268,17 @@ struct URLInputView: View {
         NavigationView {
             VStack(spacing: 20) {
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("添加日历订阅")
+                    Text("subscription.add_button")
                         .font(.title2)
                         .fontWeight(.semibold)
 
-                    Text("输入外部日历的URL地址")
+                    Text("subscription.url_input_placeholder")
                         .font(.body)
                         .foregroundColor(.secondary)
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("日历URL")
+                    Text("subscription.calendar_url")
                         .font(.headline)
                         .foregroundColor(.primary)
 
@@ -291,13 +291,13 @@ struct URLInputView: View {
                             }
                         }
 
-                    Text("支持 http://、https:// 和 webcal:// 协议")
+                    Text("subscription.protocol_hint")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("常见日历服务")
+                    Text("subscription.common_services")
                         .font(.subheadline)
                         .fontWeight(.medium)
 

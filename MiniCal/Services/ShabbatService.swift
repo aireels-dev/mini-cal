@@ -31,14 +31,15 @@ class ShabbatService {
             return start.timeIntervalSince(date)
         }
 
-        /// 安息日状态描述
+        /// 安息日状态描述（使用本地化）
         var statusDescription: String {
+            let localizer = FestivalLocalizer.shared
             if isShabbat {
-                return "安息日中"
+                return localizer.shabbatText(key: "in_progress")
             } else if isShabbatDay {
-                return "安息日当天"
+                return localizer.shabbatText(key: "day")
             } else {
-                return "平日"
+                return localizer.shabbatText(key: "weekday")
             }
         }
     }

@@ -72,7 +72,7 @@ struct LocalEventGroupRow: View {
                             .font(.system(size: 11))
                             .foregroundColor(themeColors.secondaryTextColor)
                     } else {
-                        Text("暂无事件")
+                        Text("calendar.no_events")
                             .font(.system(size: 11))
                             .foregroundColor(themeColors.secondaryTextColor.opacity(0.6))
                     }
@@ -96,7 +96,7 @@ struct LocalEventGroupRow: View {
         VStack(spacing: 8) {
             // 颜色选择
             HStack(spacing: 8) {
-                Text("颜色")
+                Text("common.color")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(themeColors.secondaryTextColor)
                     .frame(width: 40, alignment: .leading)

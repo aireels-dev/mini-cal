@@ -1,0 +1,835 @@
+[
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"event.live_preview\")",
+    "replacement": "Text(L(\"eventlive_preview\"))",
+    "key": "eventlive_preview",
+    "value": "event.live_preview"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"event.hover_delay\")",
+    "replacement": "Text(L(\"eventhover_delay\"))",
+    "key": "eventhover_delay",
+    "value": "event.hover_delay"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"event.format_symbols\")",
+    "replacement": "Text(L(\"eventformat_symbols\"))",
+    "key": "eventformat_symbols",
+    "value": "event.format_symbols"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"event.format_example\")",
+    "replacement": "Text(L(\"eventformat_example\"))",
+    "key": "eventformat_example",
+    "value": "event.format_example"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"common.arrow\")",
+    "replacement": "Text(L(\"commonarrow\"))",
+    "key": "commonarrow",
+    "value": "common.arrow"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"common.arrow\")",
+    "replacement": "Text(L(\"commonarrow\"))",
+    "key": "commonarrow",
+    "value": "common.arrow"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"settings.calendar.none\")",
+    "replacement": "Text(L(\"settingscalendarnone\"))",
+    "key": "settingscalendarnone",
+    "value": "settings.calendar.none"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"settings.calendar.description\")",
+    "replacement": "Text(L(\"settingscalendardescription\"))",
+    "key": "settingscalendardescription",
+    "value": "settings.calendar.description"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"settings.calendar.system_sync\")",
+    "replacement": "Text(L(\"settingscalendarsystem_sync\"))",
+    "key": "settingscalendarsystem_sync",
+    "value": "settings.calendar.system_sync"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"permission.calendar.required\")",
+    "replacement": "Text(L(\"permissioncalendarrequired\"))",
+    "key": "permissioncalendarrequired",
+    "value": "permission.calendar.required"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"permission.calendar.description\")",
+    "replacement": "Text(L(\"permissioncalendardescription\"))",
+    "key": "permissioncalendardescription",
+    "value": "permission.calendar.description"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"permission.calendar.hint\")",
+    "replacement": "Text(L(\"permissioncalendarhint\"))",
+    "key": "permissioncalendarhint",
+    "value": "permission.calendar.hint"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"common.no_system_calendars\")",
+    "replacement": "Text(L(\"commonno_system_calendars\"))",
+    "key": "commonno_system_calendars",
+    "value": "common.no_system_calendars"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"common.no_subscriptions\")",
+    "replacement": "Text(L(\"commonno_subscriptions\"))",
+    "key": "commonno_subscriptions",
+    "value": "common.no_subscriptions"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"点击下方「添加订阅」按钮开始\")",
+    "replacement": "Text(L(\"ui_13\"))",
+    "key": "ui_13",
+    "value": "点击下方「添加订阅」按钮开始"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"subscription.add\")",
+    "replacement": "Text(L(\"subscriptionadd\"))",
+    "key": "subscriptionadd",
+    "value": "subscription.add"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"subscription.refresh_all\")",
+    "replacement": "Text(L(\"subscriptionrefresh_all\"))",
+    "key": "subscriptionrefresh_all",
+    "value": "subscription.refresh_all"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"local_group.add\")",
+    "replacement": "Text(L(\"local_groupadd\"))",
+    "key": "local_groupadd",
+    "value": "local_group.add"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"local_group.add_title\")",
+    "replacement": "Text(L(\"local_groupadd_title\"))",
+    "key": "local_groupadd_title",
+    "value": "local_group.add_title"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"local_group.name\")",
+    "replacement": "Text(L(\"local_groupname\"))",
+    "key": "local_groupname",
+    "value": "local_group.name"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"common.color\")",
+    "replacement": "Text(L(\"commoncolor\"))",
+    "key": "commoncolor",
+    "value": "common.color"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"添加外部订阅\")",
+    "replacement": "Text(L(\"ui_20\"))",
+    "key": "ui_20",
+    "value": "添加外部订阅"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"subscription.url\")",
+    "replacement": "Text(L(\"subscriptionurl\"))",
+    "key": "subscriptionurl",
+    "value": "subscription.url"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"subscription.protocol_hint\")",
+    "replacement": "Text(L(\"subscriptionprotocol_hint\"))",
+    "key": "subscriptionprotocol_hint",
+    "value": "subscription.protocol_hint"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"subscription.adding\")",
+    "replacement": "Text(L(\"subscriptionadding\"))",
+    "key": "subscriptionadding",
+    "value": "subscription.adding"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"subscription.downloading\")",
+    "replacement": "Text(L(\"subscriptiondownloading\"))",
+    "key": "subscriptiondownloading",
+    "value": "subscription.downloading"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"settings.language.description\")",
+    "replacement": "Text(L(\"settingslanguagedescription\"))",
+    "key": "settingslanguagedescription",
+    "value": "settings.language.description"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"settings.appearance.current_size\")",
+    "replacement": "Text(L(\"settingsappearancecurrent_size\"))",
+    "key": "settingsappearancecurrent_size",
+    "value": "settings.appearance.current_size"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"settings.appearance.opacity_label\")",
+    "replacement": "Text(L(\"settingsappearanceopacity_label\"))",
+    "key": "settingsappearanceopacity_label",
+    "value": "settings.appearance.opacity_label"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"settings.appearance.more_transparent\")",
+    "replacement": "Text(L(\"settingsappearancemore_transparent\"))",
+    "key": "settingsappearancemore_transparent",
+    "value": "settings.appearance.more_transparent"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"settings.appearance.more_opaque\")",
+    "replacement": "Text(L(\"settingsappearancemore_opaque\"))",
+    "key": "settingsappearancemore_opaque",
+    "value": "settings.appearance.more_opaque"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"💡 系统外观变化时，将自动切换到对应模式下您选择的主题\")",
+    "replacement": "Text(L(\"ui_30\"))",
+    "key": "ui_30",
+    "value": "💡 系统外观变化时，将自动切换到对应模式下您选择的主题"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"箭头键切换\")",
+    "replacement": "Text(L(\"ui_31\"))",
+    "key": "ui_31",
+    "value": "箭头键切换"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"WASD键切换\")",
+    "replacement": "Text(L(\"ui_32\"))",
+    "key": "ui_32",
+    "value": "WASD键切换"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"缩放调整\")",
+    "replacement": "Text(L(\"ui_33\"))",
+    "key": "ui_33",
+    "value": "缩放调整"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"触摸板手势\")",
+    "replacement": "Text(L(\"ui_34\"))",
+    "key": "ui_34",
+    "value": "触摸板手势"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"调整面板大小可以获得更好的视觉体验\")",
+    "replacement": "Text(L(\"ui_35\"))",
+    "key": "ui_35",
+    "value": "调整面板大小可以获得更好的视觉体验"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"日历弹窗使用 macOS Glass 效果\")",
+    "replacement": "Text(L(\"ui_36\"))",
+    "key": "ui_36",
+    "value": "日历弹窗使用 macOS Glass 效果"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"今日\")",
+    "replacement": "Text(L(\"ui_37\"))",
+    "key": "ui_37",
+    "value": "今日"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Text(\"13\")",
+    "replacement": "Text(L(\"13\"))",
+    "key": "13",
+    "value": "13"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Label(\"menu_bar.title\")",
+    "replacement": "Label(L(\"menu_bartitle\"))",
+    "key": "menu_bartitle",
+    "value": "menu_bar.title"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Label(\"menu_bar.calendar\")",
+    "replacement": "Label(L(\"menu_barcalendar\"))",
+    "key": "menu_barcalendar",
+    "value": "menu_bar.calendar"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Label(\"menu_bar.appearance\")",
+    "replacement": "Label(L(\"menu_barappearance\"))",
+    "key": "menu_barappearance",
+    "value": "menu_bar.appearance"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Label(\"settings.appearance.reset\")",
+    "replacement": "Label(L(\"settingsappearancereset\"))",
+    "key": "settingsappearancereset",
+    "value": "settings.appearance.reset"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Section(\"应用设置\")",
+    "replacement": "Section(L(\"ui_43\"))",
+    "key": "ui_43",
+    "value": "应用设置"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Section(\"菜单栏显示\")",
+    "replacement": "Section(L(\"ui_44\"))",
+    "key": "ui_44",
+    "value": "菜单栏显示"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Section(\"日历交互\")",
+    "replacement": "Section(L(\"ui_45\"))",
+    "key": "ui_45",
+    "value": "日历交互"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Section(\"settings.calendar.secondary\")",
+    "replacement": "Section(L(\"settingscalendarsecondary\"))",
+    "key": "settingscalendarsecondary",
+    "value": "settings.calendar.secondary"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Section(\"settings.calendar.external_subscriptions\")",
+    "replacement": "Section(L(\"settingscalendarexternal_subscriptions\"))",
+    "key": "settingscalendarexternal_subscriptions",
+    "value": "settings.calendar.external_subscriptions"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Section(\"settings.calendar.local_management\")",
+    "replacement": "Section(L(\"settingscalendarlocal_management\"))",
+    "key": "settingscalendarlocal_management",
+    "value": "settings.calendar.local_management"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Section(\"settings.language.section\")",
+    "replacement": "Section(L(\"settingslanguagesection\"))",
+    "key": "settingslanguagesection",
+    "value": "settings.language.section"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Section(\"settings.appearance.panel_size\")",
+    "replacement": "Section(L(\"settingsappearancepanel_size\"))",
+    "key": "settingsappearancepanel_size",
+    "value": "settings.appearance.panel_size"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Section(\"settings.appearance.opacity\")",
+    "replacement": "Section(L(\"settingsappearanceopacity\"))",
+    "key": "settingsappearanceopacity",
+    "value": "settings.appearance.opacity"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Section(\"settings.appearance.theme\")",
+    "replacement": "Section(L(\"settingsappearancetheme\"))",
+    "key": "settingsappearancetheme",
+    "value": "settings.appearance.theme"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Section(\"快捷键与手势\")",
+    "replacement": "Section(L(\"ui_53\"))",
+    "key": "ui_53",
+    "value": "快捷键与手势"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SettingsView.swift",
+    "original": "Section(\"说明\")",
+    "replacement": "Section(L(\"ui_54\"))",
+    "key": "ui_54",
+    "value": "说明"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/HotkeyRecorder.swift",
+    "original": "Text(\"快捷键\")",
+    "replacement": "Text(L(\"ui_55\"))",
+    "key": "ui_55",
+    "value": "快捷键"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/CalendarEventView.swift",
+    "original": "Text(\"暂无事件\")",
+    "replacement": "Text(L(\"ui_56\"))",
+    "key": "ui_56",
+    "value": "暂无事件"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/LocalEventGroupRow.swift",
+    "original": "Text(\"暂无事件\")",
+    "replacement": "Text(L(\"ui_56\"))",
+    "key": "ui_56",
+    "value": "暂无事件"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/CalendarEventView.swift",
+    "original": "Text(\"今日事件\")",
+    "replacement": "Text(L(\"ui_57\"))",
+    "key": "ui_57",
+    "value": "今日事件"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/CalendarEventView.swift",
+    "original": "Text(\"全天\")",
+    "replacement": "Text(L(\"ui_58\"))",
+    "key": "ui_58",
+    "value": "全天"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventListView.swift",
+    "original": "Text(\"全天\")",
+    "replacement": "Text(L(\"ui_58\"))",
+    "key": "ui_58",
+    "value": "全天"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/CalendarEventView.swift",
+    "original": "Text(\"多日\")",
+    "replacement": "Text(L(\"ui_59\"))",
+    "key": "ui_59",
+    "value": "多日"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/CalendarEventView.swift",
+    "original": "Text(\"时间\")",
+    "replacement": "Text(L(\"ui_60\"))",
+    "key": "ui_60",
+    "value": "时间"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/CalendarEventView.swift",
+    "original": "Text(\"地点\")",
+    "replacement": "Text(L(\"ui_61\"))",
+    "key": "ui_61",
+    "value": "地点"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/CalendarEventView.swift",
+    "original": "Text(\"备注\")",
+    "replacement": "Text(L(\"ui_62\"))",
+    "key": "ui_62",
+    "value": "备注"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/EventDetailView.swift",
+    "original": "Text(\"备注\")",
+    "replacement": "Text(L(\"ui_62\"))",
+    "key": "ui_62",
+    "value": "备注"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/CalendarEventView.swift",
+    "original": "Text(\"参与者\")",
+    "replacement": "Text(L(\"ui_63\"))",
+    "key": "ui_63",
+    "value": "参与者"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SubscriptionManagerView.swift",
+    "original": "Text(\"日历订阅管理\")",
+    "replacement": "Text(L(\"ui_64\"))",
+    "key": "ui_64",
+    "value": "日历订阅管理"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SubscriptionManagerView.swift",
+    "original": "Text(\"还没有订阅任何日历\")",
+    "replacement": "Text(L(\"ui_65\"))",
+    "key": "ui_65",
+    "value": "还没有订阅任何日历"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SubscriptionManagerView.swift",
+    "original": "Text(\"添加外部日历订阅来查看更多事件\")",
+    "replacement": "Text(L(\"ui_66\"))",
+    "key": "ui_66",
+    "value": "添加外部日历订阅来查看更多事件"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SubscriptionManagerView.swift",
+    "original": "Text(\"添加订阅\")",
+    "replacement": "Text(L(\"ui_67\"))",
+    "key": "ui_67",
+    "value": "添加订阅"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SubscriptionManagerView.swift",
+    "original": "Text(\"添加订阅\")",
+    "replacement": "Text(L(\"ui_67\"))",
+    "key": "ui_67",
+    "value": "添加订阅"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SubscriptionManagerView.swift",
+    "original": "Text(\"全部刷新\")",
+    "replacement": "Text(L(\"ui_69\"))",
+    "key": "ui_69",
+    "value": "全部刷新"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SubscriptionManagerView.swift",
+    "original": "Text(\"添加日历订阅\")",
+    "replacement": "Text(L(\"ui_70\"))",
+    "key": "ui_70",
+    "value": "添加日历订阅"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SubscriptionManagerView.swift",
+    "original": "Text(\"输入外部日历的URL地址\")",
+    "replacement": "Text(L(\"ui_71\"))",
+    "key": "ui_71",
+    "value": "输入外部日历的URL地址"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SubscriptionManagerView.swift",
+    "original": "Text(\"日历URL\")",
+    "replacement": "Text(L(\"ui_72\"))",
+    "key": "ui_72",
+    "value": "日历URL"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SubscriptionManagerView.swift",
+    "original": "Text(\"支持 http://、https:// 和 webcal:// 协议\")",
+    "replacement": "Text(L(\"ui_73\"))",
+    "key": "ui_73",
+    "value": "支持 http://、https:// 和 webcal:// 协议"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/SubscriptionManagerView.swift",
+    "original": "Text(\"常见日历服务\")",
+    "replacement": "Text(L(\"ui_74\"))",
+    "key": "ui_74",
+    "value": "常见日历服务"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/EventDetailView.swift",
+    "original": "Text(\"加载事件中...\")",
+    "replacement": "Text(L(\"ui_75\"))",
+    "key": "ui_75",
+    "value": "加载事件中..."
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/EventDetailView.swift",
+    "original": "Text(\"加载失败\")",
+    "replacement": "Text(L(\"ui_76\"))",
+    "key": "ui_76",
+    "value": "加载失败"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/EventDetailView.swift",
+    "original": "Text(\"事件标题\")",
+    "replacement": "Text(L(\"ui_77\"))",
+    "key": "ui_77",
+    "value": "事件标题"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/EventDetailView.swift",
+    "original": "Text(\"开始时间\")",
+    "replacement": "Text(L(\"ui_78\"))",
+    "key": "ui_78",
+    "value": "开始时间"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/EventDetailView.swift",
+    "original": "Text(\"结束时间\")",
+    "replacement": "Text(L(\"ui_79\"))",
+    "key": "ui_79",
+    "value": "结束时间"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventListView.swift",
+    "original": "Text(\"这天没有事件\")",
+    "replacement": "Text(L(\"ui_81\"))",
+    "key": "ui_81",
+    "value": "这天没有事件"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventListView.swift",
+    "original": "Text(\"享受轻松的一天\")",
+    "replacement": "Text(L(\"ui_82\"))",
+    "key": "ui_82",
+    "value": "享受轻松的一天"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventListView.swift",
+    "original": "Text(\"取消\")",
+    "replacement": "Text(L(\"ui_83\"))",
+    "key": "ui_83",
+    "value": "取消"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventListView.swift",
+    "original": "Text(\"保存\")",
+    "replacement": "Text(L(\"ui_84\"))",
+    "key": "ui_84",
+    "value": "保存"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventListView.swift",
+    "original": "Text(\"添加事件\")",
+    "replacement": "Text(L(\"ui_85\"))",
+    "key": "ui_85",
+    "value": "添加事件"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventListView.swift",
+    "original": "Text(\"管理订阅\")",
+    "replacement": "Text(L(\"ui_86\"))",
+    "key": "ui_86",
+    "value": "管理订阅"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventListView.swift",
+    "original": "Text(\"标题\")",
+    "replacement": "Text(L(\"ui_87\"))",
+    "key": "ui_87",
+    "value": "标题"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventListView.swift",
+    "original": "Text(\"开始\")",
+    "replacement": "Text(L(\"ui_89\"))",
+    "key": "ui_89",
+    "value": "开始"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventListView.swift",
+    "original": "Text(\"结束\")",
+    "replacement": "Text(L(\"ui_90\"))",
+    "key": "ui_90",
+    "value": "结束"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventListView.swift",
+    "original": "Text(\"结束时间必须晚于开始时间\")",
+    "replacement": "Text(L(\"ui_91\"))",
+    "key": "ui_91",
+    "value": "结束时间必须晚于开始时间"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventListView.swift",
+    "original": "Text(\"位置（可选）\")",
+    "replacement": "Text(L(\"ui_92\"))",
+    "key": "ui_92",
+    "value": "位置（可选）"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventListView.swift",
+    "original": "Text(\"备注（可选）\")",
+    "replacement": "Text(L(\"ui_93\"))",
+    "key": "ui_93",
+    "value": "备注（可选）"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/LocalizationSettingsView.swift",
+    "original": "Text(\"Interface Language\")",
+    "replacement": "Text(L(\"interface_language\"))",
+    "key": "interface_language",
+    "value": "Interface Language"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/LocalizationSettingsView.swift",
+    "original": "Text(\"The language used for menus, settings, and UI elements\")",
+    "replacement": "Text(L(\"the_language_used_for_menus_settings_and_ui_elemen\"))",
+    "key": "the_language_used_for_menus_settings_and_ui_elemen",
+    "value": "The language used for menus, settings, and UI elements"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/LocalizationSettingsView.swift",
+    "original": "Text(\"Calendar Language\")",
+    "replacement": "Text(L(\"calendar_language\"))",
+    "key": "calendar_language",
+    "value": "Calendar Language"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/LocalizationSettingsView.swift",
+    "original": "Text(\"The language used for calendar names, festivals, and dates\")",
+    "replacement": "Text(L(\"the_language_used_for_calendar_names_festivals_and\"))",
+    "key": "the_language_used_for_calendar_names_festivals_and",
+    "value": "The language used for calendar names, festivals, and dates"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/LocalizationSettingsView.swift",
+    "original": "Text(\"Language Support\")",
+    "replacement": "Text(L(\"language_support\"))",
+    "key": "language_support",
+    "value": "Language Support"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/LocalizationSettingsView.swift",
+    "original": "Text(\"Full support: English, Simplified Chinese, Traditional Chinese, Arabic, Hebrew\")",
+    "replacement": "Text(L(\"full_support_english_simplified_chinese_traditiona\"))",
+    "key": "full_support_english_simplified_chinese_traditiona",
+    "value": "Full support: English, Simplified Chinese, Traditional Chinese, Arabic, Hebrew"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/LocalizationSettingsView.swift",
+    "original": "Text(\"Partial support: Japanese, Korean, Vietnamese, Persian, Thai, Turkish\")",
+    "replacement": "Text(L(\"partial_support_japanese_korean_vietnamese_persian\"))",
+    "key": "partial_support_japanese_korean_vietnamese_persian",
+    "value": "Partial support: Japanese, Korean, Vietnamese, Persian, Thai, Turkish"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/LocalizationSettingsView.swift",
+    "original": "Text(\"RTL Support\")",
+    "replacement": "Text(L(\"rtl_support\"))",
+    "key": "rtl_support",
+    "value": "RTL Support"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/LocalizationSettingsView.swift",
+    "original": "Text(\"Arabic, Hebrew, Persian, and Urdu automatically use right-to-left layout\")",
+    "replacement": "Text(L(\"arabic_hebrew_persian_and_urdu_automatically_use_r\"))",
+    "key": "arabic_hebrew_persian_and_urdu_automatically_use_r",
+    "value": "Arabic, Hebrew, Persian, and Urdu automatically use right-to-left layout"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/LocalEventGroupRow.swift",
+    "original": "Text(\"颜色\")",
+    "replacement": "Text(L(\"ui_104\"))",
+    "key": "ui_104",
+    "value": "颜色"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/SystemCalendarRow.swift",
+    "original": "Text(\"颜色\")",
+    "replacement": "Text(L(\"ui_104\"))",
+    "key": "ui_104",
+    "value": "颜色"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/ExternalSubscriptionCompactRow.swift",
+    "original": "Text(\"颜色\")",
+    "replacement": "Text(L(\"ui_104\"))",
+    "key": "ui_104",
+    "value": "颜色"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/ExternalSubscriptionCompactRow.swift",
+    "original": "Text(\"颜色\")",
+    "replacement": "Text(L(\"ui_104\"))",
+    "key": "ui_104",
+    "value": "颜色"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/LocalEventGroupCompactRow.swift",
+    "original": "Text(\"颜色\")",
+    "replacement": "Text(L(\"ui_104\"))",
+    "key": "ui_104",
+    "value": "颜色"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/LocalEventGroupCompactRow.swift",
+    "original": "Text(\"颜色\")",
+    "replacement": "Text(L(\"ui_104\"))",
+    "key": "ui_104",
+    "value": "颜色"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventHeader.swift",
+    "original": "Text(\"·\")",
+    "replacement": "Text(L(\"\"))",
+    "key": "",
+    "value": "·"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventRow.swift",
+    "original": "Text(\"·\")",
+    "replacement": "Text(L(\"\"))",
+    "key": "",
+    "value": "·"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventHeader.swift",
+    "original": "Text(\"启用位置，显示日出日落信息\")",
+    "replacement": "Text(L(\"ui_107\"))",
+    "key": "ui_107",
+    "value": "启用位置，显示日出日落信息"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/DayEventHeader.swift",
+    "original": "Text(\"获取位置中...\")",
+    "replacement": "Text(L(\"ui_108\"))",
+    "key": "ui_108",
+    "value": "获取位置中..."
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/ExternalSubscriptionCompactRow.swift",
+    "original": "Text(\"名称\")",
+    "replacement": "Text(L(\"ui_109\"))",
+    "key": "ui_109",
+    "value": "名称"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/LocalEventGroupCompactRow.swift",
+    "original": "Text(\"名称\")",
+    "replacement": "Text(L(\"ui_109\"))",
+    "key": "ui_109",
+    "value": "名称"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/ExternalSubscriptionCompactRow.swift",
+    "original": "Text(\"URL\")",
+    "replacement": "Text(L(\"url\"))",
+    "key": "url",
+    "value": "URL"
+  },
+  {
+    "file": "/Users/lixingmao/Documents/Developer/WebSpace/mini-cal/MiniCal/Views/Components/LocalEventGroupCompactRow.swift",
+    "original": "Text(\"默认\")",
+    "replacement": "Text(L(\"ui_113\"))",
+    "key": "ui_113",
+    "value": "默认"
+  }
+]

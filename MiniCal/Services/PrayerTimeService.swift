@@ -13,6 +13,8 @@ import Adhan
 class PrayerTimeService {
     static let shared = PrayerTimeService()
 
+    private let festivalLocalizer = FestivalLocalizer.shared
+
     private init() {}
 
     // MARK: - Prayer Times Structure
@@ -25,14 +27,15 @@ class PrayerTimeService {
         let maghrib: Date   // 昏礼（Maghrib）- 日落
         let isha: Date      // 宵礼（Isha）- 夜晚
 
-        /// 所有礼拜时间列表
+        /// 所有礼拜时间列表（使用本地化名称）
         var allPrayers: [(name: String, time: Date)] {
+            let localizer = FestivalLocalizer.shared
             return [
-                ("晨礼", fajr),
-                ("晌礼", dhuhr),
-                ("晡礼", asr),
-                ("昏礼", maghrib),
-                ("宵礼", isha)
+                (localizer.prayerTimeName("Fajr"), fajr),
+                (localizer.prayerTimeName("Dhuhr"), dhuhr),
+                (localizer.prayerTimeName("Asr"), asr),
+                (localizer.prayerTimeName("Maghrib"), maghrib),
+                (localizer.prayerTimeName("Isha"), isha)
             ]
         }
 
@@ -59,19 +62,20 @@ class PrayerTimeService {
     // MARK: - Calculation Methods
 
     enum CalculationMethod: String, CaseIterable {
-        case muslimWorldLeague = "穆斯林世界联盟"
-        case egyptian = "埃及通用"
-        case karachi = "卡拉奇大学"
-        case ummAlQura = "乌姆盖拉（麦加）"
-        case dubai = "迪拜"
-        case moonsightingCommittee = "月相观测委员会"
-        case northAmerica = "北美伊斯兰协会"
-        case kuwait = "科威特"
-        case qatar = "卡塔尔"
-        case singapore = "新加坡"
+        case muslimWorldLeague
+        case egyptian
+        case karachi
+        case ummAlQura
+        case dubai
+        case moonsightingCommittee
+        case northAmerica
+        case kuwait
+        case qatar
+        case singapore
 
-        var description: String {
-            return self.rawValue
+        var localizedName: String {
+            let key = "prayer_method_\(self.rawValue)"
+            return LocalizationManager.shared.localized(key, table: "Festivals")
         }
     }
 

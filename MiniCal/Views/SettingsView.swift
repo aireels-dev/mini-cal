@@ -24,21 +24,21 @@ struct SettingsView: View {
             // 菜单栏设置
             MenuBarSettingsView(settingsManager: settingsManager)
                 .tabItem {
-                    Label("菜单栏", systemImage: "menubar.rectangle")
+                    Label("menu_bar.title", systemImage: "menubar.rectangle")
                 }
                 .tag(0)
 
             // 日历设置
             CalendarSettingsView(settingsManager: settingsManager, calendarViewModel: calendarViewModel)
                 .tabItem {
-                    Label("日历", systemImage: "calendar")
+                    Label("menu_bar.calendar", systemImage: "calendar")
                 }
                 .tag(1)
 
             // 外观设置
             AppearanceSettingsView(settingsManager: settingsManager)
                 .tabItem {
-                    Label("外观", systemImage: "paintbrush")
+                    Label("menu_bar.appearance", systemImage: "paintbrush")
                 }
                 .tag(2)
         }
@@ -75,9 +75,9 @@ struct MenuBarSettingsView: View {
     var body: some View {
         Form {
             // 应用设置
-            Section("应用设置") {
+            Section("settings.app.section") {
                 // 全局快捷键
-                Toggle("启用全局快捷键", isOn: $localSettings.globalHotkeyEnabled)
+                Toggle("settings.app.global_hotkey", isOn: $localSettings.globalHotkeyEnabled)
                     .onChange(of: localSettings.globalHotkeyEnabled) { newValue in
                         var updated = settingsManager.currentSettings
                         updated.globalHotkeyEnabled = newValue
@@ -90,7 +90,7 @@ struct MenuBarSettingsView: View {
                 }
 
                 // 开机自启动
-                Toggle("开机自动启动", isOn: $localSettings.launchAtLogin)
+                Toggle("settings.app.launch_at_login", isOn: $localSettings.launchAtLogin)
                     .onChange(of: localSettings.launchAtLogin) { newValue in
                         var updated = settingsManager.currentSettings
                         updated.launchAtLogin = newValue
@@ -102,10 +102,10 @@ struct MenuBarSettingsView: View {
             }
 
             // 菜单栏显示
-            Section("菜单栏显示") {
+            Section("settings.menu_bar.display") {
                 // 实时预览
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("实时预览")
+                    Text("event.live_preview")
                         .font(.caption)
                         .foregroundColor(.secondary)
 
@@ -120,7 +120,7 @@ struct MenuBarSettingsView: View {
                 .padding(.bottom, 8)
 
                 // 显示格式
-                Picker("格式", selection: $localSettings.menuBarFormat) {
+                Picker("settings.menu_bar.format", selection: $localSettings.menuBarFormat) {
                     ForEach(MenuBarFormat.allCases, id: \.self) { format in
                         Text(format.displayName).tag(format)
                     }
@@ -148,21 +148,21 @@ struct MenuBarSettingsView: View {
 
                 let isCustomFormat = localSettings.menuBarFormat == .custom
 
-                Toggle("24小时制", isOn: $localSettings.show24Hour)
+                Toggle("settings.menu_bar.24hour", isOn: $localSettings.show24Hour)
                     .disabled(isCustomFormat)
                     .foregroundColor(isCustomFormat ? .secondary : .primary)
                     .onChange(of: localSettings.show24Hour) { newValue in
                         settingsManager.updateShow24Hour(newValue)
                     }
 
-                Toggle("显示星期", isOn: $localSettings.showWeekday)
+                Toggle("settings.menu_bar.show_weekday", isOn: $localSettings.showWeekday)
                     .disabled(isCustomFormat)
                     .foregroundColor(isCustomFormat ? .secondary : .primary)
                     .onChange(of: localSettings.showWeekday) { newValue in
                         settingsManager.updateShowWeekday(newValue)
                     }
 
-                Toggle("显示秒", isOn: $localSettings.showSeconds)
+                Toggle("settings.menu_bar.show_seconds", isOn: $localSettings.showSeconds)
                     .disabled(isCustomFormat)
                     .foregroundColor(isCustomFormat ? .secondary : .primary)
                     .onChange(of: localSettings.showSeconds) { newValue in
@@ -174,8 +174,8 @@ struct MenuBarSettingsView: View {
             }
 
             // 日历交互
-            Section("日历交互") {
-                Toggle("启用悬浮展示", isOn: $localSettings.hoverToShowEnabled)
+            Section("settings.calendar.interaction") {
+                Toggle("settings.calendar.hover_enable", isOn: $localSettings.hoverToShowEnabled)
                     .onChange(of: localSettings.hoverToShowEnabled) { newValue in
                         settingsManager.updateHoverSettings(enabled: newValue, delay: localSettings.hoverDelay)
                     }
@@ -187,12 +187,12 @@ struct MenuBarSettingsView: View {
                             in: 0.1...2.0,
                             step: 0.1
                         ) {
-                            Text("延迟时间")
+                            Text("event.hover_delay")
                         }
                         .onChange(of: localSettings.hoverDelay) { newValue in
                             settingsManager.updateHoverSettings(enabled: localSettings.hoverToShowEnabled, delay: newValue)
                         }
-                        Text("延迟: \(String(format: "%.1f", localSettings.hoverDelay))秒")
+                        Text(String(format: NSLocalizedString("settings.calendar.hover_delay_seconds", comment: ""), localSettings.hoverDelay))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -232,7 +232,7 @@ struct CustomFormatEditor: View {
         VStack(alignment: .leading, spacing: 8) {
             if isEditing {
                 // 输入态
-                TextField("自定义格式", text: $customFormat)
+                TextField("settings.format.custom", text: $customFormat)
                     .textFieldStyle(.roundedBorder)
                     .focused($isFocused)
                     .onSubmit {
@@ -269,7 +269,7 @@ struct CustomFormatEditor: View {
                             .foregroundColor(.blue)
                     }
                     .buttonStyle(.plain)
-                    .help("编辑格式")
+                    .help("settings.format.edit_help")
                 }
             }
         }
@@ -281,27 +281,27 @@ struct CustomFormatEditor: View {
 struct FormatGuideView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("支持的格式符号：")
+            Text("event.format_symbols")
                 .font(.caption)
                 .fontWeight(.semibold)
                 .foregroundColor(.secondary)
 
-            FormatExampleView(symbol: "yyyy", description: "四位年份", example: "2025")
-            FormatExampleView(symbol: "yy", description: "两位年份", example: "25")
-            FormatExampleView(symbol: "M", description: "月份", example: "1, 12")
-            FormatExampleView(symbol: "MM", description: "月份（补零）", example: "01, 12")
-            FormatExampleView(symbol: "d", description: "日期", example: "1, 31")
-            FormatExampleView(symbol: "dd", description: "日期（补零）", example: "01, 31")
-            FormatExampleView(symbol: "E", description: "星期", example: "周一")
-            FormatExampleView(symbol: "w", description: "第几周", example: "1-53")
-            FormatExampleView(symbol: "W", description: "月中第几周", example: "1-5")
-            FormatExampleView(symbol: "HH", description: "24小时", example: "00-23")
-            FormatExampleView(symbol: "h", description: "12小时", example: "1-12")
-            FormatExampleView(symbol: "mm", description: "分钟", example: "00-59")
-            FormatExampleView(symbol: "ss", description: "秒", example: "00-59")
-            FormatExampleView(symbol: "a", description: "上午/下午", example: "AM, PM")
+            FormatExampleView(symbol: "yyyy", description: "settings.format.year_4digit", example: "2025")
+            FormatExampleView(symbol: "yy", description: "settings.format.year_2digit", example: "25")
+            FormatExampleView(symbol: "M", description: "settings.format.month", example: "1, 12")
+            FormatExampleView(symbol: "MM", description: "settings.format.month_padded", example: "01, 12")
+            FormatExampleView(symbol: "d", description: "settings.format.day", example: "1, 31")
+            FormatExampleView(symbol: "dd", description: "settings.format.day_padded", example: "01, 31")
+            FormatExampleView(symbol: "E", description: "settings.format.weekday", example: "周一")
+            FormatExampleView(symbol: "w", description: "settings.format.week_of_year", example: "1-53")
+            FormatExampleView(symbol: "W", description: "settings.format.week_of_month", example: "1-5")
+            FormatExampleView(symbol: "HH", description: "settings.format.hour_24", example: "00-23")
+            FormatExampleView(symbol: "h", description: "settings.format.hour_12", example: "1-12")
+            FormatExampleView(symbol: "mm", description: "settings.format.minute", example: "00-59")
+            FormatExampleView(symbol: "ss", description: "settings.format.second", example: "00-59")
+            FormatExampleView(symbol: "a", description: "settings.format.am_pm", example: "AM, PM")
 
-            Text("示例：M月d日 HH:mm → 1月15日 14:30")
+            Text("event.format_example")
                 .font(.caption)
                 .foregroundColor(.blue)
                 .padding(.top, 4)
@@ -329,7 +329,7 @@ struct FormatExampleView: View {
                 .foregroundColor(.secondary)
                 .frame(width: 80, alignment: .leading)
 
-            Text("→")
+            Text("common.arrow")
                 .font(.caption)
                 .foregroundColor(.secondary)
 
@@ -368,9 +368,9 @@ struct CalendarSettingsView: View {
     var body: some View {
         Form {
             // Section 1: 本地历法
-            Section("本地历法") {
-                Picker("历法类型", selection: $localSettings.secondaryCalendarType) {
-                    Text("不显示").tag(nil as CalendarType?)
+            Section("settings.calendar.secondary") {
+                Picker("settings.calendar.type_label", selection: $localSettings.secondaryCalendarType) {
+                    Text("settings.calendar.none").tag(nil as CalendarType?)
                     ForEach(CalendarType.allCases.filter { $0 != .gregorian }, id: \.self) { type in
                         Text(type.displayName).tag(type as CalendarType?)
                     }
@@ -379,7 +379,7 @@ struct CalendarSettingsView: View {
                     settingsManager.updateSecondaryCalendar(newValue)
                 }
 
-                Text("在公历日期下方显示本地历法")
+                Text("settings.calendar.description")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -389,19 +389,19 @@ struct CalendarSettingsView: View {
                 systemCalendarSyncContent
             } header: {
                 HStack {
-                    Text("系统同步")
+                    Text("settings.calendar.system_sync")
                     Spacer()
                     permissionStatusBadge
                 }
             }
 
             // Section 3: 外部订阅（包含按钮）
-            Section("外部订阅") {
+            Section("settings.calendar.external_subscriptions") {
                 externalSubscriptionContent
             }
 
             // Section 4: 本地管理
-            Section("本地管理") {
+            Section("settings.calendar.local_management") {
                 localEventGroupContent
             }
         }
@@ -462,8 +462,8 @@ struct CalendarSettingsView: View {
                 }
             )
         }
-        .alert("添加订阅失败", isPresented: $showingAddError) {
-            Button("确定", role: .cancel) {
+        .alert("subscription.add_failed", isPresented: $showingAddError) {
+            Button("common.ok", role: .cancel) {
                 showingAddError = false
             }
         } message: {
@@ -483,12 +483,12 @@ struct CalendarSettingsView: View {
                         .foregroundColor(.orange)
                         .font(.system(size: 14))
 
-                    Text("需要访问日历权限")
+                    Text("permission.calendar.required")
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.primary)
                 }
 
-                Text("授权后可同步 iCloud 和本地日历的事件")
+                Text("permission.calendar.description")
                     .font(.system(size: 12))
                     .foregroundColor(.secondary)
 
@@ -510,7 +510,7 @@ struct CalendarSettingsView: View {
                 }) {
                     HStack {
                         Image(systemName: permissionManager.authorizationStatus == .denied ? "gear" : "lock.open.fill")
-                        Text(permissionManager.authorizationStatus == .denied ? "打开系统设置" : "请求权限")
+                        Text(permissionManager.authorizationStatus == .denied ? "permission.calendar.open_settings" : "permission.calendar.request")
                     }
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.white)
@@ -522,7 +522,7 @@ struct CalendarSettingsView: View {
                 .buttonStyle(PlainButtonStyle())
 
                 if permissionManager.authorizationStatus == .denied {
-                    Text("提示:点击按钮将打开系统设置,在「隐私与安全性」>「日历」中授权")
+                    Text("permission.calendar.hint")
                         .font(.system(size: 11))
                         .foregroundColor(.orange)
                         .padding(.top, 4)
@@ -556,7 +556,7 @@ struct CalendarSettingsView: View {
                 }
 
                 if permissionManager.systemCalendars.isEmpty {
-                    Text("暂无可用的系统日历")
+                    Text("common.no_system_calendars")
                         .font(.system(size: 12))
                         .foregroundColor(.secondary)
                         .padding(.vertical, 8)
@@ -579,11 +579,11 @@ struct CalendarSettingsView: View {
                         .foregroundColor(.secondary)
 
                     VStack(spacing: 4) {
-                        Text("暂无外部订阅")
+                        Text("common.no_subscriptions")
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(.secondary)
 
-                        Text("点击下方「添加订阅」按钮开始")
+                        Text("subscription.click_to_add")
                             .font(.system(size: 11))
                             .foregroundColor(.secondary)
                     }
@@ -626,7 +626,7 @@ struct CalendarSettingsView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 13))
-                        Text("添加订阅")
+                        Text("subscription.add")
                     }
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.white)
@@ -636,7 +636,7 @@ struct CalendarSettingsView: View {
                     .cornerRadius(6)
                 }
                 .buttonStyle(PlainButtonStyle())
-                .help("添加新的外部日历订阅")
+                .help("subscription.add_help")
 
                 // 刷新全部按钮（仅在有订阅时显示）
                 if !subscriptionViewModel.subscriptions.isEmpty {
@@ -654,7 +654,7 @@ struct CalendarSettingsView: View {
                                 Image(systemName: "arrow.clockwise")
                                     .font(.system(size: 12))
                             }
-                            Text("刷新全部")
+                            Text("subscription.refresh_all")
                         }
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(.blue)
@@ -665,7 +665,7 @@ struct CalendarSettingsView: View {
                     }
                     .buttonStyle(PlainButtonStyle())
                     .disabled(subscriptionViewModel.isRefreshing)
-                    .help("刷新所有订阅的日历数据")
+                    .help("subscription.refresh_all_help")
                 }
 
                 Spacer()
@@ -717,7 +717,7 @@ struct CalendarSettingsView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 13))
-                        Text("添加类别")
+                        Text("local_group.add")
                     }
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.white)
@@ -727,7 +727,7 @@ struct CalendarSettingsView: View {
                     .cornerRadius(6)
                 }
                 .buttonStyle(PlainButtonStyle())
-                .help("添加新的本地事件类别")
+                .help("local_group.add_help")
 
                 Spacer()
             }
@@ -852,15 +852,15 @@ struct CalendarSettingsView: View {
     private var statusText: String {
         switch permissionManager.authorizationStatus {
         case .authorized:
-            return "已授权"
+            return "permission.status.authorized"
         case .denied:
-            return "已拒绝"
+            return "permission.status.denied"
         case .restricted:
-            return "受限"
+            return "permission.status.restricted"
         case .notDetermined:
-            return "未询问"
+            return "permission.status.not_determined"
         @unknown default:
-            return "未知"
+            return "permission.status.unknown"
         }
     }
 
@@ -891,16 +891,16 @@ struct AddLocalGroupSheetView: View {
     var body: some View {
         VStack(spacing: 20) {
             // 标题
-            Text("添加本地类别")
+            Text("local_group.add_title")
                 .font(.title2)
                 .fontWeight(.semibold)
 
             // 类别名称输入
             VStack(alignment: .leading, spacing: 8) {
-                Text("类别名称")
+                Text("local_group.name")
                     .font(.headline)
 
-                TextField("例如：工作、个人、提醒", text: $groupTitle)
+                TextField("local_group.placeholder", text: $groupTitle)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .focused($isTitleFieldFocused)
                     .onSubmit {
@@ -913,7 +913,7 @@ struct AddLocalGroupSheetView: View {
 
             // 颜色选择
             VStack(alignment: .leading, spacing: 8) {
-                Text("颜色")
+                Text("common.color")
                     .font(.headline)
 
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -942,14 +942,14 @@ struct AddLocalGroupSheetView: View {
 
             // 按钮
             HStack(spacing: 12) {
-                Button("取消") {
+                Button("common.cancel") {
                     onCancel()
                 }
                 .keyboardShortcut(.escape, modifiers: [])
 
                 Spacer()
 
-                Button("添加") {
+                Button("common.add") {
                     onAdd(groupTitle, selectedColor)
                 }
                 .disabled(groupTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
@@ -978,13 +978,13 @@ struct AddSubscriptionSheetView: View {
             // 主内容
             VStack(spacing: 20) {
                 // 标题
-                Text("添加外部订阅")
+                Text("subscription.add_title")
                     .font(.title2)
                     .fontWeight(.semibold)
 
                 // URL 输入
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("订阅 URL")
+                    Text("subscription.url")
                         .font(.headline)
 
                     TextField("https://calendar.example.com/calendar.ics", text: $urlString)
@@ -998,14 +998,14 @@ struct AddSubscriptionSheetView: View {
                             }
                         }
 
-                    Text("支持 http://、https:// 和 webcal:// 协议")
+                    Text("subscription.protocol_hint")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
 
                 // 按钮
                 HStack(spacing: 12) {
-                    Button("取消") {
+                    Button("common.cancel") {
                         onCancel()
                     }
                     .keyboardShortcut(.escape, modifiers: [])
@@ -1013,7 +1013,7 @@ struct AddSubscriptionSheetView: View {
 
                     Spacer()
 
-                    Button("添加") {
+                    Button("common.add") {
                         onAdd(urlString)
                     }
                     .disabled(urlString.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isProcessing)
@@ -1032,11 +1032,11 @@ struct AddSubscriptionSheetView: View {
                         .frame(width: 40, height: 40)
 
                     VStack(spacing: 4) {
-                        Text("正在添加订阅...")
+                        Text("subscription.adding")
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.primary)
 
-                        Text("正在验证并下载日历数据")
+                        Text("subscription.downloading")
                             .font(.system(size: 12))
                             .foregroundColor(.secondary)
                     }
@@ -1095,7 +1095,7 @@ struct GestureRow: View {
                 .foregroundColor(.primary)
                 .frame(width: 80, alignment: .leading)
 
-            Text("→")
+            Text("common.arrow")
                 .font(.caption)
                 .foregroundColor(.secondary)
 
@@ -1113,18 +1113,62 @@ struct GestureRow: View {
 struct AppearanceSettingsView: View {
     @ObservedObject var settingsManager: SettingsManager
     @ObservedObject private var themeManager = ThemeManager.shared
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     @State private var localSettings: UserSettings
     @State private var isSystemDarkMode: Bool = NSApp.effectiveAppearance.name == .darkAqua
+    @State private var selectedInterfaceLocale: SupportedLocale?
 
     init(settingsManager: SettingsManager) {
         self.settingsManager = settingsManager
         self._localSettings = State(initialValue: settingsManager.currentSettings)
+        self._selectedInterfaceLocale = State(initialValue: LocalizationManager.shared.context.interfaceLocale)
     }
 
     var body: some View {
         Form {
-            Section("面板大小") {
-                Picker("尺寸档位", selection: $localSettings.calendarSize) {
+            // 语言设置
+            Section("settings.language.section") {
+                Picker("settings.language.interface", selection: $selectedInterfaceLocale) {
+                    // 自动选项（nil 值）
+                    Text("settings.language.auto").tag(nil as SupportedLocale?)
+
+                    Divider()
+
+                    // 手动选择的语言
+                    ForEach(SupportedLocale.allCases, id: \.self) { locale in
+                        Text(locale.displayName).tag(locale as SupportedLocale?)
+                    }
+                }
+                .onChange(of: selectedInterfaceLocale) { newValue in
+                    let newContext = LocalizationContext(
+                        interfaceLocale: newValue,
+                        calendarLocale: localizationManager.context.calendarLocale
+                    )
+                    localizationManager.updateContext(newContext)
+
+                    // 重启应用以应用语言更改
+                    AppRestarter.restartUsingWorkspace()
+                }
+
+                // 显示当前实际使用的语言（仅在自动模式下）
+                if selectedInterfaceLocale == nil {
+                    HStack {
+                        Text("settings.language.current")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text(localizationManager.context.effectiveInterfaceLocale.displayName)
+                            .font(.caption)
+                            .foregroundColor(.blue)
+                    }
+                }
+
+                Text("settings.language.description")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Section("settings.appearance.panel_size") {
+                Picker("settings.appearance.size_level", selection: $localSettings.calendarSize) {
                     ForEach(CalendarSize.allCases, id: \.self) { size in
                         HStack {
                             Text(size.displayName)
@@ -1146,7 +1190,7 @@ struct AppearanceSettingsView: View {
                 // 尺寸预览说明
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        Text("当前尺寸：")
+                        Text("settings.appearance.current_size")
                             .font(.caption)
                             .foregroundColor(.secondary)
                         Text(localSettings.calendarSize.sizeDescription)
@@ -1154,17 +1198,17 @@ struct AppearanceSettingsView: View {
                             .foregroundColor(.blue)
                     }
 
-                    Text("单元格大小：\(Int(localSettings.calendarSize.cellSize)) × \(Int(localSettings.calendarSize.cellSize))")
+                    Text(String(format: NSLocalizedString("settings.appearance.cell_size", comment: ""), Int(localSettings.calendarSize.cellSize), Int(localSettings.calendarSize.cellSize)))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
             }
 
             // 不透明度设置
-            Section("浮窗透明度") {
+            Section("settings.appearance.opacity") {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("不透明度")
+                        Text("settings.appearance.opacity_label")
                             .font(.body)
                         Spacer()
                         Text("\(Int(localSettings.calendarOpacity * 100))%")
@@ -1192,11 +1236,11 @@ struct AppearanceSettingsView: View {
                     )
 
                     HStack {
-                        Text("更透明")
+                        Text("settings.appearance.more_transparent")
                             .font(.caption)
                             .foregroundColor(.secondary)
                         Spacer()
-                        Text("更不透明")
+                        Text("settings.appearance.more_opaque")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -1205,7 +1249,7 @@ struct AppearanceSettingsView: View {
             }
 
             // 主题选择（统一控制）
-            Section("主题") {
+            Section("settings.appearance.theme") {
                 VStack(alignment: .leading, spacing: 12) {
                     // 主题模式选择和重置按钮
                     HStack(spacing: 8) {
@@ -1230,12 +1274,12 @@ struct AppearanceSettingsView: View {
                         Spacer()
 
                         Button(action: resetToDefault) {
-                            Label("重置", systemImage: "arrow.counterclockwise")
+                            Label("settings.appearance.reset", systemImage: "arrow.counterclockwise")
                                 .font(.caption)
                         }
                         .buttonStyle(.borderless)
                         .foregroundColor(.blue)
-                        .help("重置为默认主题（自动模式 + 经典蓝/午夜蓝）")
+                        .help(NSLocalizedString("settings.reset_theme", comment: ""))
                     }
 
                     // 根据模式显示对应的主题选择
@@ -1278,7 +1322,7 @@ struct AppearanceSettingsView: View {
                         }
 
                         // 自动模式提示
-                        Text("💡 系统外观变化时，将自动切换到对应模式下您选择的主题")
+                        Text("settings.theme_auto_switch")
                             .font(.caption)
                             .foregroundColor(.blue)
                             .padding(.top, 4)
@@ -1286,23 +1330,23 @@ struct AppearanceSettingsView: View {
                 }
             }
 
-            Section("快捷键与手势") {
+            Section("settings.shortcuts.section") {
                 VStack(alignment: .leading, spacing: 8) {
                     // 日期切换（箭头键）
                     Group {
-                        Text("箭头键切换")
+                        Text("settings.shortcuts.arrow_keys")
                             .font(.caption)
                             .fontWeight(.semibold)
                             .foregroundColor(.primary)
 
                         HStack(spacing: 20) {
                             VStack(alignment: .leading, spacing: 2) {
-                                ShortcutRow(key: "←", description: "上个月")
-                                ShortcutRow(key: "↑", description: "下一年")
+                                ShortcutRow(key: "←", description: "settings.shortcuts.prev_month")
+                                ShortcutRow(key: "↑", description: "settings.shortcuts.next_year")
                             }
                             VStack(alignment: .leading, spacing: 2) {
-                                ShortcutRow(key: "→", description: "下个月")
-                                ShortcutRow(key: "↓", description: "上一年")
+                                ShortcutRow(key: "→", description: "settings.shortcuts.next_month")
+                                ShortcutRow(key: "↓", description: "settings.shortcuts.prev_year")
                             }
                         }
                     }
@@ -1312,19 +1356,19 @@ struct AppearanceSettingsView: View {
 
                     // WASD键切换
                     Group {
-                        Text("WASD键切换")
+                        Text("settings.shortcuts.wasd_keys")
                             .font(.caption)
                             .fontWeight(.semibold)
                             .foregroundColor(.primary)
 
                         HStack(spacing: 20) {
                             VStack(alignment: .leading, spacing: 2) {
-                                ShortcutRow(key: "A", description: "上个月")
-                                ShortcutRow(key: "W", description: "下一年")
+                                ShortcutRow(key: "A", description: "settings.shortcuts.prev_month")
+                                ShortcutRow(key: "W", description: "settings.shortcuts.next_year")
                             }
                             VStack(alignment: .leading, spacing: 2) {
-                                ShortcutRow(key: "D", description: "下个月")
-                                ShortcutRow(key: "S", description: "上一年")
+                                ShortcutRow(key: "D", description: "settings.shortcuts.next_month")
+                                ShortcutRow(key: "S", description: "settings.shortcuts.prev_year")
                             }
                         }
                     }
@@ -1334,14 +1378,14 @@ struct AppearanceSettingsView: View {
 
                     // 缩放调整
                     Group {
-                        Text("缩放调整")
+                        Text("settings.shortcuts.zoom")
                             .font(.caption)
                             .fontWeight(.semibold)
                             .foregroundColor(.primary)
 
                         HStack(spacing: 20) {
-                            ShortcutRow(key: "⌘-", description: "缩小")
-                            ShortcutRow(key: "⌘+", description: "放大")
+                            ShortcutRow(key: "⌘-", description: "settings.shortcuts.zoom_out")
+                            ShortcutRow(key: "⌘+", description: "settings.shortcuts.zoom_in")
                         }
                     }
 
@@ -1350,28 +1394,28 @@ struct AppearanceSettingsView: View {
 
                     // 触摸板手势
                     Group {
-                        Text("触摸板手势")
+                        Text("settings.shortcuts.trackpad")
                             .font(.caption)
                             .fontWeight(.semibold)
                             .foregroundColor(.primary)
 
                         VStack(alignment: .leading, spacing: 2) {
-                            GestureRow(gesture: "左滑", description: "下个月")
-                            GestureRow(gesture: "右滑", description: "上个月")
-                            GestureRow(gesture: "上滑", description: "下一年")
-                            GestureRow(gesture: "下滑", description: "上一年")
+                            GestureRow(gesture: "settings.gestures.swipe_left", description: "settings.shortcuts.next_month")
+                            GestureRow(gesture: "settings.gestures.swipe_right", description: "settings.shortcuts.prev_month")
+                            GestureRow(gesture: "settings.gestures.swipe_up", description: "settings.shortcuts.next_year")
+                            GestureRow(gesture: "settings.gestures.swipe_down", description: "settings.shortcuts.prev_year")
                         }
                     }
                 }
                 .padding(.vertical, 2)
             }
 
-            Section("说明") {
-                Text("调整面板大小可以获得更好的视觉体验")
+            Section("settings.notes.section") {
+                Text("settings.notes.panel_size")
                     .font(.caption)
                     .foregroundColor(.secondary)
 
-                Text("日历弹窗使用 macOS Glass 效果")
+                Text("settings.notes.glass_effect")
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.top, 4)
@@ -1462,7 +1506,7 @@ struct ThemeCard: View {
                             .frame(width: 80, height: 32)
 
                         HStack(spacing: 4) {
-                            Text("今日")
+                            Text("calendar.today")
                                 .font(.system(size: 11, weight: .medium))
                             Text("13")
                                 .font(.system(size: 14, weight: .semibold))
@@ -1472,8 +1516,8 @@ struct ThemeCard: View {
 
                     // 底部：星期文字
                     HStack(spacing: 6) {
-                        ForEach(["日", "一", "二", "三", "四"], id: \.self) { day in
-                            Text(day)
+                        ForEach(["sun", "mon", "tue", "wed", "thu"], id: \.self) { dayKey in
+                            Text("weekday.\(dayKey)")
                                 .font(.system(size: 9))
                                 .foregroundColor(Color(hex: theme.colors.textSecondary))
                         }
@@ -1496,7 +1540,7 @@ struct ThemeCard: View {
 
             // 主题名称（带选中标记）
             HStack(spacing: 4) {
-                Text(theme.displayName)
+                Text(theme.localizedDisplayName)
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.primary)
                     .lineLimit(1)

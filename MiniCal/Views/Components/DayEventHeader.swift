@@ -29,7 +29,7 @@ struct DayEventHeader: View {
                         .font(.system(size: calendarSize.eventListTitleFontSize, weight: .medium))
                         .foregroundColor(themeColors.secondaryTextColor)
 
-                    Text("·")
+                    Text("common.dot")
                         .font(.system(size: calendarSize.eventListTitleFontSize))
                         .foregroundColor(themeColors.secondaryTextColor.opacity(0.5))
 
@@ -41,7 +41,7 @@ struct DayEventHeader: View {
                 Spacer()
 
                 // 右侧：周数信息
-                Text("第 \(weekOfYear) 周")
+                Text(String(format: NSLocalizedString("date.week_number", comment: ""), weekOfYear))
                     .font(.system(size: calendarSize.eventListSubtitleFontSize))
                     .foregroundColor(themeColors.secondaryTextColor.opacity(0.7))
             }
@@ -58,14 +58,17 @@ struct DayEventHeader: View {
 
     private var formattedDate: String {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "zh_CN")
-        formatter.dateFormat = "M月d日"
+        let localeId = LocalizationManager.shared.context.effectiveInterfaceLocale.rawValue
+        formatter.locale = Locale(identifier: localeId)
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
         return formatter.string(from: date)
     }
 
     private var weekdayText: String {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "zh_CN")
+        let localeId = LocalizationManager.shared.context.effectiveInterfaceLocale.rawValue
+        formatter.locale = Locale(identifier: localeId)
         formatter.dateFormat = "EEEE"
         return formatter.string(from: date)
     }
@@ -73,14 +76,15 @@ struct DayEventHeader: View {
     private var relativeTimeText: String {
         let calendar = Calendar.current
         if calendar.isDateInToday(date) {
-            return "今天"
+            return NSLocalizedString("date.today", comment: "")
         } else if calendar.isDateInTomorrow(date) {
-            return "明天"
+            return NSLocalizedString("date.tomorrow", comment: "")
         } else if calendar.isDateInYesterday(date) {
-            return "昨天"
+            return NSLocalizedString("date.yesterday", comment: "")
         } else {
             let formatter = RelativeDateTimeFormatter()
-            formatter.locale = Locale(identifier: "zh_CN")
+            let localeId = LocalizationManager.shared.context.effectiveInterfaceLocale.rawValue
+            formatter.locale = Locale(identifier: localeId)
             formatter.unitsStyle = .full
             return formatter.localizedString(for: date, relativeTo: Date())
         }
@@ -130,7 +134,7 @@ struct DayEventHeader: View {
                 HStack(spacing: 3) {
                     Image(systemName: "location.slash")
                         .font(.system(size: calendarSize.eventListSubtitleFontSize - 1))
-                    Text("启用位置，显示日出日落信息")
+                    Text("location.enable_for_sunset")
                         .font(.system(size: calendarSize.eventListSubtitleFontSize - 1))
                 }
                 .foregroundColor(.blue)
@@ -163,7 +167,7 @@ struct DayEventHeader: View {
             HStack(spacing: 3) {
                 Image(systemName: "location.circle")
                     .font(.system(size: calendarSize.eventListSubtitleFontSize - 1))
-                Text("获取位置中...")
+                Text("location.fetching")
                     .font(.system(size: calendarSize.eventListSubtitleFontSize - 1))
             }
             .foregroundColor(themeColors.secondaryTextColor)

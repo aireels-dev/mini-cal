@@ -152,7 +152,7 @@ struct ExternalSubscriptionCompactRow: View {
         VStack(spacing: 8) {
             // 第一行：标题编辑
             HStack(spacing: 8) {
-                Text("名称")
+                Text("common.name")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(themeColors.secondaryTextColor)
                     .frame(width: 40, alignment: .leading)
@@ -165,7 +165,7 @@ struct ExternalSubscriptionCompactRow: View {
 
             // 第二行：URL 显示（只读）
             HStack(spacing: 8) {
-                Text("URL")
+                Text("misc.url")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(themeColors.secondaryTextColor)
                     .frame(width: 40, alignment: .leading)
@@ -180,7 +180,7 @@ struct ExternalSubscriptionCompactRow: View {
 
             // 第三行：颜色选择
             HStack(spacing: 8) {
-                Text("颜色")
+                Text("common.color")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(themeColors.secondaryTextColor)
                     .frame(width: 40, alignment: .leading)
@@ -314,7 +314,7 @@ struct ExternalSubscriptionCompactRow: View {
         VStack(spacing: 8) {
             // 颜色选择
             HStack(spacing: 8) {
-                Text("颜色")
+                Text("common.color")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(themeColors.secondaryTextColor)
                     .frame(width: 40, alignment: .leading)

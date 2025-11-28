@@ -30,7 +30,7 @@ struct CalendarEventView: View {
                 .font(.system(size: 40))
                 .foregroundColor(.secondary)
 
-            Text("暂无事件")
+            Text("calendar.no_events")
                 .font(.headline)
                 .foregroundColor(.secondary)
 
@@ -48,7 +48,7 @@ struct CalendarEventView: View {
     // MARK: - Event List Header
     private var eventListHeader: some View {
         HStack {
-            Text("今日事件")
+            Text("calendar.today_events")
                 .font(.headline)
                 .fontWeight(.semibold)
 
@@ -135,7 +135,7 @@ struct EventRowView: View {
             // Event time indicator
             VStack(alignment: .trailing, spacing: 4) {
                 if event.isAllDay {
-                    Text("全天")
+                    Text("event.all_day")
                         .font(.caption2)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
@@ -199,7 +199,7 @@ struct EventRowView: View {
     private var eventBadges: some View {
         HStack(spacing: 4) {
             if event.isMultiDay {
-                Text("多日")
+                Text("event.multi_day")
                     .font(.caption2)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
@@ -255,7 +255,7 @@ struct EventDetailModalView: View {
 
                     // Event time
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("时间")
+                        Text("event.time")
                             .font(.headline)
                         .foregroundColor(.primary)
 
@@ -267,7 +267,7 @@ struct EventDetailModalView: View {
                     // Event location
                     if let location = event.location {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("地点")
+                            Text("event.location")
                             .font(.headline)
                             .foregroundColor(.primary)
 
@@ -280,7 +280,7 @@ struct EventDetailModalView: View {
                     // Event notes
                     if let notes = event.notes {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("备注")
+                            Text("common.note")
                             .font(.headline)
                             .foregroundColor(.primary)
 
@@ -293,7 +293,7 @@ struct EventDetailModalView: View {
                     // Event attendees
                     if let attendees = event.attendees, !attendees.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("参与者")
+                            Text("event.attendees")
                             .font(.headline)
                             .foregroundColor(.primary)
 

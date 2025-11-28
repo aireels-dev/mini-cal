@@ -75,6 +75,7 @@ struct CalendarView: View {
             }
         }
         .frame(width: calendarSize.width, height: calendarSize.height)
+        .applyLocalizationContext()  // 应用本地化上下文（包括 RTL 布局）
         .popover(isPresented: $showEventDetail, arrowEdge: .bottom) {
             if let selectedDate = selectedDateForDetail {
                 DayEventListView(

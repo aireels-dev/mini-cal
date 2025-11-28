@@ -1,0 +1,81 @@
+{
+  "festivals": {
+    "spring_festival": {
+      "id": "spring_festival",
+      "name": "春節",
+      "month": 1,
+      "day": 1,
+      "importance": "major"
+    },
+    "lantern_festival": {
+      "id": "lantern_festival",
+      "name": "元宵節",
+      "month": 1,
+      "day": 15,
+      "importance": "major"
+    },
+    "dragon_head": {
+      "id": "dragon_head",
+      "name": "龍抬頭",
+      "month": 2,
+      "day": 2,
+      "importance": "minor"
+    },
+    "qingming": {
+      "id": "qingming",
+      "name": "清明節",
+      "month": 3,
+      "day": 5,
+      "importance": "major"
+    },
+    "dragon_boat": {
+      "id": "dragon_boat",
+      "name": "端午節",
+      "month": 5,
+      "day": 5,
+      "importance": "major"
+    },
+    "qixi": {
+      "id": "qixi",
+      "name": "七夕節",
+      "month": 7,
+      "day": 7,
+      "importance": "minor"
+    },
+    "mid_autumn": {
+      "id": "mid_autumn",
+      "name": "中秋節",
+      "month": 8,
+      "day": 15,
+      "importance": "major"
+    },
+    "double_ninth": {
+      "id": "double_ninth",
+      "name": "重陽節",
+      "month": 9,
+      "day": 9,
+      "importance": "minor"
+    },
+    "laba": {
+      "id": "laba",
+      "name": "臘八節",
+      "month": 12,
+      "day": 8,
+      "importance": "minor"
+    },
+    "little_new_year": {
+      "id": "little_new_year",
+      "name": "小年",
+      "month": 12,
+      "day": 23,
+      "importance": "minor"
+    },
+    "new_years_eve": {
+      "id": "new_years_eve",
+      "name": "除夕",
+      "month": 12,
+      "day": 30,
+      "importance": "major"
+    }
+  }
+}

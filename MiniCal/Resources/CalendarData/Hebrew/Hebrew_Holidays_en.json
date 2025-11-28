@@ -1,0 +1,81 @@
+{
+  "festivals": {
+    "rosh_hashanah": {
+      "id": "rosh_hashanah",
+      "name": "Rosh Hashanah",
+      "month": 7,
+      "day": 1,
+      "importance": "major"
+    },
+    "yom_kippur": {
+      "id": "yom_kippur",
+      "name": "Yom Kippur",
+      "month": 7,
+      "day": 10,
+      "importance": "major"
+    },
+    "sukkot": {
+      "id": "sukkot",
+      "name": "Sukkot",
+      "month": 7,
+      "day": 15,
+      "importance": "major"
+    },
+    "simchat_torah": {
+      "id": "simchat_torah",
+      "name": "Simchat Torah",
+      "month": 7,
+      "day": 23,
+      "importance": "major"
+    },
+    "hanukkah": {
+      "id": "hanukkah",
+      "name": "Hanukkah",
+      "month": 9,
+      "day": 25,
+      "importance": "major"
+    },
+    "tu_bishvat": {
+      "id": "tu_bishvat",
+      "name": "Tu BiShvat",
+      "month": 11,
+      "day": 15,
+      "importance": "minor"
+    },
+    "purim": {
+      "id": "purim",
+      "name": "Purim",
+      "month": 12,
+      "day": 14,
+      "importance": "major"
+    },
+    "pesach": {
+      "id": "pesach",
+      "name": "Passover",
+      "month": 1,
+      "day": 15,
+      "importance": "major"
+    },
+    "lag_baomer": {
+      "id": "lag_baomer",
+      "name": "Lag BaOmer",
+      "month": 2,
+      "day": 18,
+      "importance": "minor"
+    },
+    "shavuot": {
+      "id": "shavuot",
+      "name": "Shavuot",
+      "month": 3,
+      "day": 6,
+      "importance": "major"
+    },
+    "tisha_bav": {
+      "id": "tisha_bav",
+      "name": "Tisha B'Av",
+      "month": 5,
+      "day": 9,
+      "importance": "major"
+    }
+  }
+}

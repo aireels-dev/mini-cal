@@ -18,6 +18,10 @@ struct SyncStatus: Codable, Hashable {
         case failed = "failed"
         case disabled = "disabled"
         case rateLimited = "rateLimited"
+
+        var displayName: String {
+            return NSLocalizedString("sync_status.\(rawValue)", comment: "")
+        }
     }
 
     init() {

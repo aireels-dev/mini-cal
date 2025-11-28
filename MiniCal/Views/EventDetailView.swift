@@ -56,7 +56,7 @@ struct EventDetailView: View {
                 VStack(spacing: 12) {
                     ProgressView()
                         .scaleEffect(0.8)
-                    Text("加载事件中...")
+                    Text("event.loading")
                         .font(.system(size: 14))
                         .foregroundColor(themeColors.secondaryTextColor)
                 }
@@ -66,7 +66,7 @@ struct EventDetailView: View {
                     Image(systemName: "exclamationmark.triangle")
                         .foregroundColor(.orange)
                         .font(.system(size: 20))
-                    Text("加载失败")
+                    Text("event.load_failed")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(themeColors.textColor)
                     Text(error.localizedDescription)
@@ -232,7 +232,7 @@ struct EventCreationView: View {
         NavigationView {
             VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("事件标题")
+                    Text("event.title")
                         .font(.headline)
                     TextField("输入事件标题", text: $eventTitle)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -244,7 +244,7 @@ struct EventCreationView: View {
                     if !isAllDay {
                         HStack {
                             VStack(alignment: .leading) {
-                                Text("开始时间")
+                                Text("event.start_time")
                                     .font(.caption)
                                 DatePicker("", selection: $startTime, displayedComponents: .hourAndMinute)
                             }
@@ -252,7 +252,7 @@ struct EventCreationView: View {
                             Spacer()
 
                             VStack(alignment: .leading) {
-                                Text("结束时间")
+                                Text("event.end_time")
                                     .font(.caption)
                                 DatePicker("", selection: $endTime, displayedComponents: .hourAndMinute)
                             }
@@ -261,7 +261,7 @@ struct EventCreationView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("备注")
+                    Text("common.note")
                         .font(.headline)
                     TextField("输入备注（可选）", text: $eventNotes, axis: .vertical)
                         .textFieldStyle(RoundedBorderTextFieldStyle())

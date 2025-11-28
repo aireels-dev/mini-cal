@@ -155,8 +155,9 @@ class CalendarService {
     /// 获取月份和年份的显示文本
     func monthYearText(for date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "zh_CN")
-        formatter.dateFormat = "yyyy年M月"
+        let localeId = LocalizationManager.shared.context.effectiveInterfaceLocale.rawValue
+        formatter.locale = Locale(identifier: localeId)
+        formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "yyyyMMMM", options: 0, locale: Locale(identifier: localeId))
         return formatter.string(from: date)
     }
 }

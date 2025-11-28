@@ -124,11 +124,11 @@ struct DayEventListView: View {
                 .foregroundColor(themeColors.secondaryTextColor.opacity(0.5))
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("这天没有事件")
+                Text("calendar.no_events_today")
                     .font(.system(size: calendarSize.eventListTitleFontSize, weight: .medium))
                     .foregroundColor(themeColors.textColor)
 
-                Text("享受轻松的一天")
+                Text("calendar.enjoy_day")
                     .font(.system(size: calendarSize.eventListSubtitleFontSize))
                     .foregroundColor(themeColors.secondaryTextColor)
             }
@@ -147,7 +147,7 @@ struct DayEventListView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "xmark.circle")
                             .font(.system(size: calendarSize.eventListButtonFontSize))
-                        Text("取消")
+                        Text("common.cancel")
                             .font(.system(size: calendarSize.eventListButtonFontSize, weight: .medium))
                     }
                     .foregroundColor(themeColors.secondaryTextColor)
@@ -163,7 +163,7 @@ struct DayEventListView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: calendarSize.eventListButtonFontSize))
-                        Text("保存")
+                        Text("event.save")
                             .font(.system(size: calendarSize.eventListButtonFontSize, weight: .semibold))
                     }
                     .foregroundColor(.white)
@@ -181,7 +181,7 @@ struct DayEventListView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: calendarSize.eventListButtonFontSize))
-                        Text("添加事件")
+                        Text("event.add")
                             .font(.system(size: calendarSize.eventListButtonFontSize, weight: .medium))
                     }
                     .foregroundColor(.white)
@@ -197,7 +197,7 @@ struct DayEventListView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "calendar.badge.plus")
                             .font(.system(size: calendarSize.eventListButtonFontSize))
-                        Text("管理订阅")
+                        Text("event.manage_subscription")
                             .font(.system(size: calendarSize.eventListButtonFontSize, weight: .medium))
                     }
                     .foregroundColor(themeColors.accentColor)
@@ -212,7 +212,7 @@ struct DayEventListView: View {
                 Spacer()
 
                 // 事件统计
-                Text("\(events.count) 个事件")
+                Text(String(format: NSLocalizedString("event.count", comment: ""), events.count))
                     .font(.system(size: calendarSize.eventListSubtitleFontSize))
                     .foregroundColor(themeColors.secondaryTextColor)
             }
@@ -229,11 +229,11 @@ struct DayEventListView: View {
             VStack(spacing: 14) {
                 // 标题输入
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("标题")
+                    Text("event.title_label")
                         .font(.system(size: calendarSize.eventListSubtitleFontSize, weight: .medium))
                         .foregroundColor(themeColors.secondaryTextColor)
 
-                    TextField("事件标题", text: $newEventTitle)
+                    TextField("event.title_placeholder", text: $newEventTitle)
                         .textFieldStyle(PlainTextFieldStyle())
                         .font(.system(size: calendarSize.eventListTitleFontSize))
                         .padding(8)
@@ -247,7 +247,7 @@ struct DayEventListView: View {
 
                 // 全天开关
                 Toggle(isOn: $isAllDay) {
-                    Text("全天")
+                    Text("event.all_day")
                         .font(.system(size: calendarSize.eventListTitleFontSize))
                         .foregroundColor(themeColors.textColor)
                 }
@@ -256,7 +256,7 @@ struct DayEventListView: View {
                 // 时间选择
                 VStack(spacing: 8) {
                     HStack {
-                        Text("开始")
+                        Text("event.start")
                             .font(.system(size: calendarSize.eventListSubtitleFontSize, weight: .medium))
                             .foregroundColor(themeColors.secondaryTextColor)
                             .frame(width: 45, alignment: .leading)
@@ -267,7 +267,7 @@ struct DayEventListView: View {
                     }
 
                     HStack {
-                        Text("结束")
+                        Text("event.end")
                             .font(.system(size: calendarSize.eventListSubtitleFontSize, weight: .medium))
                             .foregroundColor(themeColors.secondaryTextColor)
                             .frame(width: 45, alignment: .leading)
@@ -278,7 +278,7 @@ struct DayEventListView: View {
                     }
 
                     if newEventEndDate <= newEventStartDate {
-                        Text("结束时间必须晚于开始时间")
+                        Text("event.end_after_start")
                             .font(.system(size: calendarSize.eventListSubtitleFontSize - 1))
                             .foregroundColor(.red)
                     }
@@ -286,11 +286,11 @@ struct DayEventListView: View {
 
                 // 位置输入（可选）
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("位置（可选）")
+                    Text("event.location_optional")
                         .font(.system(size: calendarSize.eventListSubtitleFontSize, weight: .medium))
                         .foregroundColor(themeColors.secondaryTextColor)
 
-                    TextField("添加位置", text: $newEventLocation)
+                    TextField("event.add_location", text: $newEventLocation)
                         .textFieldStyle(PlainTextFieldStyle())
                         .font(.system(size: calendarSize.eventListTitleFontSize))
                         .padding(8)
@@ -300,7 +300,7 @@ struct DayEventListView: View {
 
                 // 备注输入（可选）
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("备注（可选）")
+                    Text("event.notes_optional")
                         .font(.system(size: calendarSize.eventListSubtitleFontSize, weight: .medium))
                         .foregroundColor(themeColors.secondaryTextColor)
 

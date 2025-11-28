@@ -231,7 +231,19 @@ class CalendarViewModel: ObservableObject {
     // MARK: - Week Headers
 
     func weekdayHeaders() -> [String] {
-        return ["周日", "周一", "周二", "周三", "周四", "周五", "周六"]
+        // 使用系统本地化的星期简称
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: LocalizationManager.shared.context.effectiveInterfaceLocale.rawValue)
+
+        // 获取短星期名称（如：Sun, Mon...）
+        let shortWeekdays = formatter.shortWeekdaySymbols ?? []
+
+        // 如果是中文环境，使用更短的格式（周日、周一...）
+        if LocalizationManager.shared.context.effectiveInterfaceLocale.rawValue.hasPrefix("zh") {
+            return formatter.veryShortWeekdaySymbols ?? shortWeekdays
+        }
+
+        return shortWeekdays
     }
 
     // MARK: - Event Management

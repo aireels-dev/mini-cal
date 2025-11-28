@@ -45,7 +45,7 @@ struct DayEventRow: View {
                         }
 
                         // 分隔符
-                        Text("·")
+                        Text("common.dot")
                             .font(.system(size: calendarSize.eventListSubtitleFontSize - 1))
                             .foregroundColor(themeColors.secondaryTextColor.opacity(0.5))
 

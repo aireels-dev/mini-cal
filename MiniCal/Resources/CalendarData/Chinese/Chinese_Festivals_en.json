@@ -1,0 +1,81 @@
+{
+  "festivals": {
+    "spring_festival": {
+      "id": "spring_festival",
+      "name": "Spring Festival",
+      "month": 1,
+      "day": 1,
+      "importance": "major"
+    },
+    "lantern_festival": {
+      "id": "lantern_festival",
+      "name": "Lantern Festival",
+      "month": 1,
+      "day": 15,
+      "importance": "major"
+    },
+    "dragon_head": {
+      "id": "dragon_head",
+      "name": "Dragon Head Festival",
+      "month": 2,
+      "day": 2,
+      "importance": "minor"
+    },
+    "qingming": {
+      "id": "qingming",
+      "name": "Qingming Festival",
+      "month": 3,
+      "day": 5,
+      "importance": "major"
+    },
+    "dragon_boat": {
+      "id": "dragon_boat",
+      "name": "Dragon Boat Festival",
+      "month": 5,
+      "day": 5,
+      "importance": "major"
+    },
+    "qixi": {
+      "id": "qixi",
+      "name": "Qixi Festival",
+      "month": 7,
+      "day": 7,
+      "importance": "minor"
+    },
+    "mid_autumn": {
+      "id": "mid_autumn",
+      "name": "Mid-Autumn Festival",
+      "month": 8,
+      "day": 15,
+      "importance": "major"
+    },
+    "double_ninth": {
+      "id": "double_ninth",
+      "name": "Double Ninth Festival",
+      "month": 9,
+      "day": 9,
+      "importance": "minor"
+    },
+    "laba": {
+      "id": "laba",
+      "name": "Laba Festival",
+      "month": 12,
+      "day": 8,
+      "importance": "minor"
+    },
+    "little_new_year": {
+      "id": "little_new_year",
+      "name": "Little New Year",
+      "month": 12,
+      "day": 23,
+      "importance": "minor"
+    },
+    "new_years_eve": {
+      "id": "new_years_eve",
+      "name": "New Year's Eve",
+      "month": 12,
+      "day": 30,
+      "importance": "major"
+    }
+  }
+}

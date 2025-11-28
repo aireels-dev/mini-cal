@@ -1,0 +1,60 @@
+{
+  "festivals": {
+    "ramadan_start": {
+      "id": "ramadan_start",
+      "name": "Start of Ramadan",
+      "month": 9,
+      "day": 1,
+      "importance": "major"
+    },
+    "laylat_al_qadr": {
+      "id": "laylat_al_qadr",
+      "name": "Laylat al-Qadr",
+      "month": 9,
+      "day": 27,
+      "importance": "major"
+    },
+    "eid_al_fitr": {
+      "id": "eid_al_fitr",
+      "name": "Eid al-Fitr",
+      "month": 10,
+      "day": 1,
+      "importance": "major"
+    },
+    "arafat_day": {
+      "id": "arafat_day",
+      "name": "Day of Arafat",
+      "month": 12,
+      "day": 9,
+      "importance": "major"
+    },
+    "eid_al_adha": {
+      "id": "eid_al_adha",
+      "name": "Eid al-Adha",
+      "month": 12,
+      "day": 10,
+      "importance": "major"
+    },
+    "islamic_new_year": {
+      "id": "islamic_new_year",
+      "name": "Islamic New Year",
+      "month": 1,
+      "day": 1,
+      "importance": "major"
+    },
+    "ashura": {
+      "id": "ashura",
+      "name": "Day of Ashura",
+      "month": 1,
+      "day": 10,
+      "importance": "major"
+    },
+    "mawlid": {
+      "id": "mawlid",
+      "name": "Mawlid al-Nabi",
+      "month": 3,
+      "day": 12,
+      "importance": "major"
+    }
+  }
+}

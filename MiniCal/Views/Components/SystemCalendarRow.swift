@@ -114,7 +114,7 @@ struct SystemCalendarRow: View {
         VStack(spacing: 8) {
             // 颜色选择
             HStack(spacing: 8) {
-                Text("颜色")
+                Text("common.color")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(themeColors.secondaryTextColor)
                     .frame(width: 40, alignment: .leading)

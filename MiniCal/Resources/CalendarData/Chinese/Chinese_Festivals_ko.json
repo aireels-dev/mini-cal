@@ -1,0 +1,39 @@
+{
+  "festivals": {
+    "spring_festival": {
+      "id": "spring_festival",
+      "name": "설날",
+      "month": 1,
+      "day": 1,
+      "importance": "major"
+    },
+    "lantern_festival": {
+      "id": "lantern_festival",
+      "name": "대보름",
+      "month": 1,
+      "day": 15,
+      "importance": "major"
+    },
+    "dragon_boat": {
+      "id": "dragon_boat",
+      "name": "단오",
+      "month": 5,
+      "day": 5,
+      "importance": "major"
+    },
+    "mid_autumn": {
+      "id": "mid_autumn",
+      "name": "추석",
+      "month": 8,
+      "day": 15,
+      "importance": "major"
+    },
+    "new_years_eve": {
+      "id": "new_years_eve",
+      "name": "섣달그믐",
+      "month": 12,
+      "day": 30,
+      "importance": "major"
+    }
+  }
+}
