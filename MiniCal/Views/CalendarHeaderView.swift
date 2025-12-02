@@ -67,16 +67,12 @@ struct CalendarHeaderView: View {
                             viewModel.goToToday()
                         }
                     }) {
-                        // 可选的 icon 方案：
-                        // 方案1: "calendar.badge.clock" - 带时钟的日历（推荐）
-                        // 方案2: "clock.arrow.circlepath" - 时钟回退
-                        // 方案3: "arrow.counterclockwise.circle.fill" - 圆形逆时针
-                        // 方案4: "calendar.circle.fill" - 圆形日历
-                        // 方案5: "house.circle.fill" - 回到"家"（今天）
-                        Image(systemName: "calendar.badge.clock")
-                            .font(.system(size: 15, weight: .medium))
+                        // 使用应用图标的线稿版本作为"回到今天"图标
+                        Image("TodayIcon")
+                            .resizable()
+                            .renderingMode(.template)
+                            .frame(width: 16, height: 16)
                             .foregroundColor(themeColors.accentColor.opacity(0.85))
-                            .symbolRenderingMode(.hierarchical)
                     }
                     .buttonStyle(PlainButtonStyle())
                     .focusable(false)

@@ -127,19 +127,20 @@ struct DayEventHeader: View {
     @ViewBuilder
     private var sunTimesView: some View {
         if !locationService.locationAuthorized {
-            // 未授权位置 - 显示申请按钮
+            // 未授权位置 - 显示申请按钮或系统设置引导
             Button(action: {
-                locationService.requestAuthorization()
+                locationService.requestAuthorizationOrOpenSettings()
             }) {
                 HStack(spacing: 3) {
-                    Image(systemName: "location.slash")
+                    Image(systemName: locationService.authorizationStatus == .denied || locationService.authorizationStatus == .restricted ? "gear" : "location.slash")
                         .font(.system(size: calendarSize.eventListSubtitleFontSize - 1))
-                    Text("location.enable_for_sunset")
+                    Text(locationService.authorizationStatus == .denied || locationService.authorizationStatus == .restricted ? "location.open_settings" : "location.enable_for_sunset")
                         .font(.system(size: calendarSize.eventListSubtitleFontSize - 1))
                 }
                 .foregroundColor(.blue)
             }
             .buttonStyle(PlainButtonStyle())
+            .focusable(false)
         } else if let location = locationService.currentLocation,
                   let sunTimes = SunTimeService.shared.calculate(for: date, location: location) {
             // 有位置且计算成功 - 显示日出日落
