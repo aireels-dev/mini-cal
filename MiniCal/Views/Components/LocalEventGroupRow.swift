@@ -57,7 +57,7 @@ struct LocalEventGroupRow: View {
                     )
             }
             .buttonStyle(PlainButtonStyle())
-            .help("点击编辑颜色")
+            .help(Text("local_group.edit_color_hint"))
 
             // 组标题和事件数
             VStack(alignment: .leading, spacing: 2) {
@@ -68,7 +68,7 @@ struct LocalEventGroupRow: View {
                 HStack(spacing: 8) {
                     // 事件数量
                     if eventCount > 0 {
-                        Text("\(eventCount) 个事件")
+                        Text(String(format: NSLocalizedString("local_group.event_count", comment: ""), eventCount))
                             .font(.system(size: 11))
                             .foregroundColor(themeColors.secondaryTextColor)
                     } else {
@@ -130,13 +130,13 @@ struct LocalEventGroupRow: View {
             HStack(spacing: 8) {
                 Spacer()
 
-                Button("取消") {
+                Button("common.cancel") {
                     cancelEditingColor()
                 }
                 .font(.system(size: 12))
                 .keyboardShortcut(.escape)
 
-                Button("保存") {
+                Button("common.save") {
                     saveColorChanges()
                 }
                 .font(.system(size: 12, weight: .medium))

@@ -60,13 +60,13 @@ struct ExternalSubscriptionCompactRow: View {
                 }
             }
         }
-        .alert("确认删除", isPresented: $showingDeleteConfirmation) {
-            Button("取消", role: .cancel) {}
-            Button("删除", role: .destructive) {
+        .alert("subscription.confirm_delete_title", isPresented: $showingDeleteConfirmation) {
+            Button("common.cancel", role: .cancel) {}
+            Button("common.delete", role: .destructive) {
                 onDelete()
             }
         } message: {
-            Text("确定要删除订阅「\(subscription.title)」吗？")
+            Text(String(format: NSLocalizedString("subscription.confirm_delete_message", comment: ""), subscription.title))
         }
     }
 
@@ -275,20 +275,7 @@ struct ExternalSubscriptionCompactRow: View {
     }
 
     private var statusText: String {
-        switch subscription.syncStatus.state {
-        case .idle:
-            return "未同步"
-        case .syncing:
-            return "同步中"
-        case .success:
-            return "完成"
-        case .failed:
-            return "失败"
-        case .disabled:
-            return "已禁用"
-        case .rateLimited:
-            return "限流"
-        }
+        return subscription.syncStatus.state.displayName
     }
 
     private var statusColor: Color {

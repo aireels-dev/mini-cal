@@ -46,13 +46,13 @@ struct LocalEventGroupCompactRow: View {
                 }
             }
         }
-        .alert("确认删除", isPresented: $showingDeleteConfirmation) {
-            Button("取消", role: .cancel) {}
-            Button("删除", role: .destructive) {
+        .alert("local_group.confirm_delete_title", isPresented: $showingDeleteConfirmation) {
+            Button("common.cancel", role: .cancel) {}
+            Button("common.delete", role: .destructive) {
                 onDelete()
             }
         } message: {
-            Text("确定要删除类别「\(group.title)」吗？该组的所有事件将移动到默认中。")
+            Text(String(format: NSLocalizedString("local_group.confirm_delete_message", comment: ""), group.title))
         }
     }
 
@@ -78,7 +78,7 @@ struct LocalEventGroupCompactRow: View {
             // 组标题
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
-                    Text(group.title)
+                    Text(group.localizedTitle)
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(themeColors.textColor)
                         .lineLimit(1)
@@ -96,7 +96,7 @@ struct LocalEventGroupCompactRow: View {
                 }
 
                 // 事件数量（始终显示）
-                Text(eventCount > 0 ? "\(eventCount) 个事件" : "暂无事件")
+                Text(eventCount > 0 ? String(format: NSLocalizedString("local_group.event_count", comment: ""), eventCount) : NSLocalizedString("calendar.no_events", comment: ""))
                     .font(.system(size: 11))
                     .foregroundColor(themeColors.secondaryTextColor)
             }

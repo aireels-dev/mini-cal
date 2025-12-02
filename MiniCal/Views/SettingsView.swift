@@ -314,7 +314,7 @@ struct FormatGuideView: View {
 
 struct FormatExampleView: View {
     let symbol: String
-    let description: String
+    let description: LocalizedStringKey
     let example: String
 
     var body: some View {
@@ -852,15 +852,15 @@ struct CalendarSettingsView: View {
     private var statusText: String {
         switch permissionManager.authorizationStatus {
         case .authorized:
-            return "permission.status.authorized"
+            return NSLocalizedString("permission.status.authorized", comment: "")
         case .denied:
-            return "permission.status.denied"
+            return NSLocalizedString("permission.status.denied", comment: "")
         case .restricted:
-            return "permission.status.restricted"
+            return NSLocalizedString("permission.status.restricted", comment: "")
         case .notDetermined:
-            return "permission.status.not_determined"
+            return NSLocalizedString("permission.status.not_determined", comment: "")
         @unknown default:
-            return "permission.status.unknown"
+            return NSLocalizedString("permission.status.unknown", comment: "")
         }
     }
 
@@ -1060,7 +1060,7 @@ struct AddSubscriptionSheetView: View {
 
 struct ShortcutRow: View {
     let key: String
-    let description: String
+    let description: LocalizedStringKey
 
     var body: some View {
         HStack(spacing: 12) {
@@ -1085,8 +1085,8 @@ struct ShortcutRow: View {
 // MARK: - 手势行视图
 
 struct GestureRow: View {
-    let gesture: String
-    let description: String
+    let gesture: LocalizedStringKey
+    let description: LocalizedStringKey
 
     var body: some View {
         HStack(spacing: 12) {
@@ -1517,7 +1517,7 @@ struct ThemeCard: View {
                     // 底部：星期文字
                     HStack(spacing: 6) {
                         ForEach(["sun", "mon", "tue", "wed", "thu"], id: \.self) { dayKey in
-                            Text("weekday.\(dayKey)")
+                            Text(NSLocalizedString("weekday.\(dayKey)", comment: ""))
                                 .font(.system(size: 9))
                                 .foregroundColor(Color(hex: theme.colors.textSecondary))
                         }

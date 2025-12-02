@@ -204,14 +204,7 @@ struct SubscriptionStatusIndicator: View {
     }
 
     private var statusText: String {
-        switch syncStatus {
-        case .idle:
-            return "同步完成"
-        case .syncing:
-            return "同步中..."
-        case .error:
-            return "同步失败"
-        }
+        return syncStatus.displayName
     }
 }
 

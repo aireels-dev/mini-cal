@@ -54,7 +54,7 @@ struct CalendarEventView: View {
 
             Spacer()
 
-            Text("\(events.count) 个事件")
+            Text(String(format: NSLocalizedString("calendar.event_count", comment: ""), events.count))
                 .font(.caption)
                 .foregroundColor(.secondary)
         }

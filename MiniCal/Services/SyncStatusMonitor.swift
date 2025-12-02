@@ -286,9 +286,9 @@ enum OverallSyncStatus {
 
     var displayName: String {
         switch self {
-        case .idle: return "空闲"
-        case .syncing: return "同步中"
-        case .error: return "同步错误"
+        case .idle: return NSLocalizedString("overall_sync_status.idle", comment: "")
+        case .syncing: return NSLocalizedString("overall_sync_status.syncing", comment: "")
+        case .error: return NSLocalizedString("overall_sync_status.error", comment: "")
         }
     }
 }

@@ -51,9 +51,9 @@ struct UserSettings: Codable, Equatable {
     var lastUpdated: Date
 
     static let `default` = UserSettings(
-        menuBarFormat: .dateTime,
+        menuBarFormat: .dateOnly,
         customFormat: "M月d日 HH:mm",
-        show24Hour: false,
+        show24Hour: true,
         showWeekday: false,
         showSeconds: false,
         secondaryCalendarType: detectDefaultCalendar(),

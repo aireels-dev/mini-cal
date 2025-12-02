@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import SwiftUI
+import AppKit
 
 class MenuBarViewModel: ObservableObject {
     @Published var displayText: String = ""
@@ -23,6 +24,8 @@ class MenuBarViewModel: ObservableObject {
         scheduleNextUpdate()
         observeSettingsChanges()
         observeTimeZoneChanges()
+        observeLocalizationChanges()
+        observeSystemWakeup()
     }
 
     deinit {
@@ -143,6 +146,35 @@ class MenuBarViewModel: ObservableObject {
                 self?.scheduleNextUpdate()
             }
             .store(in: &cancellables)
+    }
+
+    private func observeLocalizationChanges() {
+        NotificationCenter.default.publisher(for: .localizationDidChange)
+            .sink { [weak self] _ in
+                Logger.info("Localization changed, updating menu bar display", category: Logger.ui)
+                self?.updateDisplayText()
+            }
+            .store(in: &cancellables)
+    }
+
+    private func observeSystemWakeup() {
+        NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didWakeNotification)
+            .sink { [weak self] _ in
+                Logger.info("System woke from sleep, resynchronizing time and display", category: Logger.ui)
+                self?.handleSystemWakeup()
+            }
+            .store(in: &cancellables)
+    }
+
+    // MARK: - System Wakeup Handler
+
+    /// 处理系统唤醒事件：重新同步时间和刷新显示
+    private func handleSystemWakeup() {
+        // 立即更新显示文本（使用当前真实时间）
+        updateDisplayText()
+        // 重新调度定时器（基于唤醒后的真实时间）
+        scheduleNextUpdate()
+        Logger.info("Time synchronization completed after system wake", category: Logger.ui)
     }
 
     // MARK: - Public Methods

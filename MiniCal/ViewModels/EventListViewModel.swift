@@ -13,10 +13,14 @@ class EventListViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     enum DateFilter: String, CaseIterable {
-        case today = "今天"
-        case week = "本周"
-        case month = "本月"
-        case all = "全部"
+        case today
+        case week
+        case month
+        case all
+
+        var displayName: String {
+            return NSLocalizedString("event_filter.\(rawValue)", comment: "")
+        }
 
         var dateRange: DateRange? {
             let calendar = Calendar.current

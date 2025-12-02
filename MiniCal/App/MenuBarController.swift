@@ -341,7 +341,10 @@ class MenuBarController: NSObject {
 
     @objc func openSettings() {
         if let window = settingsWindow {
-            // 如果窗口已存在，激活并前置
+            // 如果窗口已存在，恢复最小化状态并激活前置
+            if window.isMiniaturized {
+                window.deminiaturize(nil)
+            }
             window.makeKeyAndOrderFront(nil)
             NSApp.activate(ignoringOtherApps: true)
         } else {
@@ -350,7 +353,7 @@ class MenuBarController: NSObject {
             let hostingController = NSHostingController(rootView: settingsView)
 
             let window = NSWindow(contentViewController: hostingController)
-            window.title = "MiniCal 设置"
+            window.title = NSLocalizedString("settings.window_title", comment: "")
             window.styleMask = [.titled, .closable, .miniaturizable]
             window.center()
             window.setFrameAutosaveName("SettingsWindow")

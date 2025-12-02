@@ -84,7 +84,7 @@ struct SystemCalendarRow: View {
 
                     // 事件数量
                     if eventCount > 0 {
-                        Text("\(eventCount) 个事件")
+                        Text(String(format: NSLocalizedString("system_calendar.event_count", comment: ""), eventCount))
                             .font(.system(size: 11))
                             .foregroundColor(themeColors.secondaryTextColor)
                     }
@@ -207,15 +207,15 @@ struct SystemCalendarRow: View {
     private func localizedSourceName(_ source: String) -> String {
         switch source {
         case "Subscribed Calendars":
-            return "订阅的日历"
+            return NSLocalizedString("calendar_source.subscribed", comment: "")
         case "iCloud":
             return "iCloud"
         case "Other":
-            return "其他"
+            return NSLocalizedString("calendar_source.other", comment: "")
         case "Default":
-            return "默认"
+            return NSLocalizedString("calendar_source.default", comment: "")
         case "Birthdays":
-            return "生日"
+            return NSLocalizedString("calendar_source.birthdays", comment: "")
         default:
             return source
         }

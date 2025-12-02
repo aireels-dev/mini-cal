@@ -47,7 +47,7 @@ struct SubscriptionRowView: View {
                                 .font(.system(size: 10))
                                 .foregroundColor(themeColors.secondaryTextColor)
 
-                            Text("\(subscription.eventCount) 个事件")
+                            Text(String(format: NSLocalizedString("subscription.event_count", comment: ""), subscription.eventCount))
                                 .font(.system(size: 11))
                                 .foregroundColor(themeColors.secondaryTextColor)
                         }
@@ -149,20 +149,7 @@ struct SubscriptionRowView: View {
     }
 
     private var statusText: String {
-        switch subscription.syncStatus.state {
-        case .idle:
-            return "未同步"
-        case .syncing:
-            return "同步中"
-        case .success:
-            return "完成"
-        case .failed:
-            return "失败"
-        case .disabled:
-            return "已禁用"
-        case .rateLimited:
-            return "限流"
-        }
+        return subscription.syncStatus.state.displayName
     }
 
     private var statusColor: Color {

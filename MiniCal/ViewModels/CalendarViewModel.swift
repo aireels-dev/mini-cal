@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import AppKit
 
 // MARK: - Navigation Direction
 enum NavigationDirection {
@@ -80,6 +81,25 @@ class CalendarViewModel: ObservableObject {
                 self?.loadCurrentMonth()
             }
             .store(in: &cancellables)
+
+        // 监听系统唤醒，重新同步日历数据
+        NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didWakeNotification)
+            .sink { [weak self] _ in
+                Logger.info("System woke from sleep, resynchronizing calendar data", category: Logger.calendar)
+                self?.handleSystemWakeup()
+            }
+            .store(in: &cancellables)
+    }
+
+    // MARK: - System Wakeup Handler
+
+    /// 处理系统唤醒事件：重新同步日历数据
+    private func handleSystemWakeup() {
+        // 重新加载当前月份，确保显示最新的日期和事件
+        loadCurrentMonth()
+        // 重新加载事件数据
+        loadEventsForCurrentMonth()
+        Logger.info("Calendar data synchronization completed after system wake", category: Logger.calendar)
     }
 
     // MARK: - Data Loading

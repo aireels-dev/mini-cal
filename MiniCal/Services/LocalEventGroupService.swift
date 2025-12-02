@@ -17,6 +17,14 @@ struct LocalEventGroupConfig: Codable, Identifiable, Equatable {
     var isEnabled: Bool
     var isDefault: Bool  // 是否为默认组
 
+    /// 本地化的标题（用于显示）
+    var localizedTitle: String {
+        if isDefault && title == "默认" {
+            return NSLocalizedString("local_group.default_name", comment: "")
+        }
+        return title
+    }
+
     static var `default`: LocalEventGroupConfig {
         LocalEventGroupConfig(
             id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,  // 固定UUID

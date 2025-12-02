@@ -24,35 +24,41 @@ enum MenuBarFormat: String, Codable, CaseIterable {
 
     func format(date: Date, show24Hour: Bool, showWeekday: Bool, showSeconds: Bool, customFormat: String? = nil) -> String {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "zh_CN")
+        // 使用界面语言的locale进行日期格式化
+        let localeIdentifier = LocalizationManager.shared.context.effectiveInterfaceLocale.rawValue
+        formatter.locale = Locale(identifier: localeIdentifier)
 
         switch self {
         case .dateOnly:
-            formatter.dateFormat = showWeekday ? "M月d日 E" : "M月d日"
+            // 使用locale自动生成日期格式
+            let template = showWeekday ? "MdE" : "Md"
+            formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: template, options: 0, locale: formatter.locale)
         case .timeOnly:
+            // 时间格式
             if showSeconds {
                 formatter.dateFormat = show24Hour ? "HH:mm:ss" : "h:mm:ss a"
             } else {
                 formatter.dateFormat = show24Hour ? "HH:mm" : "h:mm a"
             }
         case .dateTime:
-            var format = ""
+            // 使用locale自动生成日期时间格式
+            var template = ""
             if showWeekday {
                 if showSeconds {
-                    format = show24Hour ? "M月d日 E HH:mm:ss" : "M月d日 E h:mm:ss a"
+                    template = show24Hour ? "MdEHms" : "Mdehms"
                 } else {
-                    format = show24Hour ? "M月d日 E HH:mm" : "M月d日 E h:mm a"
+                    template = show24Hour ? "MdEHm" : "Mdehm"
                 }
             } else {
                 if showSeconds {
-                    format = show24Hour ? "M月d日 HH:mm:ss" : "M月d日 h:mm:ss a"
+                    template = show24Hour ? "MdHms" : "Mdhms"
                 } else {
-                    format = show24Hour ? "M月d日 HH:mm" : "M月d日 h:mm a"
+                    template = show24Hour ? "MdHm" : "Mdhm"
                 }
             }
-            formatter.dateFormat = format
+            formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: template, options: 0, locale: formatter.locale)
         case .custom:
-            formatter.dateFormat = customFormat ?? "M月d日 HH:mm"
+            formatter.dateFormat = customFormat ?? DateFormatter.dateFormat(fromTemplate: "MdHm", options: 0, locale: formatter.locale)
         }
 
         return formatter.string(from: date)
