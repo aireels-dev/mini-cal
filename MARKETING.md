@@ -417,7 +417,7 @@
 
 • 官网: https://minical.app
 • 邮箱: support@minical.app
-• GitHub: https://github.com/minical/minical
+• GitHub: https://github.com/aireels-dev/mini-cal
 
 ---
 
@@ -546,7 +546,7 @@ Your calendar, your control.
 
 • Website: https://minical.app
 • Email: support@minical.app
-• GitHub: https://github.com/minical/minical
+• GitHub: https://github.com/aireels-dev/mini-cal
 
 ---
 
@@ -1550,7 +1550,7 @@ Kiểm tra lịch 20 lần mỗi ngày? MiniCal tiết kiệm 8 giờ mỗi năm
 
 - **官网**: https://minical.app
 - **邮箱**: support@minical.app
-- **GitHub**: https://github.com/minical/minical
+- **GitHub**: https://github.com/aireels-dev/mini-cal
 - **Twitter**: @MiniCalApp
 - **Discord**: https://discord.gg/minical
 

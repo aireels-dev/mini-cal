@@ -422,7 +422,7 @@ Download from: https://minical.app/download
 
 ```bash
 # Clone repository
-git clone https://github.com/minical/minical.git
+git clone https://github.com/aireels-dev/mini-cal.git
 cd minical
 
 # Open in Xcode
@@ -460,7 +460,7 @@ open MiniCal.xcodeproj
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/minical/minical.git
+git clone https://github.com/aireels-dev/mini-cal.git
 cd minical
 
 # 2. Open Xcode project
@@ -514,8 +514,8 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 
 ### Ways to Contribute
 
-- 🐛 **Report Bugs**: [Open an issue](https://github.com/minical/minical/issues)
-- 💡 **Feature Requests**: [Submit ideas](https://github.com/minical/minical/discussions)
+- 🐛 **Report Bugs**: [Open an issue](https://github.com/aireels-dev/mini-cal/issues)
+- 💡 **Feature Requests**: [Submit ideas](https://github.com/aireels-dev/mini-cal/discussions)
 - 🌍 **Translations**: Help translate to more languages
 - 🎨 **Themes**: Design and share custom themes
 - 💻 **Code**: Submit pull requests
@@ -733,8 +733,8 @@ Copyright © 2025 MiniCal
 - 📧 **Email**: support@minical.app
 - 🐦 **Twitter**: [@MiniCalApp](https://twitter.com/MiniCalApp)
 - 💬 **Discord**: https://discord.gg/minical
-- 🐛 **Issues**: [GitHub Issues](https://github.com/minical/minical/issues)
-- 💭 **Discussions**: [GitHub Discussions](https://github.com/minical/minical/discussions)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/aireels-dev/mini-cal/issues)
+- 💭 **Discussions**: [GitHub Discussions](https://github.com/aireels-dev/mini-cal/discussions)
 
 ---
 

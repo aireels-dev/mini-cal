@@ -422,7 +422,7 @@ MiniCal/
 
 ```bash
 # 克隆仓库
-git clone https://github.com/minical/minical.git
+git clone https://github.com/aireels-dev/mini-cal.git
 cd minical
 
 # 在 Xcode 中打开
@@ -460,7 +460,7 @@ open MiniCal.xcodeproj
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/minical/minical.git
+git clone https://github.com/aireels-dev/mini-cal.git
 cd minical
 
 # 2. 打开 Xcode 项目
@@ -514,8 +514,8 @@ ls -la *.lproj/Info.plist
 
 ### 贡献方式
 
-- 🐛 **报告 Bug**：[提交 Issue](https://github.com/minical/minical/issues)
-- 💡 **功能建议**：[提交想法](https://github.com/minical/minical/discussions)
+- 🐛 **报告 Bug**：[提交 Issue](https://github.com/aireels-dev/mini-cal/issues)
+- 💡 **功能建议**：[提交想法](https://github.com/aireels-dev/mini-cal/discussions)
 - 🌍 **翻译**：帮助翻译到更多语言
 - 🎨 **主题**：设计并分享自定义主题
 - 💻 **代码**：提交 Pull Request
@@ -733,8 +733,8 @@ Copyright © 2025 MiniCal
 - 📧 **邮箱**：support@minical.app
 - 🐦 **Twitter**：[@MiniCalApp](https://twitter.com/MiniCalApp)
 - 💬 **Discord**：https://discord.gg/minical
-- 🐛 **Issues**：[GitHub Issues](https://github.com/minical/minical/issues)
-- 💭 **讨论**：[GitHub Discussions](https://github.com/minical/minical/discussions)
+- 🐛 **Issues**：[GitHub Issues](https://github.com/aireels-dev/mini-cal/issues)
+- 💭 **讨论**：[GitHub Discussions](https://github.com/aireels-dev/mini-cal/discussions)
 
 ---
 

@@ -422,7 +422,7 @@ MiniCal/
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/minical/minical.git
+git clone https://github.com/aireels-dev/mini-cal.git
 cd minical
 
 # Xcodeで開く
@@ -460,7 +460,7 @@ open MiniCal.xcodeproj
 
 ```bash
 # 1. リポジトリをクローン
-git clone https://github.com/minical/minical.git
+git clone https://github.com/aireels-dev/mini-cal.git
 cd minical
 
 # 2. Xcodeプロジェクトを開く
@@ -514,8 +514,8 @@ ls -la *.lproj/Info.plist
 
 ### 貢献方法
 
-- 🐛 **バグ報告**：[Issueを提出](https://github.com/minical/minical/issues)
-- 💡 **機能提案**：[アイデアを提出](https://github.com/minical/minical/discussions)
+- 🐛 **バグ報告**：[Issueを提出](https://github.com/aireels-dev/mini-cal/issues)
+- 💡 **機能提案**：[アイデアを提出](https://github.com/aireels-dev/mini-cal/discussions)
 - 🌍 **翻訳**：より多くの言語への翻訳を支援
 - 🎨 **テーマ**：カスタムテーマをデザインして共有
 - 💻 **コード**：Pull Requestを提出
@@ -733,8 +733,8 @@ Copyright © 2025 MiniCal
 - 📧 **メール**：support@minical.app
 - 🐦 **Twitter**：[@MiniCalApp](https://twitter.com/MiniCalApp)
 - 💬 **Discord**：https://discord.gg/minical
-- 🐛 **Issues**：[GitHub Issues](https://github.com/minical/minical/issues)
-- 💭 **ディスカッション**：[GitHub Discussions](https://github.com/minical/minical/discussions)
+- 🐛 **Issues**：[GitHub Issues](https://github.com/aireels-dev/mini-cal/issues)
+- 💭 **ディスカッション**：[GitHub Discussions](https://github.com/aireels-dev/mini-cal/discussions)
 
 ---
 

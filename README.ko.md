@@ -422,7 +422,7 @@ MiniCal/
 
 ```bash
 # 저장소 복제
-git clone https://github.com/minical/minical.git
+git clone https://github.com/aireels-dev/mini-cal.git
 cd minical
 
 # Xcode에서 열기
@@ -460,7 +460,7 @@ open MiniCal.xcodeproj
 
 ```bash
 # 1. 저장소 복제
-git clone https://github.com/minical/minical.git
+git clone https://github.com/aireels-dev/mini-cal.git
 cd minical
 
 # 2. Xcode 프로젝트 열기
@@ -514,8 +514,8 @@ ls -la *.lproj/Info.plist
 
 ### 기여 방법
 
-- 🐛 **버그 보고**: [Issue 제출](https://github.com/minical/minical/issues)
-- 💡 **기능 제안**: [아이디어 제출](https://github.com/minical/minical/discussions)
+- 🐛 **버그 보고**: [Issue 제출](https://github.com/aireels-dev/mini-cal/issues)
+- 💡 **기능 제안**: [아이디어 제출](https://github.com/aireels-dev/mini-cal/discussions)
 - 🌍 **번역**: 더 많은 언어로의 번역 지원
 - 🎨 **테마**: 커스텀 테마 디자인 및 공유
 - 💻 **코드**: Pull Request 제출
@@ -733,8 +733,8 @@ Copyright © 2025 MiniCal
 - 📧 **이메일**: support@minical.app
 - 🐦 **Twitter**: [@MiniCalApp](https://twitter.com/MiniCalApp)
 - 💬 **Discord**: https://discord.gg/minical
-- 🐛 **Issues**: [GitHub Issues](https://github.com/minical/minical/issues)
-- 💭 **토론**: [GitHub Discussions](https://github.com/minical/minical/discussions)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/aireels-dev/mini-cal/issues)
+- 💭 **토론**: [GitHub Discussions](https://github.com/aireels-dev/mini-cal/discussions)
 
 ---
 

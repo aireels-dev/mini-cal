@@ -422,7 +422,7 @@ MiniCal/
 
 ```bash
 # استنساخ المستودع
-git clone https://github.com/minical/minical.git
+git clone https://github.com/aireels-dev/mini-cal.git
 cd minical
 
 # فتح في Xcode
@@ -460,7 +460,7 @@ open MiniCal.xcodeproj
 
 ```bash
 # 1. استنساخ المستودع
-git clone https://github.com/minical/minical.git
+git clone https://github.com/aireels-dev/mini-cal.git
 cd minical
 
 # 2. فتح مشروع Xcode
@@ -514,8 +514,8 @@ ls -la *.lproj/Info.plist
 
 ### طرق المساهمة
 
-- 🐛 **الإبلاغ عن الأخطاء**: [إرسال Issue](https://github.com/minical/minical/issues)
-- 💡 **اقتراح الميزات**: [إرسال فكرة](https://github.com/minical/minical/discussions)
+- 🐛 **الإبلاغ عن الأخطاء**: [إرسال Issue](https://github.com/aireels-dev/mini-cal/issues)
+- 💡 **اقتراح الميزات**: [إرسال فكرة](https://github.com/aireels-dev/mini-cal/discussions)
 - 🌍 **الترجمة**: المساعدة في الترجمة إلى المزيد من اللغات
 - 🎨 **السمات**: تصميم ومشاركة سمات مخصصة
 - 💻 **الكود**: إرسال Pull Request
@@ -733,8 +733,8 @@ Copyright © 2025 MiniCal
 - 📧 **البريد الإلكتروني**: support@minical.app
 - 🐦 **Twitter**: [@MiniCalApp](https://twitter.com/MiniCalApp)
 - 💬 **Discord**: https://discord.gg/minical
-- 🐛 **Issues**: [GitHub Issues](https://github.com/minical/minical/issues)
-- 💭 **المناقشات**: [GitHub Discussions](https://github.com/minical/minical/discussions)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/aireels-dev/mini-cal/issues)
+- 💭 **المناقشات**: [GitHub Discussions](https://github.com/aireels-dev/mini-cal/discussions)
 
 ---
 
