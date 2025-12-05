@@ -8,6 +8,7 @@
 import Foundation
 import CoreLocation
 import Combine
+import AppKit
 
 class LocationService: NSObject, ObservableObject {
     static let shared = LocationService()
@@ -46,6 +47,32 @@ class LocationService: NSObject, ObservableObject {
             Logger.warning("位置权限被拒绝，请到系统设置中开启", category: Logger.app)
         case .authorizedAlways, .authorizedWhenInUse:
             startUpdatingLocation()
+        @unknown default:
+            break
+        }
+    }
+
+    /// 请求权限或打开系统设置（用于UI按钮）
+    func requestAuthorizationOrOpenSettings() {
+        let status = locationManager.authorizationStatus
+
+        switch status {
+        case .notDetermined:
+            // 首次请求权限
+            locationManager.requestWhenInUseAuthorization()
+            Logger.debug("请求位置权限", category: Logger.app)
+
+        case .denied, .restricted:
+            // 打开系统设置到隐私与安全性页面
+            if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_LocationServices") {
+                NSWorkspace.shared.open(url)
+                Logger.info("打开系统设置：位置服务", category: Logger.app)
+            }
+
+        case .authorizedAlways, .authorizedWhenInUse:
+            // 已授权，开始更新位置
+            startUpdatingLocation()
+
         @unknown default:
             break
         }

@@ -520,6 +520,7 @@ struct CalendarSettingsView: View {
                     .cornerRadius(6)
                 }
                 .buttonStyle(PlainButtonStyle())
+                .focusable(false)
 
                 if permissionManager.authorizationStatus == .denied {
                     Text("permission.calendar.hint")

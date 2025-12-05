@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>LSUIElement</key>
+	<true/>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundleDisplayName</key>
+	<string>MiniCal</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>11.0</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>MiniCal toplantıları ve etkinlikleri göstermek için takviminize erişmesi gerekiyor.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>MiniCal etkinlikleri senkronize etmek ve yönetmek ile dış takvimlere abone olmak için takviminize tam erişim gerektirir.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>MiniCal gün doğumu ve batımı zamanlarını, İslami namaz vakitlerini ve İbranice Şabat zamanlarını hesaplamak için konumunuza ihtiyaç duyar.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>MiniCal doğru astronomi bilgileri (gün doğumu ve batımı zamanları, ay evreleri) ve dini zamanlar (namaz vakitleri, Şabat) sağlamak için konumunuzu kullanır.</string>
+</dict>
+</plist>

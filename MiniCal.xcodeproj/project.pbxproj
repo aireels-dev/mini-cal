@@ -21,7 +21,7 @@
 		834383B32EAF9ED8008424E2 /* Exceptions for "MiniCal" folder in "MiniCal" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				"/Localized: Info.plist",
 			);
 			target = 834383AF2EAF9ED8008424E1 /* MiniCal */;
 		};
@@ -119,6 +119,17 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
+				ar,
+				he,
+				fa,
+				ja,
+				ko,
+				th,
+				tr,
+				ur,
+				vi,
+				"zh-Hant",
 			);
 			mainGroup = 834383A72EAF9ED8008424E1;
 			minimizedProjectReferenceProxies = 1;

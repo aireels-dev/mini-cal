@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>LSUIElement</key>
+	<true/>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundleDisplayName</key>
+	<string>MiniCal</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>11.0</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>يحتاج MiniCal إلى الوصول إلى التقويم الخاص بك لعرض الاجتماعات والأحداث.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>يحتاج MiniCal إلى وصول كامل إلى التقويم الخاص بك لمزامنة الأحداث وإدارتها والاشتراك في التقويمات الخارجية.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>يحتاج MiniCal إلى موقعك لحساب أوقات شروق الشمس وغروبها وأوقات الصلاة الإسلامية وأوقات السبت العبرية.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>يستخدم MiniCal موقعك لتوفير معلومات فلكية دقيقة (أوقات شروق الشمس وغروبها، أطوار القمر) والأوقات الدينية (أوقات الصلاة، السبت).</string>
+</dict>
+</plist>

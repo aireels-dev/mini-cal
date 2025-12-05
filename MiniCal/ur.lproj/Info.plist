@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>LSUIElement</key>
+	<true/>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundleDisplayName</key>
+	<string>MiniCal</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>11.0</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>MiniCal کو میٹنگز اور ایونٹس دکھانے کے لیے آپ کے کیلنڈر تک رسائی کی ضرورت ہے۔</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>MiniCal کو ایونٹس کو ہم وقت سازی اور منظم کرنے اور بیرونی کیلنڈرز کو سبسکرائب کرنے کے لیے آپ کے کیلنڈر تک مکمل رسائی کی ضرورت ہے۔</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>MiniCal کو طلوع و غروب آفتاب کے اوقات، اسلامی نماز کے اوقات، اور عبرانی سبت کے اوقات کا حساب لگانے کے لیے آپ کے مقام کی ضرورت ہے۔</string>
+	<key>NSLocationUsageDescription</key>
+	<string>MiniCal درست فلکیاتی معلومات (طلوع و غروب آفتاب کے اوقات، چاند کی کلائیں) اور مذہبی اوقات (نماز کے اوقات، سبت) فراہم کرنے کے لیے آپ کے مقام کا استعمال کرتا ہے۔</string>
+</dict>
+</plist>

@@ -127,14 +127,14 @@ struct DayEventHeader: View {
     @ViewBuilder
     private var sunTimesView: some View {
         if !locationService.locationAuthorized {
-            // 未授权位置 - 显示申请按钮或系统设置引导
+            // 未授权位置 - 显示启用定位按钮
             Button(action: {
                 locationService.requestAuthorizationOrOpenSettings()
             }) {
                 HStack(spacing: 3) {
-                    Image(systemName: locationService.authorizationStatus == .denied || locationService.authorizationStatus == .restricted ? "gear" : "location.slash")
+                    Image(systemName: "location.slash")
                         .font(.system(size: calendarSize.eventListSubtitleFontSize - 1))
-                    Text(locationService.authorizationStatus == .denied || locationService.authorizationStatus == .restricted ? "location.open_settings" : "location.enable_for_sunset")
+                    Text("location.enable_for_sunset")
                         .font(.system(size: calendarSize.eventListSubtitleFontSize - 1))
                 }
                 .foregroundColor(.blue)
