@@ -4,7 +4,7 @@ import Combine
 import AppKit
 
 class SystemCalendarService: ObservableObject {
-    private let eventStore = EKEventStore()
+    private let eventStore = EventStoreManager.shared.eventStore
     private let permissionManager: PermissionManager
 
     @Published var systemCalendars: [EKCalendar] = []

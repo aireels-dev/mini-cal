@@ -6,7 +6,7 @@ import AppKit
 class PermissionManager: ObservableObject {
     static let shared = PermissionManager()
 
-    private let eventStore = EKEventStore()
+    private let eventStore = EventStoreManager.shared.eventStore
 
     @Published var isAuthorized = false
     @Published var authorizationStatus: EKAuthorizationStatus = .notDetermined

@@ -39,7 +39,11 @@ struct CalendarDayCell: View {
                         ScrollingText(
                             text: solarFestival,
                             font: .system(size: calendarSize.secondaryFontSize - 0.5, weight: .medium),
-                            foregroundColor: festivalColor(for: solarFestival, calendarType: .gregorian),
+                            foregroundColor: festivalColor(
+                                for: solarFestival,
+                                festivalID: secondaryDate.solarFestivalID,
+                                calendarType: .gregorian
+                            ),
                             maxWidth: availableTextWidth
                         )
                         .frame(height: calendarSize.secondaryFontSize - 0.5)
@@ -48,7 +52,11 @@ struct CalendarDayCell: View {
                         ScrollingText(
                             text: festival,
                             font: .system(size: calendarSize.secondaryFontSize - 0.5, weight: .medium),
-                            foregroundColor: festivalColor(for: festival, calendarType: secondaryDate.calendarType),
+                            foregroundColor: festivalColor(
+                                for: festival,
+                                festivalID: secondaryDate.festivalID,
+                                calendarType: secondaryDate.calendarType
+                            ),
                             maxWidth: availableTextWidth
                         )
                         .frame(height: calendarSize.secondaryFontSize - 0.5)
@@ -142,8 +150,33 @@ struct CalendarDayCell: View {
     }
 
     /// 根据节日类型返回不同的颜色
-    private func festivalColor(for festival: String, calendarType: CalendarType) -> Color {
-        // 二十四节气用绿色
+    /// - Parameters:
+    ///   - festival: 节日显示名称
+    ///   - festivalID: 节日唯一标识符（用于程序判断，语言无关）
+    ///   - calendarType: 历法类型
+    /// - Returns: 节日颜色
+    private func festivalColor(for festival: String, festivalID: String?, calendarType: CalendarType) -> Color {
+        // 优先使用 festivalID 进行判断（语言无关）
+        if let id = festivalID {
+            // 二十四节气用绿色
+            if id.hasPrefix("solar_term_") {
+                return Color.green.opacity(0.85)
+            }
+
+            // 特定节日的特殊颜色
+            switch id {
+            case "shabbat":
+                return Color.purple.opacity(0.85)
+            case "spring_festival", "mid_autumn":
+                return Color.orange.opacity(0.9)
+            case "eid_al_fitr", "eid_al_adha":
+                return Color.blue.opacity(0.85)
+            default:
+                break
+            }
+        }
+
+        // Fallback: 二十四节气字符串判断（兼容旧数据）
         if SolarTermService.shared.isSolarTerm(festival) {
             return Color.green.opacity(0.85)
         }
@@ -163,10 +196,7 @@ struct CalendarDayCell: View {
             return Color.blue.opacity(0.85)
 
         case .hebrew:
-            // 犹太节日用紫色
-            if festival == "安息日" {
-                return Color.purple.opacity(0.85)
-            }
+            // 犹太节日用靛蓝色
             return Color.indigo.opacity(0.85)
 
         default:

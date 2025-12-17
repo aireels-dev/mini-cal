@@ -14,9 +14,11 @@ struct SecondaryDateInfo: Codable, Equatable {
     let month: Int?
     let day: Int?
     let festival: String?                // 特定历法的节日（农历节日、伊斯兰节日等）
+    let festivalID: String?              // 节日唯一标识符（用于程序判断，非显示）
 
     // 扩展字段：公历节日（全局显示，所有历法都会显示）
     let solarFestival: String?
+    let solarFestivalID: String?         // 公历节日ID
 
     // 扩展字段：伊斯兰历礼拜时间信息（可选）
     let nextPrayerInfo: PrayerInfo?

@@ -19,6 +19,11 @@ class FestivalLocalizer {
 
     private init() {
         loadAllFestivalData()
+
+        #if DEBUG
+        // Debug 模式下验证节日数据
+        validateFestivalData()
+        #endif
     }
 
     // MARK: - Festival Localization
@@ -178,6 +183,89 @@ class FestivalLocalizer {
             inDirectory: "CalendarData/\(subdir)"
         )
     }
+
+    // MARK: - Data Validation (Debug Only)
+
+    #if DEBUG
+    /// 验证节日数据完整性（仅在 Debug 模式下运行）
+    private func validateFestivalData() {
+        Logger.debug("Starting festival data validation...", category: Logger.app)
+
+        var missingDataCount = 0
+        var invalidIDCount = 0
+        var totalFestivals = 0
+
+        for calendarType in CalendarType.allCases where calendarType != .gregorian {
+            for locale in SupportedLocale.allCases {
+                let cacheKey = festivalCacheKey(calendarType: calendarType, locale: locale)
+
+                guard let festivalData = getFestivalData(for: cacheKey) else {
+                    missingDataCount += 1
+                    Logger.warning(
+                        "Missing festival data: \(calendarType.rawValue) - \(locale.rawValue)",
+                        category: Logger.app
+                    )
+                    continue
+                }
+
+                // 验证每个节日的 ID
+                for (key, festival) in festivalData.festivals {
+                    totalFestivals += 1
+
+                    // 检查 ID 是否为空或无效
+                    if festival.id.isEmpty {
+                        invalidIDCount += 1
+                        Logger.warning(
+                            "Invalid festival ID (empty): \(key) in \(calendarType.rawValue) - \(locale.rawValue)",
+                            category: Logger.app
+                        )
+                    }
+
+                    // 检查 ID 是否与 key 一致（推荐规范）
+                    if festival.id != key {
+                        Logger.debug(
+                            "Festival ID mismatch: key=\(key), id=\(festival.id) in \(calendarType.rawValue) - \(locale.rawValue)",
+                            category: Logger.app
+                        )
+                    }
+
+                    // 检查月份日期是否有效
+                    if festival.month < 1 || festival.month > 13 {
+                        Logger.warning(
+                            "Invalid month: \(festival.month) for \(festival.id) in \(calendarType.rawValue)",
+                            category: Logger.app
+                        )
+                    }
+
+                    if festival.day < 1 || festival.day > 31 {
+                        Logger.warning(
+                            "Invalid day: \(festival.day) for \(festival.id) in \(calendarType.rawValue)",
+                            category: Logger.app
+                        )
+                    }
+                }
+            }
+        }
+
+        // 输出验证总结
+        Logger.info(
+            """
+            Festival data validation completed:
+            - Total festivals: \(totalFestivals)
+            - Missing data files: \(missingDataCount)
+            - Invalid IDs: \(invalidIDCount)
+            """,
+            category: Logger.app
+        )
+
+        if missingDataCount > 0 || invalidIDCount > 0 {
+            Logger.warning(
+                "Festival data validation found issues. Please check CalendarData/ directory.",
+                category: Logger.app
+            )
+        }
+    }
+    #endif
 }
 
 // MARK: - Festival Data Models

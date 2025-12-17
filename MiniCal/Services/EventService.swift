@@ -11,37 +11,20 @@ import EventKit
 class EventService {
     static let shared = EventService()
 
-    private let eventStore = EKEventStore()
-    private var isAuthorized = false
+    private let eventStore = EventStoreManager.shared.eventStore
     private var eventStoreObserver: NSObjectProtocol?
     private let permissionManager = PermissionManager.shared
 
     private init() {}
 
+    /// 获取当前授权状态（直接使用 PermissionManager 的状态）
+    private var isAuthorized: Bool {
+        return permissionManager.isAuthorized
+    }
+
+    /// 请求日历授权（委托给 PermissionManager）
     func requestAuthorization() async -> Bool {
-        do {
-            #if os(macOS)
-            if #available(macOS 14.0, *) {
-                let granted = try await eventStore.requestFullAccessToEvents()
-                isAuthorized = granted
-                return granted
-            } else {
-                // macOS 13 及以下版本使用旧API
-                return await withCheckedContinuation { continuation in
-                    eventStore.requestAccess(to: .event) { granted, _ in
-                        self.isAuthorized = granted
-                        continuation.resume(returning: granted)
-                    }
-                }
-            }
-            #else
-            return false
-            #endif
-        } catch {
-            Logger.error("Error requesting calendar access", error: error, category: Logger.events)
-            isAuthorized = false
-            return false
-        }
+        return await permissionManager.requestEventKitAccess()
     }
 
     /// 获取启用的日历列表
@@ -97,7 +80,7 @@ class EventService {
 
     func fetchEvents(from startDate: Date, to endDate: Date) async -> [CalendarEvent] {
         guard isAuthorized else {
-            Logger.warning("⚠️ EventService not authorized to access calendar", category: Logger.calendar)
+            Logger.warning("⚠️ EventService not authorized (PermissionManager.isAuthorized = \(permissionManager.isAuthorized), status = \(permissionManager.authorizationStatus.rawValue))", category: Logger.calendar)
             return []
         }
 

@@ -129,7 +129,9 @@ class SecondaryCalendarConverter {
             month: components.month,
             day: components.day,
             festival: festival,
+            festivalID: nil,  // TODO: 实现节日 ID 获取逻辑
             solarFestival: solarFestival,
+            solarFestivalID: nil,  // TODO: 实现公历节日 ID 获取逻辑
             nextPrayerInfo: prayerInfo,
             shabbatDisplayInfo: shabbatDisplayInfo
         )
@@ -200,32 +202,6 @@ class SecondaryCalendarConverter {
 
         // 其他日期使用本地化格式
         return calendarLocalizer.formatDay(day: day, calendarType: .chinese)
-    }
-
-    /// 将农历日期数字转换为中文表达
-    /// - Parameter day: 日期数字 (1-30)
-    /// - Returns: 中文表达（如：初一、初二、十一、廿一、三十）
-    private func convertChineseDayToText(day: Int) -> String {
-        switch day {
-        case 1...10:
-            // 初一到初十
-            let dayTexts = ["", "初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十"]
-            return dayTexts[day]
-        case 11...19:
-            // 十一到十九
-            let dayTexts = ["", "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九"]
-            return dayTexts[day - 10]
-        case 20:
-            return "二十"
-        case 21...29:
-            // 廿一到廿九
-            let dayTexts = ["", "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九"]
-            return dayTexts[day - 20]
-        case 30:
-            return "三十"
-        default:
-            return "\(day)"
-        }
     }
 
     private func formatIslamicDate(components: DateComponents) -> String {

@@ -13,7 +13,32 @@ class CalendarLocalizer {
 
     private let localizationManager = LocalizationManager.shared
 
-    private init() {}
+    // MARK: - Caching
+
+    /// DateFormatter 缓存
+    private var formatterCache: [FormatterCacheKey: DateFormatter] = [:]
+    private let cacheQueue = DispatchQueue(label: "com.minical.calendar.formatter.cache")
+
+    private init() {
+        // 监听本地化上下文变更，清理缓存
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(clearFormatterCache),
+            name: .localizationDidChange,
+            object: nil
+        )
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    /// 清理 DateFormatter 缓存（在语言切换时调用）
+    @objc private func clearFormatterCache() {
+        cacheQueue.async { [weak self] in
+            self?.formatterCache.removeAll()
+        }
+    }
 
     // MARK: - Calendar Names
 
@@ -102,8 +127,12 @@ class CalendarLocalizer {
         style: MonthNameStyle,
         locale: SupportedLocale
     ) -> String {
-        let key = style == .short ? "gregorian_month_short_\(month)" : "gregorian_month_\(month)"
-        return localizationManager.localized(key, table: "CalendarNames", locale: locale)
+        return getMonthNameFromSystem(
+            month: month,
+            calendarIdentifier: .gregorian,
+            style: style,
+            locale: locale
+        )
     }
 
     // MARK: - Private Helpers - Chinese
@@ -113,38 +142,79 @@ class CalendarLocalizer {
         style: MonthNameStyle,
         locale: SupportedLocale
     ) -> String {
-        let key = style == .short ? "chinese_month_short_\(month)" : "chinese_month_\(month)"
-        return localizationManager.localized(key, table: "CalendarNames", locale: locale)
+        return getMonthNameFromSystem(
+            month: month,
+            calendarIdentifier: .chinese,
+            style: style,
+            locale: locale
+        )
     }
 
+    /// 格式化农历日期
+    /// - Parameters:
+    ///   - day: 日期（1-30）
+    ///   - locale: 目标语言
+    /// - Returns: 格式化后的日期文本
     private func formatChineseDay(day: Int, locale: SupportedLocale) -> String {
-        // 对于简中、繁中使用传统表达
-        if locale == .simplifiedChinese || locale == .traditionalChinese {
-            return convertChineseDayToText(day: day)
+        // 策略1: 优先使用 .xcstrings 本地化字符串（所有语言统一）
+        let key = "chinese_day_\(day)"
+        let localizedDay = localizationManager.localized(key, table: "CalendarNames", locale: locale)
+
+        // 如果翻译存在（不等于 key），使用翻译
+        if localizedDay != key {
+            return localizedDay
         }
 
-        // 其他语言使用数字
+        // 策略2: Fallback 到系统 API（仅限 CJK 语言）
+        if isCJKLocale(locale) {
+            if let systemFormatted = getChineseDayFromSystem(day: day, locale: locale) {
+                return systemFormatted
+            }
+        }
+
+        // 策略3: 最终 fallback 到数字
         return "\(day)"
     }
 
-    private func convertChineseDayToText(day: Int) -> String {
-        switch day {
-        case 1...10:
-            let dayTexts = ["", "初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十"]
-            return dayTexts[day]
-        case 11...19:
-            let dayTexts = ["", "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九"]
-            return dayTexts[day - 10]
-        case 20:
-            return "二十"
-        case 21...29:
-            let dayTexts = ["", "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九"]
-            return dayTexts[day - 20]
-        case 30:
-            return "三十"
-        default:
-            return "\(day)"
+    /// 使用系统 Calendar API 格式化农历日期
+    /// - Parameters:
+    ///   - day: 日期（1-30）
+    ///   - locale: 目标语言
+    /// - Returns: 格式化后的日期文本（如果系统支持）
+    private func getChineseDayFromSystem(day: Int, locale: SupportedLocale) -> String? {
+        // 创建农历日期（使用当前月份的某一天）
+        var components = DateComponents()
+        components.calendar = Calendar(identifier: .chinese)
+        components.year = 4722  // 2025年对应的农历年
+        components.month = 1
+        components.day = day
+
+        guard let date = components.date else {
+            return nil
         }
+
+        // 使用缓存的 DateFormatter 获取农历日期文本
+        let formatter = getCachedFormatter(calendarIdentifier: .chinese, locale: locale)
+
+        // 使用本地化的日期模板（仅日期部分）
+        formatter.setLocalizedDateFormatFromTemplate("d")
+
+        let formatted = formatter.string(from: date)
+
+        // 验证格式化结果是否有效（不是纯数字）
+        if formatted.rangeOfCharacter(from: CharacterSet.decimalDigits.inverted) != nil {
+            return formatted
+        }
+
+        return nil
+    }
+
+    /// 判断是否为 CJK 语言（中日韩）
+    private func isCJKLocale(_ locale: SupportedLocale) -> Bool {
+        return locale == .simplifiedChinese ||
+               locale == .traditionalChinese ||
+               locale == .japanese ||
+               locale == .korean
     }
 
     private func getChineseZodiacAnimals(locale: SupportedLocale) -> [String] {
@@ -168,8 +238,12 @@ class CalendarLocalizer {
         style: MonthNameStyle,
         locale: SupportedLocale
     ) -> String {
-        let key = style == .short ? "islamic_month_short_\(month)" : "islamic_month_\(month)"
-        return localizationManager.localized(key, table: "CalendarNames", locale: locale)
+        return getMonthNameFromSystem(
+            month: month,
+            calendarIdentifier: .islamicCivil,
+            style: style,
+            locale: locale
+        )
     }
 
     // MARK: - Private Helpers - Hebrew
@@ -179,8 +253,12 @@ class CalendarLocalizer {
         style: MonthNameStyle,
         locale: SupportedLocale
     ) -> String {
-        let key = style == .short ? "hebrew_month_short_\(month)" : "hebrew_month_\(month)"
-        return localizationManager.localized(key, table: "CalendarNames", locale: locale)
+        return getMonthNameFromSystem(
+            month: month,
+            calendarIdentifier: .hebrew,
+            style: style,
+            locale: locale
+        )
     }
 
     // MARK: - Private Helpers - Persian
@@ -190,12 +268,91 @@ class CalendarLocalizer {
         style: MonthNameStyle,
         locale: SupportedLocale
     ) -> String {
-        let key = style == .short ? "persian_month_short_\(month)" : "persian_month_\(month)"
-        return localizationManager.localized(key, table: "CalendarNames", locale: locale)
+        return getMonthNameFromSystem(
+            month: month,
+            calendarIdentifier: .persian,
+            style: style,
+            locale: locale
+        )
+    }
+
+    // MARK: - System API Helper
+
+    /// 使用系统 Calendar API 获取月份名称（带缓存）
+    private func getMonthNameFromSystem(
+        month: Int,
+        calendarIdentifier: Calendar.Identifier,
+        style: MonthNameStyle,
+        locale: SupportedLocale
+    ) -> String {
+        let formatter = getCachedFormatter(calendarIdentifier: calendarIdentifier, locale: locale)
+
+        let symbols = style == .short ? formatter.shortMonthSymbols : formatter.monthSymbols
+
+        guard let symbols = symbols, month >= 1, month <= symbols.count else {
+            return "\(month)"
+        }
+
+        return symbols[month - 1]
+    }
+
+    // MARK: - Formatter Caching Helpers
+
+    /// 获取或创建缓存的 DateFormatter
+    private func getCachedFormatter(
+        calendarIdentifier: Calendar.Identifier,
+        locale: SupportedLocale
+    ) -> DateFormatter {
+        let key = FormatterCacheKey(
+            calendarIdentifier: identifierString(from: calendarIdentifier),
+            locale: locale.rawValue
+        )
+
+        return cacheQueue.sync {
+            if let cached = formatterCache[key] {
+                return cached
+            }
+
+            // 创建新的 formatter
+            let formatter = DateFormatter()
+            formatter.calendar = Calendar(identifier: calendarIdentifier)
+            formatter.locale = locale.locale
+
+            formatterCache[key] = formatter
+            return formatter
+        }
+    }
+
+    /// 将 Calendar.Identifier 转换为字符串表示
+    private func identifierString(from identifier: Calendar.Identifier) -> String {
+        switch identifier {
+        case .gregorian:
+            return "gregorian"
+        case .chinese:
+            return "chinese"
+        case .islamic, .islamicCivil:
+            return "islamic"
+        case .hebrew:
+            return "hebrew"
+        case .persian:
+            return "persian"
+        case .japanese:
+            return "japanese"
+        case .buddhist:
+            return "buddhist"
+        default:
+            return "\(identifier)"
+        }
     }
 }
 
-// MARK: - Month Name Style
+// MARK: - Supporting Types
+
+/// DateFormatter 缓存键
+private struct FormatterCacheKey: Hashable {
+    let calendarIdentifier: String
+    let locale: String
+}
 
 enum MonthNameStyle {
     case full

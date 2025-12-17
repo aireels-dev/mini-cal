@@ -740,7 +740,7 @@ Copyright © 2025 MiniCal
 
 ## ⭐ Star履歴
 
-[![Star History Chart](https://api.star-history.com/svg?repos=minical/minical&type=Date)](https://star-history.com/#minical/minical&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=aireels-dev/mini-cal&type=Date)](https://star-history.com/#aireels-dev/mini-cal&Date)
 
 ---
 

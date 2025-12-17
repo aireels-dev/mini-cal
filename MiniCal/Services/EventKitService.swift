@@ -2,8 +2,18 @@ import Foundation
 import EventKit
 import Combine
 
+/// 共享的 EKEventStore 单例（Apple 推荐在整个应用中只使用一个实例）
+class EventStoreManager {
+    static let shared = EventStoreManager()
+    let eventStore = EKEventStore()
+
+    private init() {
+        // 私有初始化，确保单例
+    }
+}
+
 class EventKitService: ObservableObject {
-    private let eventStore = EKEventStore()
+    private let eventStore = EventStoreManager.shared.eventStore
     private let permissionManager: PermissionManager
 
     @Published var isLoading = false
