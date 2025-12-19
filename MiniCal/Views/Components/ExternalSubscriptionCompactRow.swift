@@ -9,9 +9,8 @@ import SwiftUI
 
 struct ExternalSubscriptionCompactRow: View {
     let subscription: CalendarSubscription
-    let themeColors: ThemeColors
     let onToggle: () -> Void
-    let onUpdate: (CalendarSubscription) -> Void  // 替换 onEdit
+    let onUpdate: (CalendarSubscription) -> Void
     let onDelete: () -> Void
 
     @State private var isHovered = false
@@ -24,12 +23,10 @@ struct ExternalSubscriptionCompactRow: View {
     @FocusState private var isTitleFieldFocused: Bool
 
     init(subscription: CalendarSubscription,
-         themeColors: ThemeColors,
          onToggle: @escaping () -> Void,
          onUpdate: @escaping (CalendarSubscription) -> Void,
          onDelete: @escaping () -> Void) {
         self.subscription = subscription
-        self.themeColors = themeColors
         self.onToggle = onToggle
         self.onUpdate = onUpdate
         self.onDelete = onDelete
@@ -51,7 +48,7 @@ struct ExternalSubscriptionCompactRow: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 6)
-                .fill(isHovered && !isEditing && !isEditingColor ? themeColors.backgroundColor.opacity(0.1) : Color.clear)
+                .fill(isHovered && !isEditing && !isEditingColor ? Color.primary.opacity(0.1) : Color.clear)
         )
         .onHover { hovering in
             if !isEditing && !isEditingColor {
@@ -83,7 +80,7 @@ struct ExternalSubscriptionCompactRow: View {
                     .frame(width: 12, height: 12)
                     .overlay(
                         Circle()
-                            .strokeBorder(isHovered ? themeColors.accentColor.opacity(0.5) : Color.clear, lineWidth: 1)
+                            .strokeBorder(isHovered ? Color.accentColor.opacity(0.5) : Color.clear, lineWidth: 1)
                     )
             }
             .buttonStyle(PlainButtonStyle())
@@ -93,7 +90,7 @@ struct ExternalSubscriptionCompactRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(subscription.title)
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(themeColors.textColor)
+                    .foregroundColor(.primary)
                     .lineLimit(1)
 
                 HStack(spacing: 8) {
@@ -113,7 +110,7 @@ struct ExternalSubscriptionCompactRow: View {
                     }) {
                         Image(systemName: "pencil")
                             .font(.system(size: 11))
-                            .foregroundColor(themeColors.accentColor)
+                            .foregroundColor(Color.accentColor)
                     }
                     .buttonStyle(PlainButtonStyle())
                     .help("编辑订阅")
@@ -134,7 +131,7 @@ struct ExternalSubscriptionCompactRow: View {
             // 启用/禁用开关
             Toggle("", isOn: $isEnabled)
                 .toggleStyle(.switch)
-                .tint(themeColors.accentColor)
+                .tint(Color.accentColor)
                 .labelsHidden()
                 .onChange(of: isEnabled) { oldValue, newValue in
                     if oldValue != newValue {
@@ -154,7 +151,7 @@ struct ExternalSubscriptionCompactRow: View {
             HStack(spacing: 8) {
                 Text("common.name")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(themeColors.secondaryTextColor)
+                    .foregroundColor(.secondary)
                     .frame(width: 40, alignment: .leading)
 
                 TextField("订阅名称", text: $editTitle)
@@ -167,12 +164,12 @@ struct ExternalSubscriptionCompactRow: View {
             HStack(spacing: 8) {
                 Text("misc.url")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(themeColors.secondaryTextColor)
+                    .foregroundColor(.secondary)
                     .frame(width: 40, alignment: .leading)
 
                 Text(subscription.url?.absoluteString ?? "")
                     .font(.system(size: 11))
-                    .foregroundColor(themeColors.secondaryTextColor)
+                    .foregroundColor(.secondary)
                     .lineLimit(1)
                     .truncationMode(.middle)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -182,7 +179,7 @@ struct ExternalSubscriptionCompactRow: View {
             HStack(spacing: 8) {
                 Text("common.color")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(themeColors.secondaryTextColor)
+                    .foregroundColor(.secondary)
                     .frame(width: 40, alignment: .leading)
 
                 // 颜色选择器（横向排列）
@@ -230,7 +227,7 @@ struct ExternalSubscriptionCompactRow: View {
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 8)
-        .background(themeColors.accentColor.opacity(0.05))
+        .background(Color.accentColor.opacity(0.05))
         .cornerRadius(6)
     }
 
@@ -303,7 +300,7 @@ struct ExternalSubscriptionCompactRow: View {
             HStack(spacing: 8) {
                 Text("common.color")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(themeColors.secondaryTextColor)
+                    .foregroundColor(.secondary)
                     .frame(width: 40, alignment: .leading)
 
                 // 颜色选择器（横向排列）
@@ -350,7 +347,7 @@ struct ExternalSubscriptionCompactRow: View {
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 8)
-        .background(themeColors.accentColor.opacity(0.05))
+        .background(Color.accentColor.opacity(0.05))
         .cornerRadius(6)
     }
 
@@ -428,7 +425,6 @@ struct ExternalSubscriptionCompactRow: View {
     return VStack(spacing: 8) {
         ExternalSubscriptionCompactRow(
             subscription: subscription1,
-            themeColors: .light,
             onToggle: {},
             onUpdate: { _ in },
             onDelete: {}
@@ -436,7 +432,6 @@ struct ExternalSubscriptionCompactRow: View {
 
         ExternalSubscriptionCompactRow(
             subscription: subscription2,
-            themeColors: .light,
             onToggle: {},
             onUpdate: { _ in },
             onDelete: {}

@@ -51,7 +51,7 @@ class HolidayProvider {
     }
 
     private func loadHolidayFile(filename: String) -> [String: Holiday]? {
-        guard let url = Bundle.main.url(forResource: filename, withExtension: "json", subdirectory: "Resources/Holidays"),
+        guard let url = Bundle.main.url(forResource: filename, withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let holidayData = try? JSONDecoder().decode(HolidayData.self, from: data) else {
             return nil

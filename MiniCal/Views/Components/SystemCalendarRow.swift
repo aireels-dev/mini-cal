@@ -11,11 +11,10 @@ import EventKit
 struct SystemCalendarRow: View {
     let calendar: EKCalendar
     @Binding var isEnabled: Bool
-    let themeColors: ThemeColors
-    let permissionManager: PermissionManager  // 新增：PermissionManager引用
-    let eventCount: Int  // 事件数
+    let permissionManager: PermissionManager
+    let eventCount: Int
     let onToggle: () -> Void
-    let onColorUpdate: (EventColor) -> Void  // 新增：颜色更新回调
+    let onColorUpdate: (EventColor) -> Void
 
     @State private var isHovered = false
     @State private var isEditingColor = false
@@ -38,7 +37,7 @@ struct SystemCalendarRow: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 6)
-                .fill(isHovered && !isEditingColor ? themeColors.backgroundColor.opacity(0.1) : Color.clear)
+                .fill(isHovered && !isEditingColor ? Color.primary.opacity(0.05) : Color.clear)
         )
         .onHover { hovering in
             if !isEditingColor {
@@ -62,7 +61,7 @@ struct SystemCalendarRow: View {
                     .frame(width: 12, height: 12)
                     .overlay(
                         Circle()
-                            .strokeBorder(isHovered ? themeColors.accentColor.opacity(0.5) : Color.clear, lineWidth: 1)
+                            .strokeBorder(isHovered ? Color.accentColor.opacity(0.5) : Color.clear, lineWidth: 1)
                     )
             }
             .buttonStyle(PlainButtonStyle())
@@ -72,21 +71,21 @@ struct SystemCalendarRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(calendar.title)
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(themeColors.textColor)
+                    .foregroundColor(.primary)
 
                 HStack(spacing: 8) {
                     // 日历来源
                     if let source = calendar.source?.title {
                         Text(localizedSourceName(source))
                             .font(.system(size: 11))
-                            .foregroundColor(themeColors.secondaryTextColor)
+                            .foregroundColor(.secondary)
                     }
 
                     // 事件数量
                     if eventCount > 0 {
                         Text(String(format: NSLocalizedString("system_calendar.event_count", comment: ""), eventCount))
                             .font(.system(size: 11))
-                            .foregroundColor(themeColors.secondaryTextColor)
+                            .foregroundColor(.secondary)
                     }
                 }
             }
@@ -96,7 +95,7 @@ struct SystemCalendarRow: View {
             // 启用/禁用开关
             Toggle("", isOn: $isEnabled)
                 .toggleStyle(.switch)
-                .tint(themeColors.accentColor)
+                .tint(.accentColor)
                 .labelsHidden()
                 .onChange(of: isEnabled) { oldValue, newValue in
                     if oldValue != newValue {
@@ -116,7 +115,7 @@ struct SystemCalendarRow: View {
             HStack(spacing: 8) {
                 Text("common.color")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(themeColors.secondaryTextColor)
+                    .foregroundColor(.secondary)
                     .frame(width: 40, alignment: .leading)
 
                 // 颜色选择器（横向排列）
@@ -163,7 +162,7 @@ struct SystemCalendarRow: View {
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 8)
-        .background(themeColors.accentColor.opacity(0.05))
+        .background(Color.accentColor.opacity(0.05))
         .cornerRadius(6)
     }
 
@@ -223,18 +222,21 @@ struct SystemCalendarRow: View {
 }
 
 #Preview {
-    let calendar = EKCalendar(for: .event, eventStore: EKEventStore())
-    calendar.title = "工作日历"
-    calendar.color = NSColor.blue
-
+    let calendar = createPreviewCalendar()
     return SystemCalendarRow(
         calendar: calendar,
         isEnabled: .constant(true),
-        themeColors: .light,
         permissionManager: PermissionManager.shared,
         eventCount: 15,
         onToggle: {},
         onColorUpdate: { _ in }
     )
     .padding()
+}
+
+private func createPreviewCalendar() -> EKCalendar {
+    let calendar = EKCalendar(for: .event, eventStore: EKEventStore())
+    calendar.title = "工作日历"
+    calendar.color = NSColor.blue
+    return calendar
 }

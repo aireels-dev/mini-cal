@@ -1,0 +1,325 @@
+{
+  "version": "1.0.0",
+  "lastUpdate": "2025-12-17",
+  "recommendations": [
+    {
+      "id": "cn-public-holidays",
+      "name": {
+        "en": "China Public Holidays",
+        "zh-Hans": "中国法定节假日",
+        "zh-Hant": "中國法定節假日"
+      },
+      "description": {
+        "en": "Official public holidays in China as announced by the State Council",
+        "zh-Hans": "国务院办公厅发布的中国法定节假日安排",
+        "zh-Hant": "國務院辦公廳發布的中國法定節假日安排"
+      },
+      "url": "https://calendars.icloud.com/holidays/cn_zh.ics",
+      "applicableRegions": ["CN", "zh-Hans", "zh-Hant"],
+      "applicableCalendars": ["chinese"],
+      "trustLevel": "verified",
+      "provider": "Apple iCloud",
+      "tags": ["holiday", "official", "public"],
+      "iconName": "building.columns.fill",
+      "updateFrequency": "Yearly"
+    },
+    {
+      "id": "cn-traditional-festivals",
+      "name": {
+        "en": "Chinese Traditional Festivals",
+        "zh-Hans": "中国传统节日",
+        "zh-Hant": "中國傳統節日"
+      },
+      "description": {
+        "en": "Traditional Chinese festivals including Spring Festival, Mid-Autumn Festival, Dragon Boat Festival, etc.",
+        "zh-Hans": "包括春节、中秋节、端午节等中国传统节日",
+        "zh-Hant": "包括春節、中秋節、端午節等中國傳統節日"
+      },
+      "url": "https://raw.githubusercontent.com/lanceliao/china-holiday-calender/master/holiday.ics",
+      "applicableRegions": ["CN", "zh-Hans", "zh-Hant"],
+      "applicableCalendars": ["chinese"],
+      "trustLevel": "community",
+      "provider": "GitHub Community",
+      "tags": ["festival", "traditional", "cultural"],
+      "iconName": "sparkles",
+      "updateFrequency": "Yearly"
+    },
+    {
+      "id": "islamic-holidays",
+      "name": {
+        "en": "Islamic Holidays",
+        "ar": "الأعياد الإسلامية",
+        "zh-Hans": "伊斯兰节日",
+        "ur": "اسلامی تعطیلات",
+        "fa": "تعطیلات اسلامی"
+      },
+      "description": {
+        "en": "Major Islamic holidays including Ramadan, Eid al-Fitr, Eid al-Adha",
+        "ar": "الأعياد الإسلامية الرئيسية بما في ذلك رمضان وعيد الفطر وعيد الأضحى",
+        "zh-Hans": "主要伊斯兰节日，包括斋月、开斋节、宰牲节",
+        "ur": "رمضان، عید الفطر، عید الاضحیٰ سمیت اہم اسلامی تعطیلات",
+        "fa": "تعطیلات اصلی اسلامی از جمله رمضان، عید فطر، عید قربان"
+      },
+      "url": "https://calendars.icloud.com/holidays/us_islamic.ics",
+      "applicableRegions": ["SA", "AE", "EG", "ID", "MY", "PK", "TR", "ar", "ur", "fa"],
+      "applicableCalendars": ["islamic"],
+      "trustLevel": "verified",
+      "provider": "Apple iCloud",
+      "tags": ["holiday", "religious", "islamic"],
+      "iconName": "moon.stars.fill",
+      "updateFrequency": "Yearly"
+    },
+    {
+      "id": "jewish-holidays",
+      "name": {
+        "en": "Jewish Holidays",
+        "he": "חגים יהודיים",
+        "zh-Hans": "犹太节日"
+      },
+      "description": {
+        "en": "Jewish holidays including Rosh Hashanah, Yom Kippur, Hanukkah, Passover",
+        "he": "חגים יהודיים כולל ראש השנה, יום כיפור, חנוכה, פסח",
+        "zh-Hans": "犹太节日，包括新年、赎罪日、光明节、逾越节"
+      },
+      "url": "https://www.hebcal.com/hebcal/jewish-holidays.ics",
+      "applicableRegions": ["IL", "he"],
+      "applicableCalendars": ["hebrew"],
+      "trustLevel": "verified",
+      "provider": "HebCal.com",
+      "tags": ["holiday", "religious", "jewish"],
+      "iconName": "star.fill",
+      "updateFrequency": "Yearly"
+    },
+    {
+      "id": "shabbat-times",
+      "name": {
+        "en": "Shabbat Times",
+        "he": "זמני שבת",
+        "zh-Hans": "安息日时间"
+      },
+      "description": {
+        "en": "Weekly Shabbat candle lighting and Havdalah times (requires location)",
+        "he": "זמני הדלקת נרות שבת והבדלה שבועיים (דורש מיקום)",
+        "zh-Hans": "每周安息日点蜡烛和哈瓦达拉时间（需要位置）"
+      },
+      "url": "https://www.hebcal.com/shabbat/browse/",
+      "applicableRegions": ["IL", "he"],
+      "applicableCalendars": ["hebrew"],
+      "trustLevel": "verified",
+      "provider": "HebCal.com",
+      "tags": ["shabbat", "religious", "weekly"],
+      "iconName": "candlelight.fill",
+      "updateFrequency": "Weekly"
+    },
+    {
+      "id": "jp-national-holidays",
+      "name": {
+        "en": "Japan National Holidays",
+        "ja": "日本の祝日",
+        "zh-Hans": "日本法定节假日"
+      },
+      "description": {
+        "en": "Official national holidays in Japan",
+        "ja": "日本の国民の祝日",
+        "zh-Hans": "日本的官方法定节假日"
+      },
+      "url": "https://calendars.icloud.com/holidays/jp_ja.ics",
+      "applicableRegions": ["JP", "ja"],
+      "applicableCalendars": ["japanese"],
+      "trustLevel": "verified",
+      "provider": "Apple iCloud",
+      "tags": ["holiday", "official", "public"],
+      "iconName": "flag.fill",
+      "updateFrequency": "Yearly"
+    },
+    {
+      "id": "persian-holidays",
+      "name": {
+        "en": "Persian Holidays",
+        "fa": "تعطیلات ایرانی",
+        "zh-Hans": "波斯节日"
+      },
+      "description": {
+        "en": "Persian/Iranian holidays including Nowruz and other traditional celebrations",
+        "fa": "تعطیلات ایرانی از جمله نوروز و سایر جشن‌های سنتی",
+        "zh-Hans": "波斯/伊朗节日，包括诺鲁孜节和其他传统庆典"
+      },
+      "url": "https://raw.githubusercontent.com/persian-calendar/persian-calendar/main/persian-holidays.ics",
+      "applicableRegions": ["IR", "AF", "fa"],
+      "applicableCalendars": ["persian"],
+      "trustLevel": "community",
+      "provider": "Persian Calendar Project",
+      "tags": ["holiday", "cultural", "persian"],
+      "iconName": "sun.max.fill",
+      "updateFrequency": "Yearly"
+    },
+    {
+      "id": "buddhist-festivals-th",
+      "name": {
+        "en": "Thai Buddhist Festivals",
+        "th": "วันสำคัญทางพุทธศาสนาไทย",
+        "zh-Hans": "泰国佛教节日"
+      },
+      "description": {
+        "en": "Important Buddhist festivals and observance days in Thailand",
+        "th": "วันสำคัญทางพุทธศาสนาและวันธรรมสวนะในประเทศไทย",
+        "zh-Hans": "泰国的重要佛教节日和守戒日"
+      },
+      "url": "https://calendars.icloud.com/holidays/th_th.ics",
+      "applicableRegions": ["TH", "th"],
+      "applicableCalendars": ["buddhist"],
+      "trustLevel": "verified",
+      "provider": "Apple iCloud",
+      "tags": ["festival", "religious", "buddhist"],
+      "iconName": "leaf.fill",
+      "updateFrequency": "Yearly"
+    },
+    {
+      "id": "kr-public-holidays",
+      "name": {
+        "en": "South Korea Public Holidays",
+        "ko": "대한민국 공휴일",
+        "zh-Hans": "韩国法定节假日"
+      },
+      "description": {
+        "en": "Official public holidays in South Korea",
+        "ko": "대한민국 법정 공휴일",
+        "zh-Hans": "韩国的官方法定节假日"
+      },
+      "url": "https://calendars.icloud.com/holidays/kr_ko.ics",
+      "applicableRegions": ["KR", "ko"],
+      "applicableCalendars": ["chinese"],
+      "trustLevel": "verified",
+      "provider": "Apple iCloud",
+      "tags": ["holiday", "official", "public"],
+      "iconName": "flag.fill",
+      "updateFrequency": "Yearly"
+    },
+    {
+      "id": "vn-public-holidays",
+      "name": {
+        "en": "Vietnam Public Holidays",
+        "vi": "Ngày lễ Việt Nam",
+        "zh-Hans": "越南法定节假日"
+      },
+      "description": {
+        "en": "Official public holidays in Vietnam including Tet and other festivals",
+        "vi": "Ngày lễ chính thức của Việt Nam bao gồm Tết và các lễ hội khác",
+        "zh-Hans": "越南的官方法定节假日，包括春节和其他节日"
+      },
+      "url": "https://calendars.icloud.com/holidays/vn_vi.ics",
+      "applicableRegions": ["VN", "vi"],
+      "applicableCalendars": ["chinese"],
+      "trustLevel": "verified",
+      "provider": "Apple iCloud",
+      "tags": ["holiday", "official", "public"],
+      "iconName": "flag.fill",
+      "updateFrequency": "Yearly"
+    },
+    {
+      "id": "tw-holidays",
+      "name": {
+        "en": "Taiwan Holidays",
+        "zh-Hant": "台灣節假日",
+        "zh-Hans": "台湾节假日"
+      },
+      "description": {
+        "en": "Public holidays in Taiwan (Republic of China)",
+        "zh-Hant": "中華民國（台灣）法定節假日",
+        "zh-Hans": "中华民国（台湾）法定节假日"
+      },
+      "url": "https://calendars.icloud.com/holidays/tw_zh.ics",
+      "applicableRegions": ["TW", "zh-Hant"],
+      "applicableCalendars": ["chinese"],
+      "trustLevel": "verified",
+      "provider": "Apple iCloud",
+      "tags": ["holiday", "official", "public"],
+      "iconName": "flag.fill",
+      "updateFrequency": "Yearly"
+    },
+    {
+      "id": "hk-holidays",
+      "name": {
+        "en": "Hong Kong Holidays",
+        "zh-Hant": "香港節假日",
+        "zh-Hans": "香港节假日"
+      },
+      "description": {
+        "en": "Public holidays in Hong Kong SAR",
+        "zh-Hant": "香港特別行政區法定節假日",
+        "zh-Hans": "香港特别行政区法定节假日"
+      },
+      "url": "https://calendars.icloud.com/holidays/hk_zh.ics",
+      "applicableRegions": ["HK", "zh-Hant"],
+      "applicableCalendars": ["chinese"],
+      "trustLevel": "verified",
+      "provider": "Apple iCloud",
+      "tags": ["holiday", "official", "public"],
+      "iconName": "flag.fill",
+      "updateFrequency": "Yearly"
+    },
+    {
+      "id": "sg-holidays",
+      "name": {
+        "en": "Singapore Public Holidays",
+        "zh-Hans": "新加坡公共假期"
+      },
+      "description": {
+        "en": "Official public holidays in Singapore",
+        "zh-Hans": "新加坡的官方公共假期"
+      },
+      "url": "https://calendars.icloud.com/holidays/sg_en.ics",
+      "applicableRegions": ["SG", "zh-Hans", "en"],
+      "applicableCalendars": ["chinese"],
+      "trustLevel": "verified",
+      "provider": "Apple iCloud",
+      "tags": ["holiday", "official", "public"],
+      "iconName": "flag.fill",
+      "updateFrequency": "Yearly"
+    },
+    {
+      "id": "us-holidays",
+      "name": {
+        "en": "United States Holidays",
+        "zh-Hans": "美国节假日"
+      },
+      "description": {
+        "en": "Federal holidays and observances in the United States",
+        "zh-Hans": "美国联邦节假日和纪念日"
+      },
+      "url": "https://calendars.icloud.com/holidays/us_en.ics",
+      "applicableRegions": ["US", "en"],
+      "applicableCalendars": [],
+      "trustLevel": "verified",
+      "provider": "Apple iCloud",
+      "tags": ["holiday", "official", "public"],
+      "iconName": "flag.fill",
+      "updateFrequency": "Yearly"
+    },
+    {
+      "id": "ramadan-calendar",
+      "name": {
+        "en": "Ramadan Calendar",
+        "ar": "تقويم رمضان",
+        "zh-Hans": "斋月日历",
+        "ur": "رمضان کیلنڈر",
+        "fa": "تقویم رمضان"
+      },
+      "description": {
+        "en": "Daily Ramadan schedule including Suhoor and Iftar times",
+        "ar": "جدول رمضان اليومي بما في ذلك أوقات السحور والإفطار",
+        "zh-Hans": "包括封斋和开斋时间的每日斋月时间表",
+        "ur": "روزانہ رمضان کا شیڈول بشمول سحری اور افطار کے اوقات",
+        "fa": "برنامه روزانه رمضان شامل اوقات سحر و افطار"
+      },
+      "url": "https://example.com/ramadan-calendar.ics",
+      "applicableRegions": ["SA", "AE", "EG", "ID", "MY", "PK", "TR", "ar", "ur", "fa"],
+      "applicableCalendars": ["islamic"],
+      "trustLevel": "community",
+      "provider": "Islamic Community",
+      "tags": ["ramadan", "religious", "daily"],
+      "iconName": "moon.fill",
+      "updateFrequency": "Yearly"
+    }
+  ]
+}

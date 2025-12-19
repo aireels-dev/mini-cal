@@ -107,10 +107,21 @@ class SettingsManager: ObservableObject {
     }
 
     func updateSecondaryCalendar(_ calendarType: CalendarType?) {
+        let previousCalendar = currentSettings.secondaryCalendarType
         var updatedSettings = currentSettings
         updatedSettings.secondaryCalendarType = calendarType
         updatedSettings.lastUpdated = Date()
         saveSettings(updatedSettings)
+
+        // 如果日历类型发生变化且新类型不为空，发送通知触发推荐
+        if let newCalendar = calendarType, previousCalendar != newCalendar {
+            NotificationCenter.default.post(
+                name: .calendarTypeDidChange,
+                object: nil,
+                userInfo: ["calendarType": newCalendar]
+            )
+            Logger.info("Calendar type changed to \(newCalendar.displayName), posting recommendation trigger", category: Logger.settings)
+        }
     }
 
     // MARK: - Theme Settings
@@ -204,4 +215,11 @@ class SettingsManager: ObservableObject {
     func resetToDefaults() {
         saveSettings(UserSettings.default)
     }
+}
+
+// MARK: - Notification Names
+
+extension Notification.Name {
+    static let calendarTypeDidChange = Notification.Name("CalendarTypeDidChange")
+    static let showOnboardingRequested = Notification.Name("ShowOnboardingRequested")
 }

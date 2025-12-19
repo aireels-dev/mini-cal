@@ -99,6 +99,13 @@ struct MenuBarSettingsView: View {
                         // 应用设置
                         LaunchAtLoginManager.shared.setLaunchAtLogin(newValue)
                     }
+
+                // 重新显示引导
+                Button("settings.app.show_onboarding".localized()) {
+                    // 发送通知请求显示引导
+                    NotificationCenter.default.post(name: .showOnboardingRequested, object: nil)
+                }
+                .buttonStyle(.link)
             }
 
             // 菜单栏显示
@@ -348,7 +355,6 @@ struct CalendarSettingsView: View {
     @State private var localSettings: UserSettings
     @StateObject private var permissionManager = PermissionManager.shared
     @StateObject private var subscriptionViewModel = SubscriptionManagerViewModel()
-    @StateObject private var themeManager = ThemeManager.shared
     @StateObject private var localGroupService = LocalEventGroupService.shared
 
     @State private var showingAddSubscription = false
@@ -540,7 +546,6 @@ struct CalendarSettingsView: View {
                             get: { permissionManager.isCalendarEnabled(calendarIdentifier: calendar.calendarIdentifier) },
                             set: { newValue in permissionManager.setCalendarEnabled(calendarIdentifier: calendar.calendarIdentifier, enabled: newValue) }
                         ),
-                        themeColors: themeManager.effectiveColors,
                         permissionManager: permissionManager,
                         eventCount: systemCalendarEventCounts[calendar.calendarIdentifier] ?? 0,
                         onToggle: {
@@ -596,7 +601,6 @@ struct CalendarSettingsView: View {
                 ForEach(subscriptionViewModel.subscriptions) { subscription in
                     ExternalSubscriptionCompactRow(
                         subscription: subscription,
-                        themeColors: themeManager.effectiveColors,
                         onToggle: {
                             Task {
                                 await subscriptionViewModel.toggleSubscription(subscription.id)
@@ -684,7 +688,6 @@ struct CalendarSettingsView: View {
                 LocalEventGroupCompactRow(
                     group: group,
                     eventCount: localGroupEventCounts[group.id] ?? 0,
-                    themeColors: themeManager.effectiveColors,
                     onUpdate: { updatedGroup in
                         localGroupService.updateGroup(updatedGroup)
                         // 刷新日历视图

@@ -11,9 +11,14 @@ struct CalendarView: View {
     @ObservedObject var viewModel: CalendarViewModel
     @ObservedObject private var settingsManager = SettingsManager.shared
     @ObservedObject private var themeManager = ThemeManager.shared
+    @StateObject private var recommendationService = SubscriptionRecommendationService.shared
     @State private var selectedDateForDetail: CalendarDate?
     @State private var showEventDetail = false
     @State private var settingsKeyMonitor: Any?
+    @State private var showRecommendationCard = false
+    @State private var recommendedCalendarType: CalendarType?
+    @State private var showingSecurityAlert = false
+    @State private var pendingSubscription: RecommendedSubscription?
 
     var openSettingsAction: (() -> Void)?
 
@@ -72,6 +77,35 @@ struct CalendarView: View {
                     }
                 )
                 .padding(.bottom, 16)
+
+                Spacer()
+            }
+
+            // 推荐卡片层（底部）
+            if showRecommendationCard, let calendarType = recommendedCalendarType {
+                VStack {
+                    Spacer()
+
+                    CalendarSwitchRecommendationCard(
+                        calendarType: calendarType,
+                        recommendations: recommendationService.getRecommendations(for: calendarType, excludeDismissed: true, limit: 3),
+                        onSubscribe: { recommendation in
+                            handleSubscribe(recommendation)
+                        },
+                        onDismiss: {
+                            showRecommendationCard = false
+                            if let type = recommendedCalendarType {
+                                recommendationService.dismissRecommendationForSession("\(type.rawValue)_switch")
+                            }
+                        },
+                        onDismissForever: {
+                            showRecommendationCard = false
+                            if let type = recommendedCalendarType {
+                                recommendationService.dismissRecommendationPermanently("\(type.rawValue)_switch")
+                            }
+                        }
+                    )
+                }
             }
         }
         .frame(width: calendarSize.width, height: calendarSize.height)
@@ -138,10 +172,28 @@ struct CalendarView: View {
         .onAppear {
             setupSettingsKeyMonitor()
             setupResetNotification()
+            setupCalendarTypeChangeNotification()
         }
         .onDisappear {
             removeSettingsKeyMonitor()
             removeResetNotification()
+            removeCalendarTypeChangeNotification()
+        }
+        .alert("recommendation.security_alert.title".localized(), isPresented: $showingSecurityAlert) {
+            Button("recommendation.security_alert.cancel".localized(), role: .cancel) {
+                pendingSubscription = nil
+            }
+            Button("recommendation.security_alert.confirm".localized()) {
+                confirmSubscribe()
+            }
+        } message: {
+            if let recommendation = pendingSubscription {
+                Text(String(
+                    format: "recommendation.security_alert.message".localized(),
+                    recommendation.name.localized(),
+                    recommendation.provider
+                ))
+            }
         }
     }
 
@@ -222,6 +274,81 @@ struct CalendarView: View {
             name: .resetCalendarToToday,
             object: nil
         )
+    }
+
+    // MARK: - Calendar Type Change Notification
+
+    private func setupCalendarTypeChangeNotification() {
+        NotificationCenter.default.addObserver(
+            forName: .calendarTypeDidChange,
+            object: nil,
+            queue: .main
+        ) { notification in
+            // 获取新的日历类型
+            if let calendarType = notification.userInfo?["calendarType"] as? CalendarType {
+                // 检查是否有推荐
+                let recommendations = self.recommendationService.getRecommendations(
+                    for: calendarType,
+                    excludeDismissed: true,
+                    limit: 3
+                )
+
+                // 如果有推荐，显示推荐卡片
+                if !recommendations.isEmpty {
+                    self.recommendedCalendarType = calendarType
+                    withAnimation(.spring(response: 0.3)) {
+                        self.showRecommendationCard = true
+                    }
+
+                    // 标记推荐已显示
+                    for recommendation in recommendations {
+                        self.recommendationService.markRecommendationShown(recommendation.id)
+                    }
+
+                    Logger.info("Showing \(recommendations.count) recommendations for \(calendarType.displayName)", category: Logger.app)
+                } else {
+                    Logger.debug("No recommendations available for \(calendarType.displayName)", category: Logger.app)
+                }
+            }
+        }
+    }
+
+    private func removeCalendarTypeChangeNotification() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .calendarTypeDidChange,
+            object: nil
+        )
+    }
+
+    // MARK: - Recommendation Handlers
+
+    private func handleSubscribe(_ recommendation: RecommendedSubscription) {
+        // 设置中添加订阅时，所有推荐源都需要显示安全确认弹窗
+        pendingSubscription = recommendation
+        showingSecurityAlert = true
+    }
+
+    private func confirmSubscribe() {
+        guard let recommendation = pendingSubscription else { return }
+
+        Task {
+            do {
+                try await recommendationService.subscribe(recommendation, userConfirmed: true)
+                Logger.info("Successfully subscribed to: \(recommendation.name.localized())", category: Logger.app)
+
+                // 订阅成功后关闭推荐卡片
+                await MainActor.run {
+                    showRecommendationCard = false
+                    pendingSubscription = nil
+                }
+            } catch {
+                Logger.error("Failed to subscribe: \(error)", category: Logger.app)
+                await MainActor.run {
+                    pendingSubscription = nil
+                }
+            }
+        }
     }
 }
 
