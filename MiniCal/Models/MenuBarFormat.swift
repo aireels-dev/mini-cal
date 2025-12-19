@@ -30,8 +30,8 @@ enum MenuBarFormat: String, Codable, CaseIterable {
 
         switch self {
         case .dateOnly:
-            // 使用locale自动生成日期格式
-            let template = showWeekday ? "MdE" : "Md"
+            // 使用locale自动生成日期格式，使用月份缩写（中文显示"11月18日"，英文显示"Nov 18"）
+            let template = showWeekday ? "MMMdE" : "MMMd"
             formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: template, options: 0, locale: formatter.locale)
         case .timeOnly:
             // 时间格式
@@ -41,24 +41,24 @@ enum MenuBarFormat: String, Codable, CaseIterable {
                 formatter.dateFormat = show24Hour ? "HH:mm" : "h:mm a"
             }
         case .dateTime:
-            // 使用locale自动生成日期时间格式
+            // 使用locale自动生成日期时间格式，使用月份缩写（中文显示"11月18日 14:30"，英文显示"Nov 18, 2:30 PM"）
             var template = ""
             if showWeekday {
                 if showSeconds {
-                    template = show24Hour ? "MdEHms" : "Mdehms"
+                    template = show24Hour ? "MMMdEHms" : "MMMdehms"
                 } else {
-                    template = show24Hour ? "MdEHm" : "Mdehm"
+                    template = show24Hour ? "MMMdEHm" : "MMMdehm"
                 }
             } else {
                 if showSeconds {
-                    template = show24Hour ? "MdHms" : "Mdhms"
+                    template = show24Hour ? "MMMdHms" : "MMMdhms"
                 } else {
-                    template = show24Hour ? "MdHm" : "Mdhm"
+                    template = show24Hour ? "MMMdHm" : "MMMdhm"
                 }
             }
             formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: template, options: 0, locale: formatter.locale)
         case .custom:
-            formatter.dateFormat = customFormat ?? DateFormatter.dateFormat(fromTemplate: "MdHm", options: 0, locale: formatter.locale)
+            formatter.dateFormat = customFormat ?? DateFormatter.dateFormat(fromTemplate: "MMMdHm", options: 0, locale: formatter.locale)
         }
 
         return formatter.string(from: date)

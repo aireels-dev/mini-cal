@@ -9,13 +9,14 @@ import Cocoa
 import SwiftUI
 import Combine
 
-class MenuBarController: NSObject {
+class MenuBarController: NSObject, NSWindowDelegate {
     private var statusItem: NSStatusItem!
     private var popover: NSPopover!
     private var menuBarViewModel: MenuBarViewModel!
     private var calendarViewModel: CalendarViewModel!  // 日历视图模型
     private var menuBarHostingView: NSHostingController<MenuBarView>?
     private var settingsWindow: NSWindow?
+    private var onboardingWindow: NSWindow?  // 首次启动向导窗口
     private var settingsManager = SettingsManager.shared
     private var hoverTimer: Timer?
     private var mouseMonitor: Any?
@@ -31,6 +32,9 @@ class MenuBarController: NSObject {
     private let syncStatusMonitor: SyncStatusMonitor
     private var autoSyncTimer: Timer?
 
+    // 推荐服务
+    private let recommendationService = SubscriptionRecommendationService.shared
+
     override init() {
         self.subscriptionService = CalendarSubscriptionService()
         self.syncStatusMonitor = SyncStatusMonitor()
@@ -42,6 +46,10 @@ class MenuBarController: NSObject {
         observeSettingsChanges()
         observeThemePreview()
         setupAutoSync()
+        observeOnboardingRequest()
+
+        // 检查是否需要显示首次启动向导
+        checkOnboardingStatus()
     }
 
     private func setupViewModel() {
@@ -188,6 +196,16 @@ class MenuBarController: NSObject {
             self,
             selector: #selector(handleThemePreview),
             name: .themePreviewRequested,
+            object: nil
+        )
+    }
+
+    private func observeOnboardingRequest() {
+        // 监听引导显示请求通知（从设置页面触发）
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(showOnboardingWizard),
+            name: .showOnboardingRequested,
             object: nil
         )
     }
@@ -340,35 +358,77 @@ class MenuBarController: NSObject {
     // MARK: - Settings Window
 
     @objc func openSettings() {
-        if let window = settingsWindow {
-            // 如果窗口已存在，恢复最小化状态并激活前置
-            if window.isMiniaturized {
-                window.deminiaturize(nil)
+        // 确保在主线程执行
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+
+            if let window = self.settingsWindow, window.isVisible {
+                // 如果窗口已存在且可见，恢复最小化状态并激活前置
+                if window.isMiniaturized {
+                    window.deminiaturize(nil)
+                }
+
+                // 获取鼠标所在屏幕，确保窗口显示在该屏幕
+                if let mouseScreen = NSScreen.main {
+                    // 如果窗口不在鼠标所在屏幕，移动到该屏幕中央
+                    if let windowScreen = window.screen, windowScreen != mouseScreen {
+                        let screenFrame = mouseScreen.visibleFrame
+                        let windowFrame = window.frame
+                        let x = screenFrame.midX - windowFrame.width / 2
+                        let y = screenFrame.midY - windowFrame.height / 2
+                        window.setFrameOrigin(NSPoint(x: x, y: y))
+                    }
+                }
+
+                window.makeKeyAndOrderFront(nil)
+                NSApp.activate(ignoringOtherApps: true)
+
+                Logger.info("Settings window activated and brought to front", category: Logger.app)
+            } else {
+                // 窗口不存在或不可见，创建新窗口
+                self.settingsWindow = nil  // 清理旧引用
+
+                Logger.info("Creating new settings window", category: Logger.app)
+
+                let settingsView = SettingsView(calendarViewModel: self.calendarViewModel)
+                let hostingController = NSHostingController(rootView: settingsView)
+
+                let window = NSWindow(contentViewController: hostingController)
+                window.title = NSLocalizedString("settings.window_title", comment: "")
+                window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
+                window.isReleasedWhenClosed = false
+
+                // 设置窗口最小尺寸，避免尺寸异常
+                window.minSize = NSSize(width: 600, height: 400)
+                window.setContentSize(NSSize(width: 800, height: 600))
+
+                // 在鼠标所在屏幕居中
+                if let mouseScreen = NSScreen.main {
+                    let screenFrame = mouseScreen.visibleFrame
+                    let windowSize = window.frame.size
+                    let x = screenFrame.midX - windowSize.width / 2
+                    let y = screenFrame.midY - windowSize.height / 2
+                    window.setFrameOrigin(NSPoint(x: x, y: y))
+                } else {
+                    window.center()
+                }
+
+                window.setFrameAutosaveName("SettingsWindow")
+                window.delegate = self  // 设置委托，监听窗口关闭事件
+
+                // 添加快捷键支持
+                window.makeFirstResponder(hostingController.view)
+
+                self.settingsWindow = window
+                window.makeKeyAndOrderFront(nil)
+                NSApp.activate(ignoringOtherApps: true)
+
+                Logger.info("New settings window created and displayed", category: Logger.app)
             }
-            window.makeKeyAndOrderFront(nil)
-            NSApp.activate(ignoringOtherApps: true)
-        } else {
-            // 创建新的设置窗口
-            let settingsView = SettingsView(calendarViewModel: calendarViewModel)
-            let hostingController = NSHostingController(rootView: settingsView)
 
-            let window = NSWindow(contentViewController: hostingController)
-            window.title = NSLocalizedString("settings.window_title", comment: "")
-            window.styleMask = [.titled, .closable, .miniaturizable]
-            window.center()
-            window.setFrameAutosaveName("SettingsWindow")
-            window.isReleasedWhenClosed = false
-
-            // 添加快捷键支持
-            window.makeFirstResponder(hostingController.view)
-
-            settingsWindow = window
-            window.makeKeyAndOrderFront(nil)
-            NSApp.activate(ignoringOtherApps: true)
+            // 关闭弹窗
+            self.closePopover()
         }
-
-        // 关闭弹窗
-        closePopover()
     }
 
     @objc func checkForUpdates() {
@@ -570,6 +630,78 @@ class MenuBarController: NSObject {
         let timeSinceLastSync = Date().timeIntervalSince(lastSyncDate)
 
         return timeSinceLastSync >= syncInterval
+    }
+
+    // MARK: - Onboarding
+
+    /// 检查首次启动状态
+    private func checkOnboardingStatus() {
+        // 延迟检查，确保应用完全启动
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            guard let self = self else { return }
+
+            if self.recommendationService.shouldShowOnboarding() {
+                Logger.info("First launch detected, showing onboarding wizard", category: Logger.app)
+                self.showOnboardingWizard()
+            } else {
+                // 重置会话拒绝记录（新会话开始）
+                self.recommendationService.resetSessionDismissals()
+            }
+        }
+    }
+
+    /// 显示首次启动向导（公开方法，可从设置或菜单调用）
+    @objc func showOnboardingWizard() {
+        // 如果窗口已经显示，直接激活
+        if let window = onboardingWindow, window.isVisible {
+            window.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            Logger.info("Onboarding wizard already visible, bringing to front", category: Logger.app)
+            return
+        }
+
+        // 清理旧窗口引用（不调用 close()，让它自然销毁）
+        onboardingWindow = nil
+
+        // 创建向导视图
+        let onboardingView = OnboardingWizardView()
+        let hostingController = NSHostingController(rootView: onboardingView)
+
+        // 创建窗口
+        let window = NSWindow(contentViewController: hostingController)
+        window.title = NSLocalizedString("onboarding.window_title", comment: "")
+        window.styleMask = [.titled, .closable]
+        window.center()
+        window.isReleasedWhenClosed = false  // 不自动释放，由我们手动管理
+        window.level = .floating  // 确保窗口在最前面
+        window.delegate = self  // 设置委托，监听窗口关闭事件
+
+        // 保存窗口引用
+        onboardingWindow = window
+
+        // 显示窗口
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+
+        Logger.info("Onboarding wizard shown", category: Logger.app)
+    }
+
+    // MARK: - NSWindowDelegate
+
+    func windowWillClose(_ notification: Notification) {
+        guard let window = notification.object as? NSWindow else { return }
+
+        // 监听引导窗口关闭事件，清理引用
+        if window == onboardingWindow {
+            Logger.info("Onboarding wizard window closing, cleaning up reference", category: Logger.app)
+            onboardingWindow = nil
+        }
+
+        // 监听设置窗口关闭事件，清理引用
+        if window == settingsWindow {
+            Logger.info("Settings window closing, cleaning up reference", category: Logger.app)
+            settingsWindow = nil
+        }
     }
 
     // MARK: - Cleanup
