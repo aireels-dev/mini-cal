@@ -99,6 +99,29 @@ First calendar app with **macOS Liquid Glass** design language.
 
 ---
 
+### 🎯 Smart Onboarding & Recommendations
+
+**First-time setup that actually helps.**
+
+Unlike other apps that dump you into settings, MiniCal guides you:
+
+- 🚀 **Interactive Wizard**: Choose your calendar, see instant preview
+- 💡 **Smart Recommendations**: Curated subscriptions for your calendar type
+  - Lunar calendar? Get Chinese holiday subscriptions
+  - Islamic calendar? Get prayer time sources
+  - Each recommendation rated by trust level (Verified/Community/Unverified)
+- 🎯 **Menu Bar Optimization**: Learn how to hide system date and maximize screen space
+- 🌍 **Multi-language**: Setup wizard available in all 13 languages
+
+**Context-Aware**:
+- Switch to a new calendar type? Get relevant subscription suggestions
+- Safety warnings for external sources
+- One-click subscribe with automatic configuration
+
+> **User Feedback**: _"The onboarding wizard helped me discover prayer time subscriptions I didn't know existed!"_ - Ahmed, London
+
+---
+
 ### 🔗 Subscribe to Everything
 
 One-click .ics subscription with smart incremental updates.
@@ -159,6 +182,20 @@ Not just a calendar - Your pocket observatory.
 
 ### Core Features
 
+✅ **Smart Onboarding Wizard**
+- Interactive setup guide for first-time users
+- Calendar type selection with instant preview
+- Smart subscription recommendations based on your choice
+- Menu bar optimization tips for better workflow
+- Multi-language support
+
+✅ **Intelligent Recommendation System**
+- Curated calendar subscriptions for each calendar type
+- Three-tier trust levels (Verified, Community, Unverified)
+- Context-aware recommendations when switching calendars
+- Safety warnings for external subscriptions
+- One-click subscribe with automatic configuration
+
 ✅ **7 Calendar Systems**
 - Gregorian, Lunar, Islamic, Hebrew, Persian, Japanese, Buddhist
 - Seamless switching between calendar systems
@@ -180,12 +217,14 @@ Not just a calendar - Your pocket observatory.
 - Mouse hover auto-expand
 - Global hotkey `⌥⌘C`
 - Doesn't use Dock space
+- Menu bar date optimization guide
 
 ✅ **External Calendar Subscription**
 - One-click .ics subscription
 - Smart incremental sync
 - Offline cache
 - Independent color management
+- Curated subscription library
 
 ✅ **Professional Astronomy**
 - Sunrise/sunset times (±1 min accuracy)
@@ -220,6 +259,11 @@ Not just a calendar - Your pocket observatory.
 - <1% CPU usage (idle)
 - 0.3s launch time
 - 120fps animation (M1+)
+
+✅ **Multi-Display Support**
+- Smart window positioning across multiple monitors
+- Context-aware window placement
+- Follows mouse cursor to correct screen
 
 ---
 
@@ -433,18 +477,27 @@ open MiniCal.xcodeproj
 
 ### First Launch
 
-1. **Grant Permissions** (Optional):
+1. **Interactive Onboarding Wizard**:
+   - MiniCal automatically launches the setup wizard on first run
+   - Choose your preferred calendar system (Gregorian, Lunar, Islamic, etc.)
+   - Browse curated subscription recommendations for your selection
+   - Get menu bar optimization tips for a cleaner macOS experience
+   - Complete setup in under 2 minutes
+
+2. **Grant Permissions** (Optional):
    - Calendar access: To display your events
    - Location access: For sunrise/sunset, prayer times
 
-2. **Configure**:
+3. **Configure** (Optional):
    - Right-click menu bar icon → Settings
-   - Choose your preferred calendar system, theme, language
+   - Customize themes, layouts, and advanced options
+   - Add external calendar subscriptions
 
-3. **Start Using**:
+4. **Start Using**:
    - Click menu bar icon or press `⌥⌘C`
    - Navigate months with arrows
    - Click dates to view events
+   - Switch calendar systems anytime in settings
 
 ---
 
