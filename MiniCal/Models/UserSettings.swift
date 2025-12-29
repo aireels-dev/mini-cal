@@ -48,6 +48,7 @@ struct UserSettings: Codable, Equatable {
     var hoverToShowEnabled: Bool
     var hoverDelay: Double
     var calendarSize: CalendarSize
+    var weekStartDay: WeekStartDay
     var lastUpdated: Date
 
     static let `default` = UserSettings(
@@ -67,6 +68,7 @@ struct UserSettings: Codable, Equatable {
         hoverToShowEnabled: true,
         hoverDelay: 0.5,
         calendarSize: .standard,
+        weekStartDay: .default,
         lastUpdated: Date()
     )
 

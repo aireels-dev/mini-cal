@@ -31,6 +31,10 @@ class CalendarViewModel: ObservableObject {
     @Published var navigationDirection: NavigationDirection = .none
     @Published var navigationType: NavigationType = .none
 
+    // 视图唯一标识：用于控制视图重建时机
+    // 改变此值会强制 SwiftUI 重建整个 LazyVGrid，跳过转场动画
+    @Published var viewId: String = UUID().uuidString
+
     // 立即生效的导航状态，解决动效方向切换延迟问题
     var currentNavigationType: NavigationType = .none
     var currentNavigationDirection: NavigationDirection = .none
@@ -128,24 +132,28 @@ class CalendarViewModel: ObservableObject {
         }
     }
 
-    /// 加载当月事件并填充到日历日期中
+    /// 加载当月事件并填充到日历日期中（使用统一事件服务）
     private func loadAndPopulateEvents() async {
         let performanceStart = Date()
 
-        let calendar = Calendar.current
-        guard let startDate = calendar.dateInterval(of: .month, for: currentMonth)?.start,
-              let endDate = calendar.date(byAdding: .month, value: 1, to: startDate) else {
-            Logger.error("Failed to calculate date range for month", category: Logger.calendar)
+        // 使用实际显示的日期范围（包括非当月日期）
+        guard let startDate = calendarDates.first?.gregorianDate,
+              let endDate = calendarDates.last?.gregorianDate else {
+            Logger.error("Failed to get display date range from calendarDates", category: Logger.calendar)
             return
         }
 
+        let calendar = Calendar.current
+
         do {
-            let fetchedEvents = try await eventService.getEvents(in: DateRange(startDate: startDate, endDate: endDate))
+            // 使用 UnifiedEventService 获取所有事件（系统+外部订阅+本地）
+            // 重要：包括非当月日期的事件
+            let fetchedEvents = try await unifiedEventService.getEvents(in: DateRange(startDate: startDate, endDate: endDate))
 
             await MainActor.run {
                 events = fetchedEvents
 
-                // 将事件追加到对应的 calendarDates（保留节假日和系统日历事件）
+                // 将事件追加到对应的 calendarDates（保留节假日和已有事件）
                 for index in calendarDates.indices {
                     let date = calendarDates[index].gregorianDate
                     let dayEvents = fetchedEvents.filter { event in
@@ -164,7 +172,7 @@ class CalendarViewModel: ObservableObject {
             }
 
             let duration = Date().timeIntervalSince(performanceStart)
-            Logger.debug("Loaded \(fetchedEvents.count) events for current month in \(String(format: "%.2f", duration))s", category: Logger.calendar)
+            Logger.debug("Loaded \(fetchedEvents.count) events for display range (including non-current month) in \(String(format: "%.2f", duration))s", category: Logger.calendar)
 
             // 性能警告：如果加载时间超过1秒
             if duration > 1.0 {
@@ -204,10 +212,12 @@ class CalendarViewModel: ObservableObject {
     }
 
     func goToToday() {
+        // 跳转到今天（保留完整动画效果）
         navigationDirection = .none
         navigationType = .none
-        currentNavigationType = .none         // 立即设置，确保动效计算时使用正确值
-        currentNavigationDirection = .none    // 立即设置，确保动效方向正确
+        currentNavigationType = .none
+        currentNavigationDirection = .none
+
         currentMonth = calendarService.today()
         selectedDate = currentMonth
         loadCurrentMonth()
@@ -255,15 +265,31 @@ class CalendarViewModel: ObservableObject {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: LocalizationManager.shared.context.effectiveInterfaceLocale.rawValue)
 
-        // 获取短星期名称（如：Sun, Mon...）
-        let shortWeekdays = formatter.shortWeekdaySymbols ?? []
-
-        // 如果是中文环境，使用更短的格式（周日、周一...）
+        // 获取原始星期数组（从周日开始：Sun, Mon, Tue, Wed, Thu, Fri, Sat）
+        var weekdaySymbols: [String]
         if LocalizationManager.shared.context.effectiveInterfaceLocale.rawValue.hasPrefix("zh") {
-            return formatter.veryShortWeekdaySymbols ?? shortWeekdays
+            // 中文环境：使用更短的格式（日、一、二...）
+            weekdaySymbols = formatter.veryShortWeekdaySymbols ?? formatter.shortWeekdaySymbols ?? []
+        } else {
+            // 其他语言：使用短格式（Sun, Mon...）
+            weekdaySymbols = formatter.shortWeekdaySymbols ?? []
         }
 
-        return shortWeekdays
+        // 根据用户设置的每周起始日调整顺序
+        let weekStartDay = settingsManager.currentSettings.weekStartDay
+
+        if weekStartDay == .monday {
+            // 周一开始：将周日移到末尾
+            // [Sun, Mon, Tue, Wed, Thu, Fri, Sat] -> [Mon, Tue, Wed, Thu, Fri, Sat, Sun]
+            if weekdaySymbols.count == 7 {
+                var reorderedSymbols = Array(weekdaySymbols[1...6])  // Mon-Sat
+                reorderedSymbols.append(weekdaySymbols[0])  // Sun
+                return reorderedSymbols
+            }
+        }
+
+        // 周日开始（默认）或数组不足7个元素时，直接返回
+        return weekdaySymbols
     }
 
     // MARK: - Event Management
@@ -272,18 +298,21 @@ class CalendarViewModel: ObservableObject {
     @Published var isLoadingEvents = false
     @Published var eventLoadError: Error?
 
-    private let eventService: CalendarEventService
+    private let unifiedEventService: UnifiedEventService
+    private let localEventService: CalendarEventService
     private let subscriptionService: CalendarSubscriptionService
     let syncStatusMonitor: SyncStatusMonitor
 
     init(calendarService: CalendarService = CalendarService(),
          settingsManager: SettingsManager = SettingsManager.shared,
-         eventService: CalendarEventService = CalendarEventService(),
+         unifiedEventService: UnifiedEventService = UnifiedEventService.shared,
+         localEventService: CalendarEventService = CalendarEventService(),
          subscriptionService: CalendarSubscriptionService = CalendarSubscriptionService(),
          syncStatusMonitor: SyncStatusMonitor = SyncStatusMonitor()) {
         self.calendarService = calendarService
         self.settingsManager = settingsManager
-        self.eventService = eventService
+        self.unifiedEventService = unifiedEventService
+        self.localEventService = localEventService
         self.subscriptionService = subscriptionService
         self.syncStatusMonitor = syncStatusMonitor
         self.currentMonth = Date()
@@ -329,7 +358,7 @@ class CalendarViewModel: ObservableObject {
 
         Task { @MainActor in
             do {
-                let fetchedEvents = try await eventService.getEvents(in: dateRange)
+                let fetchedEvents = try await unifiedEventService.getEvents(in: dateRange)
                 events = fetchedEvents
                 isLoadingEvents = false
             } catch {
@@ -357,17 +386,17 @@ class CalendarViewModel: ObservableObject {
     // MARK: - Event Actions
 
     func createEvent(_ event: CalendarEvent) async throws {
-        try await eventService.createEvent(event)
+        try await localEventService.createEvent(event)
         refreshEvents()
     }
 
     func updateEvent(_ event: CalendarEvent) async throws {
-        try await eventService.updateEvent(event)
+        try await localEventService.updateEvent(event)
         refreshEvents()
     }
 
     func deleteEvent(_ event: CalendarEvent) async throws {
-        try await eventService.deleteEvent(event.id)
+        try await localEventService.deleteEvent(event.id)
         refreshEvents()
     }
 

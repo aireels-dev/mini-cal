@@ -205,6 +205,29 @@ struct MenuBarSettingsView: View {
                     }
                 }
             }
+
+            // 每周起始日
+            Section("settings.week_start.section") {
+                Picker("settings.week_start.label", selection: $localSettings.weekStartDay) {
+                    ForEach(WeekStartDay.allCases, id: \.self) { weekStart in
+                        VStack(alignment: .leading) {
+                            Text(weekStart.displayName)
+                                .font(.body)
+                            Text(weekStart.shortDescription)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .tag(weekStart)
+                    }
+                }
+                .onChange(of: localSettings.weekStartDay) { newValue in
+                    settingsManager.updateWeekStartDay(newValue)
+                }
+
+                Text("settings.week_start.description")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
         }
         .formStyle(.grouped)
         .onAppear {

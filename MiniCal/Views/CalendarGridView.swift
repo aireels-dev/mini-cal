@@ -42,7 +42,7 @@ struct CalendarGridView: View {
                     .frame(height: calendarSize.cellSize)
                 }
             }
-            .id(viewModel.currentMonth) // 关键：用于触发转场
+            .id(viewModel.viewId + "-" + viewModel.currentMonth.description) // 组合 ID：viewId 改变时重建，currentMonth 改变时触发转场
             .transition(monthTransition)
             .animation(.easeInOut(duration: 0.35), value: viewModel.currentMonth)
         }
@@ -282,7 +282,7 @@ struct CalendarGridView: View {
                 ),
                 removal: .modifier(
                     active: SmoothSlideModifier(
-                        offsetX: isHorizontal ? slideDistance : 0,   // 月份减小：旧内容向右退出
+                        offsetX: isHorizontal ? slideDistance : 0,   // 月份减小：新内容向右退出
                         offsetY: isHorizontal ? 0 : slideDistance,   // 年份减小：旧内容向下退出
                         scale: 0.95,
                         opacity: fadeThreshold

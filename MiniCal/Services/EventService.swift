@@ -73,7 +73,8 @@ class EventService {
                 startDate: ekEvent.startDate,
                 endDate: ekEvent.endDate,
                 source: .eventKit,
-                isAllDay: ekEvent.isAllDay
+                isAllDay: ekEvent.isAllDay,
+                eventIdentifier: ekEvent.eventIdentifier
             )
         }
     }
@@ -102,7 +103,8 @@ class EventService {
                 startDate: ekEvent.startDate,
                 endDate: ekEvent.endDate,
                 source: .eventKit,
-                isAllDay: ekEvent.isAllDay
+                isAllDay: ekEvent.isAllDay,
+                eventIdentifier: ekEvent.eventIdentifier
             )
         }
     }

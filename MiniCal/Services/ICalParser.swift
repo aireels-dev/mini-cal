@@ -150,7 +150,8 @@ class ICalParser {
             title: summary,
             startDate: startDate,
             endDate: endDate,
-            source: .external
+            source: .external,
+            eventIdentifier: uid  // 使用 iCal 文件中的 UID 作为 eventIdentifier
         )
 
         // 设置其他属性

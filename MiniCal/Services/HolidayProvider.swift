@@ -2,7 +2,8 @@
 //  HolidayProvider.swift
 //  MiniCal
 //
-//  Created on 2025/10/27.
+//  [已废弃] 本地节假日数据提供者 - 现在通过外部订阅获取节假日数据
+//  保留此文件以维持向后兼容性，所有方法返回空数据
 //
 
 import Foundation
@@ -31,78 +32,32 @@ struct HolidayData: Codable {
     let holidays: [Holiday]
 }
 
+/// [已废弃] 本地节假日提供者
+/// 节假日数据现在通过外部日历订阅获取（iCal格式）
 class HolidayProvider {
     static let shared = HolidayProvider()
 
-    private var holidaysCache: [String: [String: Holiday]] = [:]
     private let dateFormatter: DateFormatter
 
     private init() {
         dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        loadHolidayData()
+
+        Logger.warning("⚠️ HolidayProvider is deprecated. Holiday data should be fetched via external calendar subscriptions.", category: Logger.calendar)
     }
 
-    func loadHolidayData() {
-        // 加载中国节假日数据
-        if let cnHolidays = loadHolidayFile(filename: "CN") {
-            holidaysCache["CN"] = cnHolidays
-        }
-    }
-
-    private func loadHolidayFile(filename: String) -> [String: Holiday]? {
-        guard let url = Bundle.main.url(forResource: filename, withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let holidayData = try? JSONDecoder().decode(HolidayData.self, from: data) else {
-            return nil
-        }
-
-        var holidayDict: [String: Holiday] = [:]
-        for holiday in holidayData.holidays {
-            holidayDict[holiday.date] = holiday
-        }
-        return holidayDict
-    }
-
+    /// [已废弃] 返回空数组，节假日应通过外部订阅获取
     func getHolidays(for date: Date, region: String = "CN") -> [Holiday] {
-        let dateString = dateFormatter.string(from: date)
-        guard let regionHolidays = holidaysCache[region],
-              let holiday = regionHolidays[dateString] else {
-            return []
-        }
-        return [holiday]
+        return []
     }
 
+    /// [已废弃] 返回空字典，节假日应通过外部订阅获取
     func getMonthHolidays(year: Int, month: Int, region: String = "CN") -> [String: Holiday] {
-        guard let regionHolidays = holidaysCache[region] else {
-            return [:]
-        }
-
-        let monthString = String(format: "%04d-%02d", year, month)
-        var monthHolidays: [String: Holiday] = [:]
-
-        for (dateString, holiday) in regionHolidays {
-            if dateString.hasPrefix(monthString) {
-                monthHolidays[dateString] = holiday
-            }
-        }
-
-        return monthHolidays
+        return [:]
     }
 
+    /// [已废弃] 总是返回 true，提示用户添加外部订阅
     func isDataOutdated() -> Bool {
-        // 检查最新节假日数据是否过期（示例：检查是否有当年数据）
-        let currentYear = Calendar.current.component(.year, from: Date())
-        let yearString = String(currentYear)
-
-        for regionHolidays in holidaysCache.values {
-            for dateString in regionHolidays.keys {
-                if dateString.hasPrefix(yearString) {
-                    return false
-                }
-            }
-        }
-
         return true
     }
 }

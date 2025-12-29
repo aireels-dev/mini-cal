@@ -40,13 +40,12 @@ struct EventIndicatorView: View {
         return Group {
             if additionalCount > 0 {
                 Text("+\(additionalCount)")
-                    .font(.caption2)
-                    .fontWeight(.medium)
+                    .font(.system(size: 9, weight: .semibold))
                     .foregroundColor(.secondary)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 1)
-                    .background(Color.secondary.opacity(0.1))
-                    .cornerRadius(4)
+                    .padding(.horizontal, 3)
+                    .padding(.vertical, 0.5)
+                    .background(Color.secondary.opacity(0.15))
+                    .cornerRadius(3)
             }
         }
     }

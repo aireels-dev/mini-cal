@@ -77,8 +77,32 @@ struct CalendarEvent: Identifiable, Codable, Hashable {
         return CalendarGroupService.shared.getColor(for: self)
     }
 
-    init(title: String, startDate: Date, endDate: Date, source: EventSource, isAllDay: Bool = false) {
-        self.id = UUID()
+    init(title: String, startDate: Date, endDate: Date, source: EventSource, isAllDay: Bool = false, eventIdentifier: String? = nil) {
+        // 为 EventKit 事件生成稳定的 UUID（基于 eventIdentifier）
+        // 其他事件（外部订阅、本地）使用随机 UUID
+        if let eventIdentifier = eventIdentifier, !eventIdentifier.isEmpty {
+            // 尝试将 eventIdentifier 作为 UUID
+            if let uuid = UUID(uuidString: eventIdentifier) {
+                self.id = uuid
+            } else {
+                // 如果不是有效的 UUID 格式，使用 eventIdentifier 的 hash 生成确定性的 UUID
+                // 这样相同的 eventIdentifier 总是生成相同的 UUID
+                let hash = eventIdentifier.hashValue
+                self.id = UUID(
+                    uuidString: String(format: "%08X-%04X-%04X-%04X-%012X",
+                        (hash >> 0) & 0xFFFFFFFF,
+                        (hash >> 32) & 0xFFFF,
+                        ((hash >> 32) & 0xFFFF) | 0x4000,  // Version 4
+                        ((hash >> 48) & 0x3FFF) | 0x8000,  // Variant
+                        (hash >> 16) & 0x0FFFFFFFFFFFFF
+                    )
+                ) ?? UUID()
+            }
+        } else {
+            // 本地事件：使用随机 UUID
+            self.id = UUID()
+        }
+
         self.title = title
         self.startDate = startDate
         self.endDate = endDate
@@ -88,6 +112,9 @@ struct CalendarEvent: Identifiable, Codable, Hashable {
         self.isEditable = (source == .user)
         self.status = .confirmed
         self.visibility = .private
+
+        // 保存 eventIdentifier
+        self.eventIdentifier = eventIdentifier
     }
 }
 

@@ -106,6 +106,14 @@ class SettingsManager: ObservableObject {
         saveSettings(updatedSettings)
     }
 
+    func updateWeekStartDay(_ weekStartDay: WeekStartDay) {
+        var updatedSettings = currentSettings
+        updatedSettings.weekStartDay = weekStartDay
+        updatedSettings.lastUpdated = Date()
+        saveSettings(updatedSettings)
+        Logger.info("Week start day updated to '\(weekStartDay.displayName)'", category: Logger.settings)
+    }
+
     func updateSecondaryCalendar(_ calendarType: CalendarType?) {
         let previousCalendar = currentSettings.secondaryCalendarType
         var updatedSettings = currentSettings

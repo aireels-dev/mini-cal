@@ -6,6 +6,8 @@ class CalendarSubscriptionService: CalendarSubscriptionServiceProtocol {
     private let storageManager: LocalStorageManager
     private let systemCalendarService: SystemCalendarService
     private let permissionManager: PermissionManager
+    private let externalCalendarService: ExternalCalendarService
+    private let externalEventStorage: ExternalEventStorage
     private var cancellables = Set<AnyCancellable>()
 
     @Published var subscriptions: [CalendarSubscription] = []
@@ -14,10 +16,14 @@ class CalendarSubscriptionService: CalendarSubscriptionServiceProtocol {
 
     init(storageManager: LocalStorageManager = LocalStorageManager(),
          systemCalendarService: SystemCalendarService = SystemCalendarService(),
-         permissionManager: PermissionManager = PermissionManager()) {
+         permissionManager: PermissionManager = PermissionManager(),
+         externalCalendarService: ExternalCalendarService = ExternalCalendarService(),
+         externalEventStorage: ExternalEventStorage = ExternalEventStorage.shared) {
         self.storageManager = storageManager
         self.systemCalendarService = systemCalendarService
         self.permissionManager = permissionManager
+        self.externalCalendarService = externalCalendarService
+        self.externalEventStorage = externalEventStorage
 
         loadSubscriptions()
         setupBindings()
@@ -180,24 +186,112 @@ class CalendarSubscriptionService: CalendarSubscriptionServiceProtocol {
 
             let startTime = Date()
 
-            // 模拟同步过程
-            DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) {
-                let duration = Date().timeIntervalSince(startTime)
+            // 根据订阅类型选择不同的同步策略
+            switch subscription.subscriptionType {
+            case .external:
+                // 外部订阅：实际下载并解析事件
+                Task {
+                    do {
+                        Logger.info("🔄 Starting external subscription sync for: \(subscription.title)", category: Logger.calendar)
+
+                        let events = try await self.externalCalendarService.syncSubscription(subscription)
+
+                        // 将事件标记为属于该订阅
+                        var taggedEvents = events.map { event in
+                            var taggedEvent = event
+                            taggedEvent.subscriptionId = subscription.id
+                            return taggedEvent
+                        }
+
+                        // 持久化事件到外部事件存储
+                        await MainActor.run {
+                            self.externalEventStorage.saveEvents(taggedEvents, for: subscription.id)
+                        }
+
+                        let duration = Date().timeIntervalSince(startTime)
+                        let result = SyncResult(
+                            subscriptionId: id,
+                            eventsAdded: events.count,
+                            eventsUpdated: 0,
+                            eventsDeleted: 0,
+                            duration: duration,
+                            error: nil
+                        )
+
+                        // 更新同步状态
+                        var updatedSubscription = subscription
+                        updatedSubscription.syncStatus.recordSuccess()
+                        updatedSubscription.lastSyncDate = Date()
+
+                        await MainActor.run {
+                            self.storageManager.updateSubscription(updatedSubscription)
+                        }
+
+                        Logger.info("✅ External subscription sync completed: \(events.count) events", category: Logger.calendar)
+
+                        // 发送事件更新通知
+                        NotificationCenter.default.post(name: .subscriptionUpdated, object: nil)
+
+                        promise(.success(result))
+
+                    } catch {
+                        Logger.error("❌ External subscription sync failed: \(error)", category: Logger.calendar)
+
+                        // 记录同步失败
+                        var updatedSubscription = subscription
+                        updatedSubscription.syncStatus.recordFailure(error.localizedDescription)
+
+                        await MainActor.run {
+                            self.storageManager.updateSubscription(updatedSubscription)
+                        }
+
+                        let duration = Date().timeIntervalSince(startTime)
+                        let result = SyncResult(
+                            subscriptionId: id,
+                            eventsAdded: 0,
+                            eventsUpdated: 0,
+                            eventsDeleted: 0,
+                            duration: duration,
+                            error: error
+                        )
+                        promise(.success(result))
+                    }
+                }
+
+            case .system:
+                // 系统日历：由 EventService 自动处理，无需额外同步
                 let result = SyncResult(
                     subscriptionId: id,
-                    eventsAdded: Int.random(in: 0...5),
-                    eventsUpdated: Int.random(in: 0...3),
-                    eventsDeleted: Int.random(in: 0...2),
-                    duration: duration,
+                    eventsAdded: 0,
+                    eventsUpdated: 0,
+                    eventsDeleted: 0,
+                    duration: 0,
                     error: nil
                 )
 
-                // 更新同步状态
                 var updatedSubscription = subscription
-                updatedSubscription.syncStatus.recordSuccess()
                 updatedSubscription.lastSyncDate = Date()
-
                 self.storageManager.updateSubscription(updatedSubscription)
+
+                Logger.info("ℹ️ System calendar sync skipped (handled by EventService)", category: Logger.calendar)
+                promise(.success(result))
+
+            case .local:
+                // 本地事件：由 CalendarEventService 管理，无需同步
+                let result = SyncResult(
+                    subscriptionId: id,
+                    eventsAdded: 0,
+                    eventsUpdated: 0,
+                    eventsDeleted: 0,
+                    duration: 0,
+                    error: nil
+                )
+
+                var updatedSubscription = subscription
+                updatedSubscription.lastSyncDate = Date()
+                self.storageManager.updateSubscription(updatedSubscription)
+
+                Logger.info("ℹ️ Local calendar sync skipped (managed locally)", category: Logger.calendar)
                 promise(.success(result))
             }
         }
