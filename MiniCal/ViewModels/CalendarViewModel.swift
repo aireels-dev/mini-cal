@@ -44,6 +44,14 @@ class CalendarViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private var loadTask: Task<Void, Never>?
 
+    // 防抖机制：避免频繁重复加载
+    private var lastLoadTime: Date?
+    private let minimumLoadInterval: TimeInterval = 0.1 // 100ms 最小间隔
+
+    // 月份去重：避免短时间内重复加载相同月份
+    private var lastLoadedMonth: Date?
+    private let monthDuplicateInterval: TimeInterval = 0.5 // 500ms 内相同月份去重
+
     // 计算属性：判断当前显示的是否是今天所在的月份
     var isCurrentMonth: Bool {
         let calendar = Calendar.current
@@ -109,21 +117,55 @@ class CalendarViewModel: ObservableObject {
     // MARK: - Data Loading
 
     func loadCurrentMonth() {
-        // 取消之前的加载任务（防抖）
+        let now = Date()
+        let calendar = Calendar.current
+
+        // 防抖检查 1：基于时间的防抖
+        if let lastLoad = lastLoadTime,
+           now.timeIntervalSince(lastLoad) < minimumLoadInterval {
+            Logger.debug("Skipping load (time-based debounce: \(String(format: "%.0f", now.timeIntervalSince(lastLoad) * 1000))ms)", category: Logger.calendar)
+            return
+        }
+
+        // 防抖检查 2：基于月份内容的去重
+        // 如果在短时间内重复加载相同月份，跳过（避免设置频繁触发导致的重复加载）
+        if let lastMonth = lastLoadedMonth,
+           calendar.isDate(lastMonth, equalTo: currentMonth, toGranularity: .month),
+           let lastLoad = lastLoadTime,
+           now.timeIntervalSince(lastLoad) < monthDuplicateInterval {
+            Logger.debug("Skipping load (same month duplicate: \(currentMonth))", category: Logger.calendar)
+            return
+        }
+
+        // 更新最后加载时间和月份
+        lastLoadTime = now
+        lastLoadedMonth = currentMonth
+
+        // 取消之前的加载任务
         loadTask?.cancel()
 
         loadTask = Task { @MainActor in
+            // 性能监控
             let complete = Logger.measureTimeAsync(operation: "Load calendar month", category: Logger.performance)
 
+            // 获取副历设置（在 MainActor 上下文中）
             let secondaryCalendar = settingsManager.currentSettings.secondaryCalendarType
-            calendarDates = await calendarService.generateMonth(for: currentMonth, secondaryCalendar: secondaryCalendar)
-            monthYearText = calendarService.monthYearText(for: currentMonth)
 
-            // 加载当月事件并填充到 calendarDates
+            // 生成日历数据
+            let dates = await calendarService.generateMonth(for: currentMonth, secondaryCalendar: secondaryCalendar)
+            let monthText = calendarService.monthYearText(for: currentMonth)
+
+            // 先赋值 calendarDates，然后再加载事件
+            // 修复竞态条件：loadAndPopulateEvents() 需要 calendarDates 不为空
+            calendarDates = dates
+            monthYearText = monthText
+
+            // 现在可以安全地加载和填充事件
             await loadAndPopulateEvents()
 
             // 动画完成后重置立即生效的状态
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            // 缩短延迟从 0.4 秒到 0.25 秒，提升流畅度
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                 self.currentNavigationType = .none
                 self.currentNavigationDirection = .none
             }

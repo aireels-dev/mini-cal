@@ -16,6 +16,11 @@ class SettingsManager: ObservableObject {
     private let userDefaults: UserDefaults
     private let settingsKey = "MiniCalUserSettings"
 
+    // 防抖机制：避免短时间内频繁保存设置
+    private var settingsSaveDebouncer: DispatchWorkItem?
+    private let debounceDelay: TimeInterval = 0.5 // 500ms 防抖延迟
+    private var pendingSettings: UserSettings?
+
     private init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
 
@@ -68,18 +73,66 @@ class SettingsManager: ObservableObject {
 
     // MARK: - Save Settings
 
-    func saveSettings(_ settings: UserSettings) {
+    /// 保存设置（带防抖机制）
+    /// - Parameter settings: 要保存的设置
+    /// - Parameter immediate: 是否立即保存（默认 false，使用防抖）
+    func saveSettings(_ settings: UserSettings, immediate: Bool = false) {
+        // 保存待保存的设置
+        pendingSettings = settings
+
+        if immediate {
+            // 立即保存（用于关键设置变更）
+            performSave(settings)
+        } else {
+            // 防抖：取消之前的保存任务
+            settingsSaveDebouncer?.cancel()
+
+            // 创建新的延迟保存任务
+            let task = DispatchWorkItem { [weak self] in
+                guard let self = self,
+                      let settings = self.pendingSettings else { return }
+                self.performSave(settings)
+                self.pendingSettings = nil
+            }
+            settingsSaveDebouncer = task
+
+            // 延迟执行
+            DispatchQueue.global(qos: .userInitiated).asyncAfter(
+                deadline: .now() + debounceDelay,
+                execute: task
+            )
+
+            Logger.debug("Settings save scheduled (debounced)", category: Logger.settings)
+        }
+    }
+
+    /// 执行实际的保存操作
+    private func performSave(_ settings: UserSettings) {
         Logger.measureTime(operation: "Save settings", category: Logger.performance) {
             do {
                 let encoder = JSONEncoder()
                 encoder.dateEncodingStrategy = .iso8601
                 let data = try encoder.encode(settings)
                 userDefaults.set(data, forKey: settingsKey)
-                currentSettings = settings
+
+                // 在主线程更新 currentSettings
+                DispatchQueue.main.async { [weak self] in
+                    self?.currentSettings = settings
+                }
+
                 Logger.debug("Settings saved successfully", category: Logger.settings)
             } catch {
                 Logger.error("Failed to encode settings", error: error, category: Logger.settings)
             }
+        }
+    }
+
+    /// 立即保存所有待保存的设置（用于应用退出等场景）
+    func flushPendingSettings() {
+        if let settings = pendingSettings {
+            settingsSaveDebouncer?.cancel()
+            performSave(settings)
+            pendingSettings = nil
         }
     }
 

@@ -7,11 +7,120 @@
 
 import Foundation
 
+// MARK: - LRU Cache for Secondary Calendar Conversion
+
+/// 副历转换的 LRU 缓存
+private class SecondaryDateCache {
+    private var cache: [Date: SecondaryDateInfo] = [:]
+    private var accessOrder: [Date] = []
+    private let maxCacheSize: Int
+    private let queue = DispatchQueue(label: "com.minical.secondarycache", attributes: .concurrent)
+
+    init(maxSize: Int = 200) {
+        self.maxCacheSize = maxSize
+    }
+
+    /// 获取缓存的副历信息
+    func get(_ date: Date) -> SecondaryDateInfo? {
+        return queue.sync {
+            if let info = cache[date] {
+                // 更新访问顺序（LRU）
+                updateAccessOrder(date)
+                return info
+            }
+            return nil
+        }
+    }
+
+    /// 设置缓存
+    func set(_ date: Date, info: SecondaryDateInfo) {
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+
+            // 如果已存在，先移除旧位置
+            if self.cache[date] != nil {
+                self.accessOrder.removeAll { $0 == date }
+            }
+
+            // 添加新值
+            self.cache[date] = info
+            self.accessOrder.append(date)
+
+            // 如果超过最大缓存大小，移除最旧的
+            if self.accessOrder.count > self.maxCacheSize {
+                let oldestDate = self.accessOrder.removeFirst()
+                self.cache.removeValue(forKey: oldestDate)
+            }
+        }
+    }
+
+    /// 批量获取缓存（返回未命中的日期）
+    func getBatch(_ dates: [Date]) -> (cached: [Date: SecondaryDateInfo], uncached: [Date]) {
+        return queue.sync {
+            var cached: [Date: SecondaryDateInfo] = [:]
+            var uncached: [Date] = []
+
+            for date in dates {
+                if let info = cache[date] {
+                    cached[date] = info
+                    updateAccessOrder(date)
+                } else {
+                    uncached.append(date)
+                }
+            }
+
+            return (cached, uncached)
+        }
+    }
+
+    /// 批量设置缓存
+    func setBatch(_ results: [Date: SecondaryDateInfo]) {
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+
+            for (date, info) in results {
+                // 如果已存在，先移除旧位置
+                if self.cache[date] != nil {
+                    self.accessOrder.removeAll { $0 == date }
+                }
+
+                // 添加新值
+                self.cache[date] = info
+                self.accessOrder.append(date)
+            }
+
+            // 如果超过最大缓存大小，移除最旧的
+            while self.accessOrder.count > self.maxCacheSize {
+                let oldestDate = self.accessOrder.removeFirst()
+                self.cache.removeValue(forKey: oldestDate)
+            }
+        }
+    }
+
+    /// 清空缓存
+    func clear() {
+        queue.async(flags: .barrier) { [weak self] in
+            self?.cache.removeAll()
+            self?.accessOrder.removeAll()
+        }
+    }
+
+    /// 更新访问顺序
+    private func updateAccessOrder(_ date: Date) {
+        // 移到末尾（最近访问）
+        accessOrder.removeAll { $0 == date }
+        accessOrder.append(date)
+    }
+}
+
 class CalendarService {
     private let gregorianCalendar: Calendar
     private let secondaryCalendarConverter: SecondaryCalendarConverter
     private let unifiedEventService: UnifiedEventService
     private let settingsManager: SettingsManager
+
+    // 副历转换缓存
+    private let secondaryDateCache = SecondaryDateCache(maxSize: 200)
 
     init(
         secondaryCalendarConverter: SecondaryCalendarConverter = SecondaryCalendarConverter(),
@@ -36,8 +145,24 @@ class CalendarService {
         let monthStart = gregorianCalendar.firstDayOfMonth(for: date)
         let numberOfDaysInMonth = gregorianCalendar.numberOfDaysInMonth(for: date)
 
-        // 获取用户设置的每周起始日
-        let weekStartDay = settingsManager.currentSettings.weekStartDay
+        // 添加调试日志
+        print("📅 [CalendarService] Generating month for date: \(date)")
+        print("📅 [CalendarService] Month start: \(monthStart)")
+        print("📅 [CalendarService] Days in month: \(numberOfDaysInMonth)")
+        Logger.debug("Generating month for \(date), days in month: \(numberOfDaysInMonth)", category: Logger.calendar)
+
+        // 验证输入
+        guard numberOfDaysInMonth > 0 else {
+            Logger.error("Invalid number of days in month: \(numberOfDaysInMonth)", category: Logger.calendar)
+            return []
+        }
+
+        // 修复: 在 MainActor 上下文中访问 currentSettings，避免并发问题
+        let weekStartDay = await MainActor.run {
+            settingsManager.currentSettings.weekStartDay
+        }
+        print("📅 [CalendarService] Week start day: \(weekStartDay)")
+        Logger.debug("Week start day: \(weekStartDay)", category: Logger.calendar)
 
         // 计算需要显示的上个月的日期数量（基于每周起始日设置）
         let previousMonthDays = gregorianCalendar.previousMonthDays(for: date, weekStartDay: weekStartDay)
@@ -71,10 +196,43 @@ class CalendarService {
             }
         }
 
-        // 批量转换本地历法信息（性能优化）
+        // 添加防御性检查：确保 dates 数组不为空
+        Logger.debug("Generated \(dates.count) dates total (expected: 42)", category: Logger.calendar)
+        guard !dates.isEmpty else {
+            Logger.error("Dates array is empty after generation for date: \(date)", category: Logger.calendar)
+            return []
+        }
+
+        // 批量转换本地历法信息（使用 LRU 缓存优化）
         var secondaryInfoMap: [Date: SecondaryDateInfo] = [:]
         if let calendarType = secondaryCalendar {
-            secondaryInfoMap = secondaryCalendarConverter.batchConvert(dates: dates, to: calendarType)
+            // 先尝试从缓存获取
+            let (cached, uncached) = secondaryDateCache.getBatch(dates)
+            secondaryInfoMap = cached
+
+            // 只转换未缓存的日期
+            if !uncached.isEmpty {
+                Logger.debug("Cache hit: \(cached.count)/\(dates.count), converting \(uncached.count) uncached dates", category: Logger.calendar)
+
+                // 使用 autoreleasepool 分批处理，降低内存峰值
+                let batchSize = 10
+                for batchStart in stride(from: 0, to: uncached.count, by: batchSize) {
+                    let batchEnd = min(batchStart + batchSize, uncached.count)
+                    let batch = Array(uncached[batchStart..<batchEnd])
+
+                    autoreleasepool {
+                        let batchResults = secondaryCalendarConverter.batchConvert(dates: batch, to: calendarType)
+                        secondaryInfoMap.merge(batchResults) { $1 }
+                    }
+                }
+
+                // 将新转换的结果加入缓存
+                secondaryDateCache.setBatch(secondaryInfoMap)
+
+                Logger.debug("Converted \(uncached.count) dates to secondary calendar (total: \(secondaryInfoMap.count))", category: Logger.calendar)
+            } else {
+                Logger.debug("All \(dates.count) dates served from cache", category: Logger.calendar)
+            }
         }
 
         // 获取所有事件（系统+外部订阅+本地）使用统一事件服务
@@ -96,13 +254,20 @@ class CalendarService {
             allEvents = []
         }
 
-        // 按日期分组事件
+        // 按日期分组事件（使用预分配优化）
         var eventsMap: [String: [CalendarEvent]] = [:]
+        eventsMap.reserveCapacity(allEvents.count)
+
+        // 复用 DateFormatter 对象（避免在循环中创建）
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
+
         for event in allEvents {
             let dateString = dateFormatter.string(from: event.startDate)
-            eventsMap[dateString, default: []].append(event)
+            if eventsMap[dateString] == nil {
+                eventsMap[dateString] = []
+            }
+            eventsMap[dateString]?.append(event)
         }
 
         // 创建 CalendarDate 对象（重用已计算的monthStart）

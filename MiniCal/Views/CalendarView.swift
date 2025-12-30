@@ -118,15 +118,11 @@ struct CalendarView: View {
                     themeColors: effectiveColors,
                     calendarSize: calendarSize,
                     onEventTap: { event in
-                        // 事件点击处理 - 可以显示事件详情
                         print("Event tapped: \(event.title)")
                     },
                     onManageEvents: {
-                        // 关闭事件详情弹窗
                         showEventDetail = false
-                        // 打开设置窗口（订阅管理部分）
                         openSettingsAction?()
-                        // 发送通知定位到订阅管理标签
                         NotificationCenter.default.post(name: .openSubscriptionManagement, object: nil)
                     },
                     onSaveEvent: { event in
@@ -135,24 +131,18 @@ struct CalendarView: View {
                                 try await viewModel.createEvent(event)
                                 Logger.info("Created local event: \(event.title)", category: Logger.calendar)
 
-                                // 保存选中的日期
                                 let savedDate = selectedDateForDetail?.gregorianDate ?? Date()
 
-                                // 立即刷新日历数据
                                 await MainActor.run {
                                     viewModel.loadCurrentMonth()
                                 }
 
-                                // 等待数据加载完成后重新打开Popover显示更新后的事件
-                                try await Task.sleep(nanoseconds: 300_000_000)  // 0.3秒
+                                try await Task.sleep(nanoseconds: 300_000_000)
 
                                 await MainActor.run {
-                                    // 关闭Popover
                                     showEventDetail = false
 
-                                    // 短暂延迟后重新打开，显示更新后的数据
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                        // 重新查找更新后的日期数据
                                         if let updatedDate = viewModel.calendarDates.first(where: {
                                             Calendar.current.isDate($0.gregorianDate, inSameDayAs: savedDate)
                                         }) {
@@ -200,40 +190,30 @@ struct CalendarView: View {
     // MARK: - Keyboard Shortcuts Monitor
 
     private func setupSettingsKeyMonitor() {
-        // 移除旧监听器（如果存在）
         removeSettingsKeyMonitor()
 
-        // 添加快捷键监听（Command+,, Command+/-, Command+=）
         settingsKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-            // 检查窗口焦点：只在日历浮窗有焦点时响应
             guard self.isCalendarWindowActive() else {
                 return event
             }
 
-            // 检查文本输入焦点：避免拦截文本框输入
             if NSApp.keyWindow?.firstResponder as? NSTextView != nil {
                 return event
             }
 
-            // 必须按下 Command 键
             guard event.modifierFlags.contains(.command) else {
                 return event
             }
 
             let key = event.charactersIgnoringModifiers ?? ""
 
-            // Command+, 打开设置
             if key == "," {
                 self.openSettingsAction?()
                 return nil
-            }
-            // Command+- 减小日历尺寸
-            else if key == "-" {
+            } else if key == "-" {
                 self.settingsManager.decreaseCalendarSize()
                 return nil
-            }
-            // Command+= 或 Command++ 增大日历尺寸
-            else if key == "=" || key == "+" {
+            } else if key == "=" || key == "+" {
                 self.settingsManager.increaseCalendarSize()
                 return nil
             }
@@ -242,10 +222,8 @@ struct CalendarView: View {
         }
     }
 
-    /// 检查日历窗口是否处于活动状态
     private func isCalendarWindowActive() -> Bool {
         guard let keyWindow = NSApp.keyWindow else { return false }
-        // 检查是否是 NSPopover 的窗口（日历浮窗）
         return keyWindow.className.contains("NSPopover")
     }
 
@@ -284,27 +262,22 @@ struct CalendarView: View {
             object: nil,
             queue: .main
         ) { notification in
-            // 在 Main Actor 上执行
-            // 先提取 Sendable 值，避免在 @Sendable 闭包中捕获非 Sendable 的 Notification
             let calendarType = notification.userInfo?["calendarType"] as? CalendarType
             Task { @MainActor in
                 guard let calendarType = calendarType else { return }
 
-                // 检查是否有推荐
                 let recommendations = self.recommendationService.getRecommendations(
                     for: calendarType,
                     excludeDismissed: true,
                     limit: 3
                 )
 
-                // 如果有推荐，显示推荐卡片
                 if !recommendations.isEmpty {
                     self.recommendedCalendarType = calendarType
                     withAnimation(.spring(response: 0.3)) {
                         self.showRecommendationCard = true
                     }
 
-                    // 标记推荐已显示
                     for recommendation in recommendations {
                         self.recommendationService.markRecommendationShown(recommendation.id)
                     }
@@ -328,7 +301,6 @@ struct CalendarView: View {
     // MARK: - Recommendation Handlers
 
     private func handleSubscribe(_ recommendation: RecommendedSubscription) {
-        // 设置中添加订阅时，所有推荐源都需要显示安全确认弹窗
         pendingSubscription = recommendation
         showingSecurityAlert = true
     }
@@ -341,7 +313,6 @@ struct CalendarView: View {
                 try await recommendationService.subscribe(recommendation, userConfirmed: true)
                 Logger.info("Successfully subscribed to: \(recommendation.name.localized())", category: Logger.app)
 
-                // 订阅成功后关闭推荐卡片
                 await MainActor.run {
                     showRecommendationCard = false
                     pendingSubscription = nil

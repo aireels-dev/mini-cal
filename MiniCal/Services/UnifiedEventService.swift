@@ -40,47 +40,50 @@ class UnifiedEventService: ObservableObject {
 
     /// 获取指定日期范围内的所有事件（聚合所有源）
     func getEvents(in dateRange: DateRange) async throws -> [CalendarEvent] {
-        isLoading = true
-        lastError = nil
+        // 性能监控
+        return try await PerformanceMonitor.shared.measureAsync("unified_events.getEvents") {
+            isLoading = true
+            lastError = nil
 
-        defer {
-            isLoading = false
-        }
+            defer {
+                isLoading = false
+            }
 
-        do {
-            // 并发获取所有事件源
-            async let systemEvents = systemEventService.fetchEvents(
-                from: dateRange.startDate,
-                to: dateRange.endDate
-            )
-            async let externalEvents = externalEventStorage.getEvents(in: dateRange)
-            async let localEvents = localEventService.getEvents(in: dateRange)
+            do {
+                // 并发获取所有事件源
+                async let systemEvents = systemEventService.fetchEvents(
+                    from: dateRange.startDate,
+                    to: dateRange.endDate
+                )
+                async let externalEvents = externalEventStorage.getEvents(in: dateRange)
+                async let localEvents = localEventService.getEvents(in: dateRange)
 
-            // 等待所有结果
-            let allSystemEvents = await systemEvents
-            let allExternalEvents = try await externalEvents
-            let allLocalEvents = try await localEvents
+                // 等待所有结果
+                let allSystemEvents = await systemEvents
+                let allExternalEvents = try await externalEvents
+                let allLocalEvents = try await localEvents
 
-            // 合并并去重
-            var aggregatedEvents = allSystemEvents + allExternalEvents + allLocalEvents
+                // 合并并去重
+                var aggregatedEvents = allSystemEvents + allExternalEvents + allLocalEvents
 
-            // 按事件ID去重（避免重复显示）
-            aggregatedEvents = removeDuplicates(from: aggregatedEvents)
+                // 按事件ID去重（避免重复显示）
+                aggregatedEvents = removeDuplicates(from: aggregatedEvents)
 
-            Logger.info("""
-                📊 Event aggregation completed:
-                - System events: \(allSystemEvents.count)
-                - External subscription events: \(allExternalEvents.count)
-                - Local events: \(allLocalEvents.count)
-                - Total (after deduplication): \(aggregatedEvents.count)
-                """, category: Logger.calendar)
+                Logger.info("""
+                    📊 Event aggregation completed:
+                    - System events: \(allSystemEvents.count)
+                    - External subscription events: \(allExternalEvents.count)
+                    - Local events: \(allLocalEvents.count)
+                    - Total (after deduplication): \(aggregatedEvents.count)
+                    """, category: Logger.calendar)
 
-            return aggregatedEvents
+                return aggregatedEvents
 
-        } catch {
-            lastError = error
-            Logger.error("Failed to aggregate events: \(error)", category: Logger.calendar)
-            throw error
+            } catch {
+                lastError = error
+                Logger.error("Failed to aggregate events: \(error)", category: Logger.calendar)
+                throw error
+            }
         }
     }
 

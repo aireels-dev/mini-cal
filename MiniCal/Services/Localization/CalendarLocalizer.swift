@@ -17,7 +17,11 @@ class CalendarLocalizer {
 
     /// DateFormatter 缓存
     private var formatterCache: [FormatterCacheKey: DateFormatter] = [:]
+    private var accessOrder: [FormatterCacheKey] = []  // LRU 访问顺序
     private let cacheQueue = DispatchQueue(label: "com.minical.calendar.formatter.cache")
+
+    // 限制缓存大小，避免内存膨胀
+    private let maxFormatterCacheSize = 20
 
     private init() {
         // 监听本地化上下文变更，清理缓存
@@ -39,6 +43,7 @@ class CalendarLocalizer {
             // 抑制 Swift 6 Main Actor 警告 - 已确保线程安全
             // FormatterCacheKey 是 @unchecked Sendable，所有操作在串行队列上执行
             self?.formatterCache.removeAll()
+            self?.accessOrder.removeAll()
         }
     }
 
@@ -300,7 +305,7 @@ class CalendarLocalizer {
 
     // MARK: - Formatter Caching Helpers
 
-    /// 获取或创建缓存的 DateFormatter
+    /// 获取或创建缓存的 DateFormatter（使用 LRU 策略）
     private func getCachedFormatter(
         calendarIdentifier: Calendar.Identifier,
         locale: SupportedLocale
@@ -311,16 +316,29 @@ class CalendarLocalizer {
         )
 
         return cacheQueue.sync {
+            // LRU 缓存命中 - 更新访问顺序
             if let cached = formatterCache[key] {
+                // 移到访问顺序末尾（最近使用）
+                accessOrder.removeAll { $0 == key }
+                accessOrder.append(key)
                 return cached
             }
 
-            // 创建新的 formatter
+            // 缓存未命中 - 创建新 formatter
             let formatter = DateFormatter()
             formatter.calendar = Calendar(identifier: calendarIdentifier)
             formatter.locale = locale.locale
 
+            // 添加到缓存
             formatterCache[key] = formatter
+            accessOrder.append(key)
+
+            // 超过限制时移除最少使用的项（LRU）
+            if formatterCache.count > maxFormatterCacheSize {
+                let oldestKey = accessOrder.removeFirst()
+                formatterCache.removeValue(forKey: oldestKey)
+            }
+
             return formatter
         }
     }
