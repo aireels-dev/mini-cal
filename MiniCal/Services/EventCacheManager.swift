@@ -133,12 +133,10 @@ class EventCacheManager: ObservableObject {
     }
 
     func clearExpiredCache() {
-        let calendar = Calendar.current
         let expirationDate = Date().addingTimeInterval(-cacheExpirationInterval)
 
         // 清理内存中的过期缓存
         // 由于NSCache没有直接的遍历方法，我们通过重新初始化来清理
-        let oldCache = memoryCache
         setupMemoryCache()
 
         // 清理磁盘中的过期缓存
@@ -285,7 +283,7 @@ class EventCacheManager: ObservableObject {
             let files = try FileManager.default.contentsOfDirectory(at: cacheDirectory, includingPropertiesForKeys: [.nameKey])
 
             for file in files {
-                let filename = file.lastPathComponent ?? ""
+                let filename = file.lastPathComponent
                 if filename.contains(subscriptionId.uuidString) {
                     try FileManager.default.removeItem(at: file)
                 }

@@ -8529,6 +8529,9 @@
         }
       }
     },
+    "permission.status.full_access" : {
+
+    },
     "permission.status.not_determined" : {
       "localizations" : {
         "ar" : {
@@ -8756,6 +8759,9 @@
           }
         }
       }
+    },
+    "permission.status.write_only" : {
+
     },
     "quit" : {
       "comment" : "Quit menu item",

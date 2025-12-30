@@ -403,13 +403,9 @@ class CalendarViewModel: ObservableObject {
     // MARK: - Subscription Management
 
     func refreshAllSubscriptions() async {
-        do {
-            try await subscriptionService.getAllSubscriptions()
-                .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
-                .store(in: &cancellables)
-        } catch {
-            Logger.error("Failed to refresh subscriptions: \(error)", category: Logger.calendar)
-        }
+        subscriptionService.getAllSubscriptions()
+            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+            .store(in: &cancellables)
     }
 
     func addSubscription(_ subscription: CalendarSubscription) async throws {

@@ -36,6 +36,8 @@ class CalendarLocalizer {
     /// 清理 DateFormatter 缓存（在语言切换时调用）
     @objc private func clearFormatterCache() {
         cacheQueue.async { [weak self] in
+            // 抑制 Swift 6 Main Actor 警告 - 已确保线程安全
+            // FormatterCacheKey 是 @unchecked Sendable，所有操作在串行队列上执行
             self?.formatterCache.removeAll()
         }
     }
@@ -349,7 +351,8 @@ class CalendarLocalizer {
 // MARK: - Supporting Types
 
 /// DateFormatter 缓存键
-private struct FormatterCacheKey: Hashable {
+/// 使用 @unchecked Sendable 因为 FormatterCacheKey 只包含不可变值类型，是线程安全的
+private struct FormatterCacheKey: Hashable, @unchecked Sendable {
     let calendarIdentifier: String
     let locale: String
 }

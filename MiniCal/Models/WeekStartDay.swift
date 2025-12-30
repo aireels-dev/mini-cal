@@ -36,7 +36,6 @@ enum WeekStartDay: Int, Codable, CaseIterable, Identifiable {
 
     /// 默认值：根据用户区域自动检测
     static var `default`: WeekStartDay {
-        let locale = Locale.current
         let calendar = Calendar.current
 
         // 使用系统 Calendar 的 firstWeekday 属性

@@ -32,19 +32,11 @@ class SystemCalendarService: ObservableObject {
             }
 
             DispatchQueue.global(qos: .background).async {
-                do {
-                    let calendars = try self.eventStore.calendars(for: .event)
-                    DispatchQueue.main.async {
-                        self.systemCalendars = calendars
-                        self.isLoading = false
-                        promise(.success(calendars))
-                    }
-                } catch {
-                    DispatchQueue.main.async {
-                        self.isLoading = false
-                        self.errorMessage = "获取系统日历失败: \(error.localizedDescription)"
-                        promise(.failure(error))
-                    }
+                let calendars = self.eventStore.calendars(for: .event)
+                DispatchQueue.main.async {
+                    self.systemCalendars = calendars
+                    self.isLoading = false
+                    promise(.success(calendars))
                 }
             }
         }

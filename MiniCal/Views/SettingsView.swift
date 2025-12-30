@@ -78,7 +78,7 @@ struct MenuBarSettingsView: View {
             Section("settings.app.section") {
                 // 全局快捷键
                 Toggle("settings.app.global_hotkey", isOn: $localSettings.globalHotkeyEnabled)
-                    .onChange(of: localSettings.globalHotkeyEnabled) { newValue in
+                    .onChange(of: localSettings.globalHotkeyEnabled) { _, newValue in
                         var updated = settingsManager.currentSettings
                         updated.globalHotkeyEnabled = newValue
                         updated.lastUpdated = Date()
@@ -91,7 +91,7 @@ struct MenuBarSettingsView: View {
 
                 // 开机自启动
                 Toggle("settings.app.launch_at_login", isOn: $localSettings.launchAtLogin)
-                    .onChange(of: localSettings.launchAtLogin) { newValue in
+                    .onChange(of: localSettings.launchAtLogin) { _, newValue in
                         var updated = settingsManager.currentSettings
                         updated.launchAtLogin = newValue
                         updated.lastUpdated = Date()
@@ -132,7 +132,7 @@ struct MenuBarSettingsView: View {
                         Text(format.displayName).tag(format)
                     }
                 }
-                .onChange(of: localSettings.menuBarFormat) { newValue in
+                .onChange(of: localSettings.menuBarFormat) { _, newValue in
                     // 切换到自定义格式时自动进入编辑态
                     if newValue == .custom {
                         isEditingCustomFormat = true
@@ -158,21 +158,21 @@ struct MenuBarSettingsView: View {
                 Toggle("settings.menu_bar.24hour", isOn: $localSettings.show24Hour)
                     .disabled(isCustomFormat)
                     .foregroundColor(isCustomFormat ? .secondary : .primary)
-                    .onChange(of: localSettings.show24Hour) { newValue in
+                    .onChange(of: localSettings.show24Hour) { _, newValue in
                         settingsManager.updateShow24Hour(newValue)
                     }
 
                 Toggle("settings.menu_bar.show_weekday", isOn: $localSettings.showWeekday)
                     .disabled(isCustomFormat)
                     .foregroundColor(isCustomFormat ? .secondary : .primary)
-                    .onChange(of: localSettings.showWeekday) { newValue in
+                    .onChange(of: localSettings.showWeekday) { _, newValue in
                         settingsManager.updateShowWeekday(newValue)
                     }
 
                 Toggle("settings.menu_bar.show_seconds", isOn: $localSettings.showSeconds)
                     .disabled(isCustomFormat)
                     .foregroundColor(isCustomFormat ? .secondary : .primary)
-                    .onChange(of: localSettings.showSeconds) { newValue in
+                    .onChange(of: localSettings.showSeconds) { _, newValue in
                         var updated = settingsManager.currentSettings
                         updated.showSeconds = newValue
                         updated.lastUpdated = Date()
@@ -183,7 +183,7 @@ struct MenuBarSettingsView: View {
             // 日历交互
             Section("settings.calendar.interaction") {
                 Toggle("settings.calendar.hover_enable", isOn: $localSettings.hoverToShowEnabled)
-                    .onChange(of: localSettings.hoverToShowEnabled) { newValue in
+                    .onChange(of: localSettings.hoverToShowEnabled) { _, newValue in
                         settingsManager.updateHoverSettings(enabled: newValue, delay: localSettings.hoverDelay)
                     }
 
@@ -196,7 +196,7 @@ struct MenuBarSettingsView: View {
                         ) {
                             Text("event.hover_delay")
                         }
-                        .onChange(of: localSettings.hoverDelay) { newValue in
+                        .onChange(of: localSettings.hoverDelay) { _, newValue in
                             settingsManager.updateHoverSettings(enabled: localSettings.hoverToShowEnabled, delay: newValue)
                         }
                         Text(String(format: NSLocalizedString("settings.calendar.hover_delay_seconds", comment: ""), localSettings.hoverDelay))
@@ -220,7 +220,7 @@ struct MenuBarSettingsView: View {
                         .tag(weekStart)
                     }
                 }
-                .onChange(of: localSettings.weekStartDay) { newValue in
+                .onChange(of: localSettings.weekStartDay) { _, newValue in
                     settingsManager.updateWeekStartDay(newValue)
                 }
 
@@ -233,7 +233,7 @@ struct MenuBarSettingsView: View {
         .onAppear {
             localSettings = settingsManager.currentSettings
         }
-        .onChange(of: settingsManager.currentSettings) { newValue in
+        .onChange(of: settingsManager.currentSettings) { _, newValue in
             localSettings = newValue
         }
     }
@@ -404,7 +404,7 @@ struct CalendarSettingsView: View {
                         Text(type.displayName).tag(type as CalendarType?)
                     }
                 }
-                .onChange(of: localSettings.secondaryCalendarType) { newValue in
+                .onChange(of: localSettings.secondaryCalendarType) { _, newValue in
                     settingsManager.updateSecondaryCalendar(newValue)
                 }
 
@@ -441,7 +441,7 @@ struct CalendarSettingsView: View {
             loadSystemCalendarEventCounts()
             loadLocalGroupEventCounts()
         }
-        .onChange(of: settingsManager.currentSettings) { newValue in
+        .onChange(of: settingsManager.currentSettings) { _, newValue in
             localSettings = newValue
         }
         .onChange(of: calendarViewModel.events) { oldValue, newValue in
@@ -799,7 +799,6 @@ struct CalendarSettingsView: View {
     private func loadLocalGroupEventCounts() {
         // 统计每个本地类别的事件数
         let allEvents = calendarViewModel.events
-        let defaultGroupId = localGroupService.defaultGroupId
 
         var counts: [UUID: Int] = [:]
         for group in localGroupService.groups {
@@ -861,6 +860,15 @@ struct CalendarSettingsView: View {
         Group {
             switch permissionManager.authorizationStatus {
             case .authorized:
+                // macOS 13 及更早版本
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 8))
+            case .fullAccess:
+                // macOS 14+ 完全访问
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 8))
+            case .writeOnly:
+                // macOS 14+ 仅写入权限
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 8))
             case .denied, .restricted:
@@ -879,7 +887,14 @@ struct CalendarSettingsView: View {
     private var statusText: String {
         switch permissionManager.authorizationStatus {
         case .authorized:
+            // macOS 13 及更早版本
             return NSLocalizedString("permission.status.authorized", comment: "")
+        case .fullAccess:
+            // macOS 14+ 完全访问
+            return NSLocalizedString("permission.status.full_access", comment: "")
+        case .writeOnly:
+            // macOS 14+ 仅写入权限
+            return NSLocalizedString("permission.status.write_only", comment: "")
         case .denied:
             return NSLocalizedString("permission.status.denied", comment: "")
         case .restricted:
@@ -894,6 +909,10 @@ struct CalendarSettingsView: View {
     private var statusColor: Color {
         switch permissionManager.authorizationStatus {
         case .authorized:
+            // macOS 13 及更早版本
+            return .green
+        case .fullAccess, .writeOnly:
+            // macOS 14+ 完全访问或仅写入权限
             return .green
         case .denied, .restricted:
             return .red
@@ -1166,7 +1185,7 @@ struct AppearanceSettingsView: View {
                         Text(locale.displayName).tag(locale as SupportedLocale?)
                     }
                 }
-                .onChange(of: selectedInterfaceLocale) { newValue in
+                .onChange(of: selectedInterfaceLocale) { _, newValue in
                     let newContext = LocalizationContext(
                         interfaceLocale: newValue,
                         calendarLocale: localizationManager.context.calendarLocale
@@ -1207,7 +1226,7 @@ struct AppearanceSettingsView: View {
                         .tag(size)
                     }
                 }
-                .onChange(of: localSettings.calendarSize) { newValue in
+                .onChange(of: localSettings.calendarSize) { _, newValue in
                     var updated = settingsManager.currentSettings
                     updated.calendarSize = newValue
                     updated.lastUpdated = Date()
@@ -1453,7 +1472,7 @@ struct AppearanceSettingsView: View {
             localSettings = settingsManager.currentSettings
             isSystemDarkMode = NSApp.effectiveAppearance.name == .darkAqua
         }
-        .onChange(of: settingsManager.currentSettings) { newValue in
+        .onChange(of: settingsManager.currentSettings) { _, newValue in
             localSettings = newValue
         }
         .onReceive(NotificationCenter.default.publisher(for: .themeDidChange)) { _ in

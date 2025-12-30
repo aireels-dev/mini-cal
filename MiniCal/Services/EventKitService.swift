@@ -63,26 +63,18 @@ class EventKitService: ObservableObject {
             }
 
             DispatchQueue.global(qos: .background).async {
-                do {
-                    let predicate = self.eventStore.predicateForEvents(
-                        withStart: dateRange.startDate,
-                        end: dateRange.endDate,
-                        calendars: calendars
-                    )
+                let predicate = self.eventStore.predicateForEvents(
+                    withStart: dateRange.startDate,
+                    end: dateRange.endDate,
+                    calendars: calendars
+                )
 
-                    let ekEvents = self.eventStore.events(matching: predicate)
-                    let calendarEvents = ekEvents.map { self.convertEKEventToCalendarEvent($0) }
+                let ekEvents = self.eventStore.events(matching: predicate)
+                let calendarEvents = ekEvents.map { self.convertEKEventToCalendarEvent($0) }
 
-                    DispatchQueue.main.async {
-                        self.isLoading = false
-                        promise(.success(calendarEvents))
-                    }
-                } catch {
-                    DispatchQueue.main.async {
-                        self.isLoading = false
-                        self.errorMessage = "获取事件失败: \(error.localizedDescription)"
-                        promise(.failure(error))
-                    }
+                DispatchQueue.main.async {
+                    self.isLoading = false
+                    promise(.success(calendarEvents))
                 }
             }
         }
@@ -182,6 +174,7 @@ class EventKitService: ObservableObject {
         case .unavailable:
             return .confidential
         @unknown default:
+            // 未来可能的新状态（如 macOS 14+ 的 declined）
             return .private
         }
     }

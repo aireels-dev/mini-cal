@@ -172,7 +172,10 @@ class AutoSyncService: ObservableObject {
                                 _ = try await self.syncSubscription(subscription)
                                 return (subscription.id, .success(()))
                             } catch {
-                                Logger.error("Failed to sync subscription \(subscription.title): \(error)", category: Logger.calendar)
+                                // 在 Main Actor 上记录日志
+                                await MainActor.run {
+                                    Logger.error("Failed to sync subscription \(subscription.title): \(error)", category: Logger.calendar)
+                                }
                                 return (subscription.id, .failure(error))
                             }
                         }

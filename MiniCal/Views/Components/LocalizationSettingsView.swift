@@ -36,7 +36,7 @@ struct LocalizationSettingsView: View {
                         Text(locale.displayName).tag(locale as SupportedLocale?)
                     }
                 }
-                .onChange(of: selectedInterfaceLocale) { newValue in
+                .onChange(of: selectedInterfaceLocale) { _, newValue in
                     updateLocalization()
                 }
 
@@ -59,7 +59,7 @@ struct LocalizationSettingsView: View {
 
             Section(header: Text("Calendar Language")) {
                 Toggle("Use separate language for calendar", isOn: $useIndependentCalendarLocale)
-                    .onChange(of: useIndependentCalendarLocale) { newValue in
+                    .onChange(of: useIndependentCalendarLocale) { _, newValue in
                         if !newValue {
                             selectedCalendarLocale = nil
                         } else {
@@ -77,7 +77,7 @@ struct LocalizationSettingsView: View {
                             Text(locale.displayName).tag(locale)
                         }
                     }
-                    .onChange(of: selectedCalendarLocale) { _ in
+                    .onChange(of: selectedCalendarLocale) { _, _ in
                         updateLocalization()
                     }
 

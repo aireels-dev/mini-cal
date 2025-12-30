@@ -27,7 +27,7 @@ class PermissionManager: ObservableObject {
 
     init() {
         authorizationStatus = EKEventStore.authorizationStatus(for: .event)
-        isAuthorized = (authorizationStatus == .authorized)
+        isAuthorized = Self.isAuthorized(for: authorizationStatus)
 
         // 加载颜色覆盖
         loadColorOverrides()
@@ -182,7 +182,7 @@ class PermissionManager: ObservableObject {
     @objc private func checkAuthorizationStatus() {
         DispatchQueue.main.async {
             self.authorizationStatus = EKEventStore.authorizationStatus(for: .event)
-            self.isAuthorized = (self.authorizationStatus == .authorized)
+            self.isAuthorized = Self.isAuthorized(for: self.authorizationStatus)
 
             // 如果授权状态改变，重新加载日历
             if self.isAuthorized {
@@ -206,7 +206,14 @@ class PermissionManager: ObservableObject {
     func getAuthorizationDescription() -> String {
         switch authorizationStatus {
         case .authorized:
+            // macOS 13 及更早版本
             return "已授权访问日历"
+        case .fullAccess:
+            // macOS 14+ 完全访问
+            return "已完全授权访问日历"
+        case .writeOnly:
+            // macOS 14+ 仅写入权限
+            return "已授权写入日历"
         case .denied:
             return "日历访问被拒绝，请在系统偏好设置中授权"
         case .restricted:
@@ -352,6 +359,21 @@ class PermissionManager: ObservableObject {
     func getEnabledCalendarIdentifiers() -> Set<String> {
         let allCalendarIds = Set(systemCalendars.map { $0.calendarIdentifier })
         return allCalendarIds.filter { isCalendarEnabled(calendarIdentifier: $0) }
+    }
+
+    // MARK: - Authorization Status Helper
+
+    /// 检查授权状态是否表示已授权（兼容 macOS 14+ 新 API）
+    /// - Parameter status: EKAuthorizationStatus 状态值
+    /// - Returns: 是否已授权
+    private static func isAuthorized(for status: EKAuthorizationStatus) -> Bool {
+        if #available(macOS 14.0, *) {
+            // macOS 14+ 使用 .fullAccess 或 .writeOnly
+            return status == .fullAccess || status == .writeOnly
+        } else {
+            // macOS 13 及更早版本使用 .authorized
+            return status == .authorized
+        }
     }
 }
 

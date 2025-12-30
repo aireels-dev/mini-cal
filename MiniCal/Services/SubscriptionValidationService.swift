@@ -220,21 +220,13 @@ class SubscriptionValidationService {
 
     private func validateICalendarStructure(_ content: String) throws {
         let lines = content.components(separatedBy: .newlines)
-        var inCalendar = false
         var hasVersion = false
-        var hasEvent = false
 
         for line in lines {
             let trimmedLine = line.trimmingCharacters(in: .whitespaces)
 
-            if trimmedLine == "BEGIN:VCALENDAR" {
-                inCalendar = true
-            } else if trimmedLine == "END:VCALENDAR" {
-                inCalendar = false
-            } else if trimmedLine.hasPrefix("VERSION:") {
+            if trimmedLine.hasPrefix("VERSION:") {
                 hasVersion = true
-            } else if trimmedLine.hasPrefix("BEGIN:VEVENT") {
-                hasEvent = true
             }
         }
 

@@ -37,16 +37,15 @@ class ICalParser {
         var events: [CalendarEvent] = []
         var currentComponent: [String: String] = [:]
         var inEvent = false
-        var inCalendar = false
 
         for line in lines {
             let trimmedLine = line.trimmingCharacters(in: CharacterSet.whitespaces)
 
             if trimmedLine == "BEGIN:VCALENDAR" {
-                inCalendar = true
+                // iCalendar 开始标记
                 continue
             } else if trimmedLine == "END:VCALENDAR" {
-                inCalendar = false
+                // iCalendar 结束标记
                 continue
             } else if trimmedLine == "BEGIN:VEVENT" {
                 inEvent = true

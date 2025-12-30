@@ -197,7 +197,7 @@ class CalendarSubscriptionService: CalendarSubscriptionServiceProtocol {
                         let events = try await self.externalCalendarService.syncSubscription(subscription)
 
                         // 将事件标记为属于该订阅
-                        var taggedEvents = events.map { event in
+                        let taggedEvents = events.map { event in
                             var taggedEvent = event
                             taggedEvent.subscriptionId = subscription.id
                             return taggedEvent

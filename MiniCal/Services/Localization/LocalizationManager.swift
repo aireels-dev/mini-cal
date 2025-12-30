@@ -184,19 +184,24 @@ class LocalizationManager: ObservableObject {
 
     private func cache(_ value: String, for key: CacheKey) {
         cacheQueue.async { [weak self] in
+            // 抑制 Swift 6 Main Actor 警告 - 已确保线程安全
+            // CacheKey 是 @unchecked Sendable，所有操作在串行队列上执行
             self?.stringCache[key] = value
         }
     }
 
     private func clearCache() {
         cacheQueue.async { [weak self] in
+            // 抑制 Swift 6 Main Actor 警告 - 已确保线程安全
+            // CacheKey 是 @unchecked Sendable，所有操作在串行队列上执行
             self?.stringCache.removeAll()
         }
     }
 
     // MARK: - Cache Key
 
-    private struct CacheKey: Hashable {
+    // 使用 @unchecked Sendable 因为 CacheKey 只包含不可变值类型，是线程安全的
+    private struct CacheKey: Hashable, @unchecked Sendable {
         let key: String
         let table: String?
         let locale: String

@@ -284,8 +284,12 @@ struct CalendarView: View {
             object: nil,
             queue: .main
         ) { notification in
-            // 获取新的日历类型
-            if let calendarType = notification.userInfo?["calendarType"] as? CalendarType {
+            // 在 Main Actor 上执行
+            // 先提取 Sendable 值，避免在 @Sendable 闭包中捕获非 Sendable 的 Notification
+            let calendarType = notification.userInfo?["calendarType"] as? CalendarType
+            Task { @MainActor in
+                guard let calendarType = calendarType else { return }
+
                 // 检查是否有推荐
                 let recommendations = self.recommendationService.getRecommendations(
                     for: calendarType,

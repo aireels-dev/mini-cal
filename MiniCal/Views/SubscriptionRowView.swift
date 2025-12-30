@@ -177,7 +177,7 @@ struct SubscriptionRowView: View {
             Toggle("", isOn: .constant(subscription.isEnabled))
                 .toggleStyle(SwitchToggleStyle(tint: themeColors.accentColor))
                 .controlSize(.mini)
-                .onChange(of: subscription.isEnabled) { _ in
+                .onChange(of: subscription.isEnabled) { _, _ in
                     onToggle()
                 }
 

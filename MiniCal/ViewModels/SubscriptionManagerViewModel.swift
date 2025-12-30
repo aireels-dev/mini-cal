@@ -225,7 +225,8 @@ class SubscriptionManagerViewModel: ObservableObject {
 
         } catch {
             handleError(error)
-            await MainActor.run {
+            // 忽略返回值 - 仅在 Main Actor 上执行状态清理
+            _ = await MainActor.run {
                 subscriptionsToDelete.remove(subscriptionId)
             }
         }
