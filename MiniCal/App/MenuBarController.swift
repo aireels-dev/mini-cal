@@ -121,7 +121,7 @@ class MenuBarController: NSObject, NSWindowDelegate {
 
         // 设置菜单项
         let settingsItem = NSMenuItem(
-            title: "设置...",
+            title: "menu.settings".localized(),
             action: #selector(openSettings),
             keyEquivalent: ","
         )
@@ -130,7 +130,7 @@ class MenuBarController: NSObject, NSWindowDelegate {
 
         // 检查更新菜单项
         let checkUpdateItem = NSMenuItem(
-            title: "检查更新...",
+            title: "menu.check_updates".localized(),
             action: #selector(checkForUpdates),
             keyEquivalent: ""
         )
@@ -139,7 +139,7 @@ class MenuBarController: NSObject, NSWindowDelegate {
 
         // 关于菜单项
         let aboutItem = NSMenuItem(
-            title: "关于 MiniCal",
+            title: "menu.about_app".localized(with: AppBrand.displayName),
             action: #selector(showAbout),
             keyEquivalent: ""
         )
@@ -150,7 +150,7 @@ class MenuBarController: NSObject, NSWindowDelegate {
 
         // 退出菜单项
         let quitItem = NSMenuItem(
-            title: "退出 MiniCal",
+            title: "quit".localized(with: AppBrand.displayName),
             action: #selector(quitApp),
             keyEquivalent: "q"
         )
@@ -401,7 +401,7 @@ class MenuBarController: NSObject, NSWindowDelegate {
                 let hostingController = NSHostingController(rootView: settingsView)
 
                 let window = NSWindow(contentViewController: hostingController)
-                window.title = NSLocalizedString("settings.window_title", comment: "")
+                window.title = "settings.window_title".localized(with: AppBrand.displayName)
                 window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
                 window.isReleasedWhenClosed = false
 
@@ -468,16 +468,10 @@ class MenuBarController: NSObject, NSWindowDelegate {
 
     @objc func showAbout() {
         let alert = NSAlert()
-        alert.messageText = AppVersion.appName
-        alert.informativeText = """
-        版本 \(AppVersion.fullVersion)
-
-        一款简洁优雅的macOS菜单栏日历应用
-
-        © 2025 MiniCal
-        """
+        alert.messageText = AppBrand.displayName
+        alert.informativeText = "about.message".localized(with: AppVersion.fullVersion, AppBrand.displayName)
         alert.alertStyle = .informational
-        alert.addButton(withTitle: "确定")
+        alert.addButton(withTitle: "common.ok".localized())
 
         Logger.info("Showing about window", category: Logger.app)
         alert.runModal()
@@ -610,7 +604,7 @@ class MenuBarController: NSObject, NSWindowDelegate {
 
         // 创建窗口
         let window = NSWindow(contentViewController: hostingController)
-        window.title = NSLocalizedString("onboarding.window_title", comment: "")
+        window.title = "onboarding.window_title".localized(with: AppBrand.displayName)
         window.styleMask = [.titled, .closable]
         window.center()
         window.isReleasedWhenClosed = false  // 不自动释放，由我们手动管理

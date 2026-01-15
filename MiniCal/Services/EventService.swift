@@ -11,7 +11,7 @@ import EventKit
 class EventService {
     static let shared = EventService()
 
-    private let eventStore = EventStoreManager.shared.eventStore
+    private let eventStoreManager = EventStoreManager.shared
     private var eventStoreObserver: NSObjectProtocol?
     private let permissionManager = PermissionManager.shared
 
@@ -29,7 +29,9 @@ class EventService {
 
     /// 获取启用的日历列表
     private func getEnabledCalendars() -> [EKCalendar]? {
-        let allCalendars = eventStore.calendars(for: .event)
+        let allCalendars = eventStoreManager.perform { store in
+            store.calendars(for: .event)
+        }
         let enabledCalendars = allCalendars.filter { calendar in
             permissionManager.isCalendarEnabled(calendarIdentifier: calendar.calendarIdentifier)
         }
@@ -65,28 +67,24 @@ class EventService {
             if let calendars = enabledCalendars, calendars.isEmpty {
                 return []
             }
-
-            let predicate = eventStore.predicateForEvents(withStart: startOfDay, end: endOfDay, calendars: enabledCalendars)
-            let ekEvents = eventStore.events(matching: predicate)
-
-            // 性能优化：使用 ContiguousArray + 预分配容量
-            let calendarEvents = ContiguousArray<CalendarEvent>(
-                unsafeUninitializedCapacity: ekEvents.count
-            ) { buffer, initializedCount in
-                    for (index, ekEvent) in ekEvents.enumerated() {
-                        buffer[index] = CalendarEvent(
-                            title: ekEvent.title,
-                            startDate: ekEvent.startDate,
-                            endDate: ekEvent.endDate,
-                            source: .eventKit,
-                            isAllDay: ekEvent.isAllDay,
-                            eventIdentifier: ekEvent.eventIdentifier
-                        )
-                    }
-                    initializedCount = ekEvents.count
+            return await eventStoreManager.performAsync { store in
+                let predicate = store.predicateForEvents(
+                    withStart: startOfDay,
+                    end: endOfDay,
+                    calendars: enabledCalendars
+                )
+                let ekEvents = store.events(matching: predicate)
+                return ekEvents.map {
+                    CalendarEvent(
+                        title: $0.title,
+                        startDate: $0.startDate,
+                        endDate: $0.endDate,
+                        source: .eventKit,
+                        isAllDay: $0.isAllDay,
+                        eventIdentifier: $0.eventIdentifier
+                    )
                 }
-
-            return Array(calendarEvents)
+            }
         }
     }
 
@@ -105,29 +103,28 @@ class EventService {
                 Logger.debug("📅 No enabled calendars, returning empty array", category: Logger.calendar)
                 return []
             }
-
-            let predicate = eventStore.predicateForEvents(withStart: startDate, end: endDate, calendars: enabledCalendars)
-            let ekEvents = eventStore.events(matching: predicate)
-            Logger.debug("📅 EventKit returned \(ekEvents.count) events from \(enabledCalendars?.count ?? 0) calendars", category: Logger.calendar)
-
-            // 性能优化：ContiguousArray + 预分配
-            let calendarEvents = ContiguousArray<CalendarEvent>(
-                unsafeUninitializedCapacity: ekEvents.count
-            ) { buffer, initializedCount in
-                    for (index, ekEvent) in ekEvents.enumerated() {
-                        buffer[index] = CalendarEvent(
-                            title: ekEvent.title,
-                            startDate: ekEvent.startDate,
-                            endDate: ekEvent.endDate,
-                            source: .eventKit,
-                            isAllDay: ekEvent.isAllDay,
-                            eventIdentifier: ekEvent.eventIdentifier
-                        )
-                    }
-                    initializedCount = ekEvents.count
+            return await eventStoreManager.performAsync { store in
+                let predicate = store.predicateForEvents(
+                    withStart: startDate,
+                    end: endDate,
+                    calendars: enabledCalendars
+                )
+                let ekEvents = store.events(matching: predicate)
+                Logger.debug(
+                    "📅 EventKit returned \(ekEvents.count) events from \(enabledCalendars?.count ?? 0) calendars",
+                    category: Logger.calendar
+                )
+                return ekEvents.map {
+                    CalendarEvent(
+                        title: $0.title,
+                        startDate: $0.startDate,
+                        endDate: $0.endDate,
+                        source: .eventKit,
+                        isAllDay: $0.isAllDay,
+                        eventIdentifier: $0.eventIdentifier
+                    )
                 }
-
-            return Array(calendarEvents)
+            }
         }
     }
 
@@ -152,13 +149,14 @@ class EventService {
                 return [:]
             }
 
-            // 单次查询覆盖整个范围
-            let predicate = eventStore.predicateForEvents(
-                withStart: startOfDay,
-                end: endOfDay,
-                calendars: enabledCalendars
-            )
-            let ekEvents = eventStore.events(matching: predicate)
+            let ekEvents = await eventStoreManager.performAsync { store in
+                let predicate = store.predicateForEvents(
+                    withStart: startOfDay,
+                    end: endOfDay,
+                    calendars: enabledCalendars
+                )
+                return store.events(matching: predicate)
+            }
 
             // 性能优化：按日期分组（使用字典预分配）
             var groupedEvents: [Date: [CalendarEvent]] = [:]
@@ -195,7 +193,7 @@ class EventService {
         // 添加新的观察者并保存
         eventStoreObserver = NotificationCenter.default.addObserver(
             forName: .EKEventStoreChanged,
-            object: eventStore,
+            object: eventStoreManager.eventStore,
             queue: .main
         ) { _ in
             handler()

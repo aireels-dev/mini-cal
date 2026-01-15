@@ -5,9 +5,9 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
+	<string>UniCal</string>
 	<key>CFBundleDisplayName</key>
-	<string>MiniCal</string>
+	<string>UniCal</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleVersion</key>
@@ -19,12 +19,12 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>11.0</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>MiniCal זקוק לגישה ליומן שלך כדי להציג פגישות ואירועים.</string>
+	<string>UniCal זקוק לגישה ליומן שלך כדי להציג פגישות ואירועים.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>MiniCal זקוק לגישה מלאה ליומן שלך כדי לסנכרן ולנהל אירועים ולהירשם ליומנים חיצוניים.</string>
+	<string>UniCal זקוק לגישה מלאה ליומן שלך כדי לסנכרן ולנהל אירועים ולהירשם ליומנים חיצוניים.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>MiniCal זקוק למיקום שלך כדי לחשב זמני זריחה ושקיעה, זמני תפילה אסלאמיים וזמני שבת עבריים.</string>
+	<string>UniCal זקוק למיקום שלך כדי לחשב זמני זריחה ושקיעה, זמני תפילה אסלאמיים וזמני שבת עבריים.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>MiniCal משתמש במיקום שלך כדי לספק מידע אסטרונומי מדויק (זמני זריחה ושקיעה, שלבי הירח) וזמנים דתיים (זמני תפילה, שבת).</string>
+	<string>UniCal משתמש במיקום שלך כדי לספק מידע אסטרונומי מדויק (זמני זריחה ושקיעה, שלבי הירח) וזמנים דתיים (זמני תפילה, שבת).</string>
 </dict>
 </plist>

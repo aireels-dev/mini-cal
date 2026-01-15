@@ -71,28 +71,42 @@ class PerformanceMonitor {
     /// - Returns: 操作的返回值
     func measureAsync<T>(_ name: String, block: () async throws -> T) async rethrows -> T {
         let start = CFAbsoluteTimeGetCurrent()
+
+        // 执行闭包并捕获结果
         let result = try await block()
+
+        // 计算耗时
         let duration = CFAbsoluteTimeGetCurrent() - start
 
-        recordMetric(name: name, duration: duration)
+        // 捕获需要的值，避免在 Task.detached 中强捕获 self
+        let threshold = self.thresholds[name] ?? 0.5
 
-        let milliseconds = duration * 1000
+        // 使用 Task.detached 避免阻塞主流程
+        // 使用 [weak self] 避免强引用循环
+        Task.detached { [weak self] in
+            guard let self = self else { return }
 
-        // 添加控制台输出以确保性能日志可见
-        print("⏱️ [PERF] \(name): \(String(format: "%.2f", milliseconds))ms")
+            // 后台记录指标
+            self.recordMetric(name: name, duration: duration)
 
-        // 异步操作的阈值通常更宽松
-        let threshold = thresholds[name] ?? 0.5
-        if duration > threshold {
-            Logger.warning(
-                "Performance: \(name) took \(String(format: "%.2f", milliseconds))ms (threshold: \(String(format: "%.2f", threshold * 1000))ms)",
-                category: Logger.performance
-            )
-        } else {
-            Logger.info(
-                "Performance: \(name) completed in \(String(format: "%.2f", milliseconds))ms",
-                category: Logger.performance
-            )
+            let milliseconds = duration * 1000
+
+            #if DEBUG
+            print("⏱️ [PERF] \(name): \(String(format: "%.2f", milliseconds))ms")
+
+            // 异步操作的阈值通常更宽松
+            if duration > threshold {
+                Logger.warning(
+                    "Performance: \(name) took \(String(format: "%.2f", milliseconds))ms (threshold: \(String(format: "%.2f", threshold * 1000))ms)",
+                    category: Logger.performance
+                )
+            } else {
+                Logger.debug(
+                    "Performance: \(name) completed in \(String(format: "%.2f", milliseconds))ms",
+                    category: Logger.performance
+                )
+            }
+            #endif
         }
 
         return result

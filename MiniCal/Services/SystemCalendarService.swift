@@ -5,6 +5,7 @@ import AppKit
 
 class SystemCalendarService: ObservableObject {
     private let eventStore = EventStoreManager.shared.eventStore
+    private let eventStoreManager = EventStoreManager.shared
     private let permissionManager: PermissionManager
 
     @Published var systemCalendars: [EKCalendar] = []
@@ -32,7 +33,9 @@ class SystemCalendarService: ObservableObject {
             }
 
             DispatchQueue.global(qos: .background).async {
-                let calendars = self.eventStore.calendars(for: .event)
+                let calendars = self.eventStoreManager.perform { store in
+                    store.calendars(for: .event)
+                }
                 DispatchQueue.main.async {
                     self.systemCalendars = calendars
                     self.isLoading = false
@@ -78,8 +81,10 @@ class SystemCalendarService: ObservableObject {
         let startDate = calendar.date(byAdding: .year, value: -1, to: Date()) ?? Date()
         let endDate = calendar.date(byAdding: .year, value: 1, to: Date()) ?? Date()
 
-        let predicate = eventStore.predicateForEvents(withStart: startDate, end: endDate, calendars: [ekCalendar])
-        let events = eventStore.events(matching: predicate)
+        let events = eventStoreManager.perform { store in
+            let predicate = store.predicateForEvents(withStart: startDate, end: endDate, calendars: [ekCalendar])
+            return store.events(matching: predicate)
+        }
 
         return !events.isEmpty
     }
@@ -89,19 +94,25 @@ class SystemCalendarService: ObservableObject {
         let startDate = calendar.startOfDay(for: Date())
         let endDate = calendar.date(byAdding: .day, value: 30, to: startDate) ?? startDate
 
-        let predicate = eventStore.predicateForEvents(withStart: startDate, end: endDate, calendars: [ekCalendar])
-        let events = eventStore.events(matching: predicate)
+        let events = eventStoreManager.perform { store in
+            let predicate = store.predicateForEvents(withStart: startDate, end: endDate, calendars: [ekCalendar])
+            return store.events(matching: predicate)
+        }
 
         return events.count
     }
 
     // MARK: - Calendar Information
     func getCalendarInfo(for identifier: String) -> EKCalendar? {
-        return eventStore.calendar(withIdentifier: identifier)
+        return eventStoreManager.perform { store in
+            store.calendar(withIdentifier: identifier)
+        }
     }
 
     func getAllCalendarSources() -> [EKSource] {
-        return eventStore.sources
+        return eventStoreManager.perform { store in
+            store.sources
+        }
     }
 
     // MARK: - Subscription Management

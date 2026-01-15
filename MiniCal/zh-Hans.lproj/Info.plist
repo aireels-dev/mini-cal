@@ -5,9 +5,9 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
+	<string>闪历</string>
 	<key>CFBundleDisplayName</key>
-	<string>MiniCal</string>
+	<string>闪历</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleVersion</key>
@@ -19,12 +19,12 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>11.0</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>MiniCal需要访问您的日历以显示会议和事件。</string>
+	<string>闪历需要访问您的日历以显示会议和事件。</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>MiniCal需要完全访问您的日历以同步和管理事件、订阅外部日历。</string>
+	<string>闪历需要完全访问您的日历以同步和管理事件、订阅外部日历。</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>MiniCal需要您的位置信息来计算日出日落时间、伊斯兰礼拜时间和希伯来安息日时间。</string>
+	<string>闪历需要您的位置信息来计算日出日落时间、伊斯兰礼拜时间和希伯来安息日时间。</string>
 	<key>NSLocationUsageDescription</key>
-	<string>MiniCal使用您的位置信息来提供准确的天文信息（日出日落时间、月相）和宗教时间（礼拜时间、安息日）。</string>
+	<string>闪历使用您的位置信息来提供准确的天文信息（日出日落时间、月相）和宗教时间（礼拜时间、安息日）。</string>
 </dict>
 </plist>

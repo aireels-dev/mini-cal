@@ -5,9 +5,9 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
+	<string>UniCal</string>
 	<key>CFBundleDisplayName</key>
-	<string>MiniCal</string>
+	<string>UniCal</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleVersion</key>
@@ -19,12 +19,12 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>11.0</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>MiniCal برای نمایش جلسات و رویدادها نیاز به دسترسی به تقویم شما دارد.</string>
+	<string>UniCal برای نمایش جلسات و رویدادها نیاز به دسترسی به تقویم شما دارد.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>MiniCal برای همگام‌سازی و مدیریت رویدادها و اشتراک در تقویم‌های خارجی به دسترسی کامل به تقویم شما نیاز دارد.</string>
+	<string>UniCal برای همگام‌سازی و مدیریت رویدادها و اشتراک در تقویم‌های خارجی به دسترسی کامل به تقویم شما نیاز دارد.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>MiniCal برای محاسبه زمان طلوع و غروب خورشید، اوقات نماز اسلامی و زمان‌های شبات عبری به مکان شما نیاز دارد.</string>
+	<string>UniCal برای محاسبه زمان طلوع و غروب خورشید، اوقات نماز اسلامی و زمان‌های شبات عبری به مکان شما نیاز دارد.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>MiniCal از مکان شما برای ارائه اطلاعات نجومی دقیق (زمان طلوع و غروب خورشید، فازهای ماه) و زمان‌های مذهبی (اوقات نماز، شبات) استفاده می‌کند.</string>
+	<string>UniCal از مکان شما برای ارائه اطلاعات نجومی دقیق (زمان طلوع و غروب خورشید، فازهای ماه) و زمان‌های مذهبی (اوقات نماز، شبات) استفاده می‌کند.</string>
 </dict>
 </plist>

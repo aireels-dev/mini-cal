@@ -5,9 +5,9 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
+	<string>UniCal</string>
 	<key>CFBundleDisplayName</key>
-	<string>MiniCal</string>
+	<string>UniCal</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleVersion</key>
@@ -19,12 +19,12 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>11.0</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>يحتاج MiniCal إلى الوصول إلى التقويم الخاص بك لعرض الاجتماعات والأحداث.</string>
+	<string>يحتاج UniCal إلى الوصول إلى التقويم الخاص بك لعرض الاجتماعات والأحداث.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>يحتاج MiniCal إلى وصول كامل إلى التقويم الخاص بك لمزامنة الأحداث وإدارتها والاشتراك في التقويمات الخارجية.</string>
+	<string>يحتاج UniCal إلى وصول كامل إلى التقويم الخاص بك لمزامنة الأحداث وإدارتها والاشتراك في التقويمات الخارجية.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>يحتاج MiniCal إلى موقعك لحساب أوقات شروق الشمس وغروبها وأوقات الصلاة الإسلامية وأوقات السبت العبرية.</string>
+	<string>يحتاج UniCal إلى موقعك لحساب أوقات شروق الشمس وغروبها وأوقات الصلاة الإسلامية وأوقات السبت العبرية.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>يستخدم MiniCal موقعك لتوفير معلومات فلكية دقيقة (أوقات شروق الشمس وغروبها، أطوار القمر) والأوقات الدينية (أوقات الصلاة، السبت).</string>
+	<string>يستخدم UniCal موقعك لتوفير معلومات فلكية دقيقة (أوقات شروق الشمس وغروبها، أطوار القمر) والأوقات الدينية (أوقات الصلاة، السبت).</string>
 </dict>
 </plist>

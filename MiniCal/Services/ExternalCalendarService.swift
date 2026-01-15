@@ -299,7 +299,7 @@ class ExternalCalendarService: NSObject, ObservableObject {
         var request = URLRequest(url: url)
 
         // 设置User-Agent
-        request.setValue("MiniCal/\(AppVersion.version) (+https://github.com/your-repo/mini-cal)", forHTTPHeaderField: "User-Agent")
+        request.setValue("MiniCal/\(AppVersion.version) (+https://github.com/aireels-dev/mini-cal)", forHTTPHeaderField: "User-Agent")
 
         // 设置Accept头
         request.setValue("text/calendar, application/octet-stream, */*", forHTTPHeaderField: "Accept")

@@ -5,9 +5,9 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
+	<string>UniCal</string>
 	<key>CFBundleDisplayName</key>
-	<string>MiniCal</string>
+	<string>UniCal</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleVersion</key>
@@ -19,12 +19,12 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>11.0</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>MiniCal cần truy cập lịch của bạn để hiển thị cuộc họp và sự kiện.</string>
+	<string>UniCal cần truy cập lịch của bạn để hiển thị cuộc họp và sự kiện.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>MiniCal cần quyền truy cập đầy đủ vào lịch của bạn để đồng bộ và quản lý sự kiện, đăng ký lịch bên ngoài.</string>
+	<string>UniCal cần quyền truy cập đầy đủ vào lịch của bạn để đồng bộ và quản lý sự kiện, đăng ký lịch bên ngoài.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>MiniCal cần vị trí của bạn để tính thời gian mặt trời mọc và lặn, thời gian cầu nguyện Hồi giáo và thời gian Sa-bat Do Thái.</string>
+	<string>UniCal cần vị trí của bạn để tính thời gian mặt trời mọc và lặn, thời gian cầu nguyện Hồi giáo và thời gian Sa-bat Do Thái.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>MiniCal sử dụng vị trí của bạn để cung cấp thông tin thiên văn chính xác (thời gian mặt trời mọc và lặn, pha mặt trăng) và thời gian tôn giáo (thời gian cầu nguyện, Sa-bat).</string>
+	<string>UniCal sử dụng vị trí của bạn để cung cấp thông tin thiên văn chính xác (thời gian mặt trời mọc và lặn, pha mặt trăng) và thời gian tôn giáo (thời gian cầu nguyện, Sa-bat).</string>
 </dict>
 </plist>

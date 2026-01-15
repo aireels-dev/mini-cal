@@ -11,7 +11,18 @@ extension String {
     /// 获取本地化字符串
     /// 使用示例: "menu_bar".localized()
     var localized: String {
-        return NSLocalizedString(self, comment: "")
+        let localized = NSLocalizedString(self, comment: "")
+        if localized != self {
+            return localized
+        }
+
+        guard let path = Bundle.main.path(forResource: "en", ofType: "lproj"),
+              let bundle = Bundle(path: path) else {
+            return localized
+        }
+
+        let fallback = bundle.localizedString(forKey: self, value: self, table: nil)
+        return fallback
     }
 
     /// 获取本地化字符串，带参数
@@ -22,7 +33,18 @@ extension String {
 
     /// 从指定的 table 获取本地化字符串
     func localized(from table: String) -> String {
-        return NSLocalizedString(self, tableName: table, comment: "")
+        let localized = NSLocalizedString(self, tableName: table, comment: "")
+        if localized != self {
+            return localized
+        }
+
+        guard let path = Bundle.main.path(forResource: "en", ofType: "lproj"),
+              let bundle = Bundle(path: path) else {
+            return localized
+        }
+
+        let fallback = bundle.localizedString(forKey: self, value: self, table: table)
+        return fallback
     }
 }
 

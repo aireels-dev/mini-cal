@@ -10,7 +10,9 @@ import Foundation
 struct Constants {
     // UserDefaults Keys
     struct UserDefaultsKeys {
-        static let settings = "MiniCal.Settings"
+        // 注意：这些键值使用 "MiniCal" 前缀，不应修改以避免用户数据丢失
+        // 仅用于文档说明，实际键值在各 Service 中定义
+        static let settingsBase = "MiniCal"
     }
 
     // Timing

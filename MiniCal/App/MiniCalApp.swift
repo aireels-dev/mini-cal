@@ -15,5 +15,10 @@ struct MiniCalApp: App {
         Settings {
             EmptyView()
         }
+        .commands {
+            CommandGroup(replacing: .appSettings) {
+                // 禁用默认的 Command+,
+            }
+        }
     }
 }

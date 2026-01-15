@@ -6,14 +6,30 @@ import Combine
 class EventStoreManager {
     static let shared = EventStoreManager()
     let eventStore = EKEventStore()
+    private let accessQueue = DispatchQueue(label: "com.minical.eventstore")
 
     private init() {
         // 私有初始化，确保单例
+    }
+
+    func perform<T>(_ block: (EKEventStore) throws -> T) rethrows -> T {
+        return try accessQueue.sync {
+            try block(eventStore)
+        }
+    }
+
+    func performAsync<T>(_ block: @escaping (EKEventStore) -> T) async -> T {
+        return await withCheckedContinuation { continuation in
+            accessQueue.async {
+                continuation.resume(returning: block(self.eventStore))
+            }
+        }
     }
 }
 
 class EventKitService: ObservableObject {
     private let eventStore = EventStoreManager.shared.eventStore
+    private let eventStoreManager = EventStoreManager.shared
     private let permissionManager: PermissionManager
 
     @Published var isLoading = false
@@ -30,7 +46,9 @@ class EventKitService: ObservableObject {
                 .eraseToAnyPublisher()
         }
 
-        guard let ekCalendar = eventStore.calendar(withIdentifier: calendarId) else {
+        guard let ekCalendar = eventStoreManager.perform({ store in
+            store.calendar(withIdentifier: calendarId)
+        }) else {
             return Fail(error: CalendarError.calendarNotFound)
                 .eraseToAnyPublisher()
         }
@@ -48,7 +66,9 @@ class EventKitService: ObservableObject {
                 .eraseToAnyPublisher()
         }
 
-        let calendars = calendarIds.compactMap { eventStore.calendar(withIdentifier: $0) }
+        let calendars = eventStoreManager.perform { store in
+            calendarIds.compactMap { store.calendar(withIdentifier: $0) }
+        }
         guard !calendars.isEmpty else {
             return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
         }
@@ -63,14 +83,15 @@ class EventKitService: ObservableObject {
             }
 
             DispatchQueue.global(qos: .background).async {
-                let predicate = self.eventStore.predicateForEvents(
-                    withStart: dateRange.startDate,
-                    end: dateRange.endDate,
-                    calendars: calendars
-                )
-
-                let ekEvents = self.eventStore.events(matching: predicate)
-                let calendarEvents = ekEvents.map { self.convertEKEventToCalendarEvent($0) }
+                let calendarEvents = self.eventStoreManager.perform { store in
+                    let predicate = store.predicateForEvents(
+                        withStart: dateRange.startDate,
+                        end: dateRange.endDate,
+                        calendars: calendars
+                    )
+                    let ekEvents = store.events(matching: predicate)
+                    return ekEvents.map { self.convertEKEventToCalendarEvent($0) }
+                }
 
                 DispatchQueue.main.async {
                     self.isLoading = false
@@ -94,8 +115,10 @@ class EventKitService: ObservableObject {
             }
 
             DispatchQueue.global(qos: .background).async {
-                let ekEvent = self.eventStore.event(withIdentifier: identifier)
-                let calendarEvent = ekEvent.map { self.convertEKEventToCalendarEvent($0) }
+                let calendarEvent = self.eventStoreManager.perform { store in
+                    let ekEvent = store.event(withIdentifier: identifier)
+                    return ekEvent.map { self.convertEKEventToCalendarEvent($0) }
+                }
 
                 DispatchQueue.main.async {
                     promise(.success(calendarEvent))

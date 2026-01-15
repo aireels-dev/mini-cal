@@ -13,34 +13,32 @@ struct SettingsView: View {
     @ObservedObject private var settingsManager = SettingsManager.shared
     @ObservedObject var calendarViewModel: CalendarViewModel
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedTab = 0
+    @State private var selectedTab: SettingsTab = .menuBar
 
     init(calendarViewModel: CalendarViewModel? = nil) {
         self.calendarViewModel = calendarViewModel ?? CalendarViewModel()
     }
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            // 菜单栏设置
-            MenuBarSettingsView(settingsManager: settingsManager)
-                .tabItem {
-                    Label("menu_bar.title", systemImage: "menubar.rectangle")
+        VStack(spacing: 12) {
+            Picker("", selection: $selectedTab) {
+                ForEach(SettingsTab.allCases, id: \.self) { tab in
+                    Label(tab.titleKey.localized(), systemImage: tab.systemImageName)
+                        .tag(tab)
                 }
-                .tag(0)
+            }
+            .pickerStyle(.segmented)
 
-            // 日历设置
-            CalendarSettingsView(settingsManager: settingsManager, calendarViewModel: calendarViewModel)
-                .tabItem {
-                    Label("menu_bar.calendar", systemImage: "calendar")
+            Group {
+                switch selectedTab {
+                case .menuBar:
+                    MenuBarSettingsView(settingsManager: settingsManager)
+                case .calendar:
+                    CalendarSettingsView(settingsManager: settingsManager, calendarViewModel: calendarViewModel)
+                case .appearance:
+                    AppearanceSettingsView(settingsManager: settingsManager)
                 }
-                .tag(1)
-
-            // 外观设置
-            AppearanceSettingsView(settingsManager: settingsManager)
-                .tabItem {
-                    Label("menu_bar.appearance", systemImage: "paintbrush")
-                }
-                .tag(2)
+            }
         }
         .frame(width: 580, height: 700)
         .padding()
@@ -55,7 +53,35 @@ struct SettingsView: View {
             object: nil,
             queue: .main
         ) { [self] _ in
-            self.selectedTab = 1  // 切换到日历tab
+            self.selectedTab = .calendar  // 切换到日历tab
+        }
+    }
+}
+
+private enum SettingsTab: Int, CaseIterable {
+    case menuBar
+    case calendar
+    case appearance
+
+    var titleKey: String {
+        switch self {
+        case .menuBar:
+            return "menu_bar.title"
+        case .calendar:
+            return "menu_bar.calendar"
+        case .appearance:
+            return "menu_bar.appearance"
+        }
+    }
+
+    var systemImageName: String {
+        switch self {
+        case .menuBar:
+            return "menubar.rectangle"
+        case .calendar:
+            return "calendar"
+        case .appearance:
+            return "paintbrush"
         }
     }
 }
@@ -207,8 +233,8 @@ struct MenuBarSettingsView: View {
             }
 
             // 每周起始日
-            Section("settings.week_start.section") {
-                Picker("settings.week_start.label", selection: $localSettings.weekStartDay) {
+            Section("settings.week_start.section".localized()) {
+                Picker(selection: $localSettings.weekStartDay) {
                     ForEach(WeekStartDay.allCases, id: \.self) { weekStart in
                         VStack(alignment: .leading) {
                             Text(weekStart.displayName)
@@ -219,12 +245,14 @@ struct MenuBarSettingsView: View {
                         }
                         .tag(weekStart)
                     }
+                } label: {
+                    Text("settings.week_start.label".localized())
                 }
                 .onChange(of: localSettings.weekStartDay) { _, newValue in
                     settingsManager.updateWeekStartDay(newValue)
                 }
 
-                Text("settings.week_start.description")
+                Text("settings.week_start.description".localized())
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

@@ -132,7 +132,7 @@ struct OnboardingWizardView: View {
                 .font(.system(size: 80))
                 .foregroundColor(.accentColor)
 
-            Text("onboarding.welcome.title".localized())
+            Text("onboarding.welcome.title".localized(with: AppBrand.displayName))
                 .font(.largeTitle)
                 .fontWeight(.bold)
 
@@ -337,7 +337,7 @@ struct OnboardingWizardView: View {
                         .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.primary)
 
-                    Text("onboarding.complete.subtitle".localized())
+                    Text("onboarding.complete.subtitle".localized(with: AppBrand.displayName))
                         .font(.system(size: 14))
                         .foregroundColor(.secondary)
                 }
@@ -382,7 +382,7 @@ struct OnboardingWizardView: View {
                 .font(.system(size: 17, weight: .semibold))
                 .foregroundColor(.primary)
 
-            Text("onboarding.optimize.intro".localized())
+            Text("onboarding.optimize.intro".localized(with: AppBrand.displayName))
                 .font(.system(size: 12))
                 .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -499,7 +499,7 @@ struct OnboardingWizardView: View {
                     }
                     .frame(width: 28, height: 28)
 
-                    Text("onboarding.optimize.step2_title".localized())
+                    Text("onboarding.optimize.step2_title".localized(with: AppBrand.displayName))
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.primary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -521,7 +521,7 @@ struct OnboardingWizardView: View {
                         Text("•")
                             .font(.system(size: 11))
                             .foregroundColor(.secondary)
-                        Text("onboarding.optimize.step2_detail2".localized())
+                        Text("onboarding.optimize.step2_detail2".localized(with: AppBrand.displayName))
                             .font(.system(size: 12))
                             .foregroundColor(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -763,7 +763,7 @@ struct OnboardingWizardView: View {
     private var securityAlertMessage: some View {
         if let subscription = pendingSubscription {
             VStack(alignment: .leading, spacing: 8) {
-                Text("recommendation.security_alert.message".localized())
+                Text("recommendation.security_alert.message".localized(with: AppBrand.displayName))
 
                 Text("URL: \(subscription.url)")
                     .font(.caption)

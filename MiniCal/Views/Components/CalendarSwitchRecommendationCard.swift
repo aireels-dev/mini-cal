@@ -164,7 +164,7 @@ struct CalendarSwitchRecommendationCard: View {
         } message: {
             if let subscription = pendingSubscription {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("recommendation.security_alert.message".localized())
+                    Text("recommendation.security_alert.message".localized(with: AppBrand.displayName))
 
                     Text("URL: \(subscription.url)")
                         .font(.caption)

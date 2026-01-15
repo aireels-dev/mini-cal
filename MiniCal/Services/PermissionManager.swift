@@ -7,6 +7,7 @@ class PermissionManager: ObservableObject {
     static let shared = PermissionManager()
 
     private let eventStore = EventStoreManager.shared.eventStore
+    private let eventStoreManager = EventStoreManager.shared
 
     @Published var isAuthorized = false
     @Published var authorizationStatus: EKAuthorizationStatus = .notDetermined
@@ -200,7 +201,9 @@ class PermissionManager: ObservableObject {
             return
         }
 
-        systemCalendars = eventStore.calendars(for: .event)
+        systemCalendars = eventStoreManager.perform { store in
+            store.calendars(for: .event)
+        }
     }
 
     func getAuthorizationDescription() -> String {

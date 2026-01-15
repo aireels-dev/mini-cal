@@ -5,9 +5,9 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
+	<string>UniCal</string>
 	<key>CFBundleDisplayName</key>
-	<string>MiniCal</string>
+	<string>UniCal</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleVersion</key>
@@ -19,12 +19,12 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>11.0</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>MiniCal은 회의 및 이벤트를 표시하기 위해 캘린더에 액세스해야 합니다.</string>
+	<string>UniCal은 회의 및 이벤트를 표시하기 위해 캘린더에 액세스해야 합니다.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>MiniCal은 이벤트 동기화 및 관리, 외부 캘린더 구독을 위해 캘린더에 대한 전체 액세스 권한이 필요합니다.</string>
+	<string>UniCal은 이벤트 동기화 및 관리, 외부 캘린더 구독을 위해 캘린더에 대한 전체 액세스 권한이 필요합니다.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>MiniCal은 일출 및 일몰 시간, 이슬람 기도 시간, 히브리 안식일 시간을 계산하기 위해 위치 정보가 필요합니다.</string>
+	<string>UniCal은 일출 및 일몰 시간, 이슬람 기도 시간, 히브리 안식일 시간을 계산하기 위해 위치 정보가 필요합니다.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>MiniCal은 정확한 천문 정보(일출 및 일몰 시간, 월상)와 종교적 시간(기도 시간, 안식일)을 제공하기 위해 위치 정보를 사용합니다.</string>
+	<string>UniCal은 정확한 천문 정보(일출 및 일몰 시간, 월상)와 종교적 시간(기도 시간, 안식일)을 제공하기 위해 위치 정보를 사용합니다.</string>
 </dict>
 </plist>

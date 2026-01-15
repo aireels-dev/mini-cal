@@ -178,11 +178,7 @@ struct CalendarView: View {
             }
         } message: {
             if let recommendation = pendingSubscription {
-                Text(String(
-                    format: "recommendation.security_alert.message".localized(),
-                    recommendation.name.localized(),
-                    recommendation.provider
-                ))
+                Text("recommendation.security_alert.message".localized(with: AppBrand.displayName))
             }
         }
     }

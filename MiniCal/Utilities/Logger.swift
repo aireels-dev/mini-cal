@@ -17,6 +17,7 @@ enum Logger {
 
     // MARK: - Categories
 
+    // 恢复为静态常量，现在是安全的（不会触发 Bundle 访问）
     static let app = OSLog(subsystem: subsystem, category: "App")
     static let ui = OSLog(subsystem: subsystem, category: "UI")
     static let calendar = OSLog(subsystem: subsystem, category: "Calendar")

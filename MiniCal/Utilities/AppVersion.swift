@@ -14,12 +14,12 @@ enum AppVersion {
 
     /// 获取应用版本号 (CFBundleShortVersionString)
     static var version: String {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+        return Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     }
 
     /// 获取构建号 (CFBundleVersion)
     static var build: String {
-        Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
+        return Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
     }
 
     /// 获取完整版本字符串 (版本号 (构建号))
@@ -29,14 +29,12 @@ enum AppVersion {
 
     /// 获取应用名称
     static var appName: String {
-        Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String ??
-        Bundle.main.infoDictionary?["CFBundleName"] as? String ??
-        "MiniCal"
+        return AppBrand.displayName
     }
 
     /// 获取Bundle标识符
     static var bundleIdentifier: String {
-        Bundle.main.bundleIdentifier ?? "com.minical.app"
+        return Bundle.main.bundleIdentifier ?? "com.minical.app"
     }
 
     // MARK: - System Info
