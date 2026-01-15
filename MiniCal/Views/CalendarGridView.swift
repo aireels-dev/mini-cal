@@ -18,34 +18,14 @@ struct CalendarGridView: View {
     @State private var scrollMonitor: Any?
     @State private var scrollDeltaX: CGFloat = 0
     @State private var scrollDeltaY: CGFloat = 0
+    @State private var gestureAxis: GestureAxis?
+    @State private var lastDeltaX: CGFloat = 0
+    @State private var lastDeltaY: CGFloat = 0
+    @State private var isNavigating = false
     
     var body: some View {
-        VStack(spacing: 0) {
-            // 星期标题行
-            weekdayHeaderRow
-                .padding(.bottom, 8)
-
-            // 日期网格（带优化转场动画）
-            LazyVGrid(columns: columns, spacing: 6) {
-                ForEach(viewModel.calendarDates) { date in
-                    CalendarDayCell(
-                        date: date,
-                        isSelected: viewModel.isSelected(date),
-                        themeColors: themeColors,
-                        calendarSize: calendarSize,
-                        onTap: {
-                            viewModel.selectDate(date)
-                            // 所有日期均可点击，显示事件详情（即使没有事件）
-                            onDateTap?(date)
-                        }
-                    )
-                    .frame(height: calendarSize.cellSize)
-                }
-            }
-            .id(viewModel.viewId + "-" + viewModel.currentMonth.description) // 组合 ID：viewId 改变时重建，currentMonth 改变时触发转场
-            .transition(monthTransition)
-            .animation(.easeInOut(duration: 0.35), value: viewModel.currentMonth)
-        }
+        calendarBody(dates: viewModel.calendarDates)
+        .clipped()
         .padding(.horizontal, 12)
         .onAppear {
             setupKeyboardMonitor()
@@ -110,62 +90,44 @@ struct CalendarGridView: View {
             return event
         }
 
-        let animation = Animation.easeInOut(duration: 0.35)
-
         // 左箭头 = 上一个月（月份减小）
         if event.keyCode == 123 { // Left arrow
-            withAnimation(animation) {
-                viewModel.goToPreviousMonth()
-            }
+            viewModel.goToPreviousMonth()
             return nil
         }
         // 右箭头 = 下一个月（月份增大）
         else if event.keyCode == 124 { // Right arrow
-            withAnimation(animation) {
-                viewModel.goToNextMonth()
-            }
+            viewModel.goToNextMonth()
             return nil
         }
         // 上箭头 = 下一年（年份增大）
         else if event.keyCode == 126 { // Up arrow
-            withAnimation(animation) {
-                viewModel.goToNextYear()
-            }
+            viewModel.goToNextYear()
             return nil
         }
         // 下箭头 = 上一年（年份减小）
         else if event.keyCode == 125 { // Down arrow
-            withAnimation(animation) {
-                viewModel.goToPreviousYear()
-            }
+            viewModel.goToPreviousYear()
             return nil
         }
         // W键 = 下一年（年份增大）
         else if event.keyCode == 13 { // W key
-            withAnimation(animation) {
-                viewModel.goToNextYear()
-            }
+            viewModel.goToNextYear()
             return nil
         }
         // A键 = 上一个月（月份减小）
         else if event.keyCode == 0 { // A key
-            withAnimation(animation) {
-                viewModel.goToPreviousMonth()
-            }
+            viewModel.goToPreviousMonth()
             return nil
         }
         // S键 = 上一年（年份减小）
         else if event.keyCode == 1 { // S key
-            withAnimation(animation) {
-                viewModel.goToPreviousYear()
-            }
+            viewModel.goToPreviousYear()
             return nil
         }
         // D键 = 下一个月（月份增大）
         else if event.keyCode == 2 { // D key
-            withAnimation(animation) {
-                viewModel.goToNextMonth()
-            }
+            viewModel.goToNextMonth()
             return nil
         }
         return event
@@ -178,131 +140,69 @@ struct CalendarGridView: View {
             return event
         }
 
+        // 仅当指针在浮窗范围内时响应（避免设置窗口滚动触发）
+        guard isPointerInsidePopover() else {
+            return event
+        }
+
         // 检查是否是触摸板手势（不是鼠标滚轮）
         guard event.hasPreciseScrollingDeltas else {
             return event
         }
+        if isNavigating {
+            return nil
+        }
 
-        // 累积滚动量
+        if event.phase == .began {
+            scrollDeltaX = 0
+            scrollDeltaY = 0
+            lastDeltaX = 0
+            lastDeltaY = 0
+            gestureAxis = nil
+        }
+
         if event.phase == .began || event.phase == .changed {
             scrollDeltaX += event.scrollingDeltaX
             scrollDeltaY += event.scrollingDeltaY
-            return event
+            lastDeltaX = event.scrollingDeltaX
+            lastDeltaY = event.scrollingDeltaY
+
+            if gestureAxis == nil {
+                let axisLockThreshold: CGFloat = 4
+                if abs(scrollDeltaX) > abs(scrollDeltaY), abs(scrollDeltaX) > axisLockThreshold {
+                    gestureAxis = .horizontal
+                } else if abs(scrollDeltaY) > abs(scrollDeltaX), abs(scrollDeltaY) > axisLockThreshold {
+                    gestureAxis = .vertical
+                }
+            }
+
+            let threshold = calendarSize.gridSize * 0.25
+            let fastThreshold: CGFloat = 60
+
+            if gestureAxis == .horizontal {
+                if abs(scrollDeltaX) > threshold || abs(lastDeltaX) > fastThreshold {
+                    let sign: CGFloat = scrollDeltaX < 0 ? -1 : 1
+                    triggerNavigation(axis: .horizontal, sign: sign)
+                }
+                return nil
+            } else if gestureAxis == .vertical {
+                if abs(scrollDeltaY) > threshold || abs(lastDeltaY) > fastThreshold {
+                    let sign: CGFloat = scrollDeltaY < 0 ? -1 : 1
+                    triggerNavigation(axis: .vertical, sign: sign)
+                }
+                return nil
+            }
         }
 
-        // 手势结束，判断方向
-        if event.phase == .ended {
-            let threshold: CGFloat = 25.0  // 优化阈值
-            let animation = Animation.easeInOut(duration: 0.35)
-
-            // 水平滑动（月份切换）
-            if abs(scrollDeltaX) > abs(scrollDeltaY) && abs(scrollDeltaX) > threshold {
-                withAnimation(animation) {
-                    if scrollDeltaX < 0 {
-                        // 左滑（手指向左滑）→ 月份增大
-                        viewModel.goToNextMonth()
-                    } else {
-                        // 右滑（手指向右滑）→ 月份减小
-                        viewModel.goToPreviousMonth()
-                    }
-                }
-            }
-            // 垂直滑动（年份切换）
-            else if abs(scrollDeltaY) > abs(scrollDeltaX) && abs(scrollDeltaY) > threshold {
-                withAnimation(animation) {
-                    if scrollDeltaY < 0 {
-                        // 上滑（手指向上滑）→ 年份增大
-                        viewModel.goToNextYear()
-                    } else {
-                        // 下滑（手指向下滑）→ 年份减小
-                        viewModel.goToPreviousYear()
-                    }
-                }
-            }
-
-            // 重置累积值
-            scrollDeltaX = 0
-            scrollDeltaY = 0
+        let isGestureEnding = event.phase == .cancelled
+            || (event.phase == .ended && event.momentumPhase == [])
+            || event.momentumPhase == .ended
+        if isGestureEnding {
+            resetGestureState()
             return nil
         }
 
         return event
-    }
-
-    /// 日历切换转场动画（彻底解决延迟问题）
-    private var monthTransition: AnyTransition {
-        // 优先使用立即生效的导航状态，完全解决延迟问题
-        let effectiveType = viewModel.currentNavigationType != .none ?
-                           viewModel.currentNavigationType :
-                           viewModel.navigationType
-        let effectiveDirection = viewModel.currentNavigationDirection != .none ?
-                               viewModel.currentNavigationDirection :
-                               viewModel.navigationDirection
-
-        let isHorizontal = effectiveType == .month
-
-        // 动画参数 - 更平滑的设置
-        let slideDistance: CGFloat = 280  // 减小滑动距离
-        let fadeThreshold: Double = 0.3    // 透明度阈值，避免突然消失
-
-        switch effectiveDirection {
-        case .forward:
-            // 前进动画：月份增大（从右向左）或年份增大（从下到上）
-            return .asymmetric(
-                insertion: .modifier(
-                    active: SmoothSlideModifier(
-                        offsetX: isHorizontal ? slideDistance : 0,   // 月份增大：新内容从右侧进入
-                        offsetY: isHorizontal ? 0 : slideDistance,   // 年份增大：新内容从下方进入
-                        scale: 0.95,
-                        opacity: fadeThreshold
-                    ),
-                    identity: SmoothSlideModifier(offsetX: 0, offsetY: 0, scale: 1.0, opacity: 1.0)
-                ),
-                removal: .modifier(
-                    active: SmoothSlideModifier(
-                        offsetX: isHorizontal ? -slideDistance : 0,  // 月份增大：旧内容向左退出
-                        offsetY: isHorizontal ? 0 : -slideDistance,  // 年份增大：旧内容向上退出
-                        scale: 0.95,
-                        opacity: fadeThreshold
-                    ),
-                    identity: SmoothSlideModifier(offsetX: 0, offsetY: 0, scale: 1.0, opacity: 1.0)
-                )
-            )
-        case .backward:
-            // 后退动画：月份减小（从左向右）或年份减小（从上到下）
-            return .asymmetric(
-                insertion: .modifier(
-                    active: SmoothSlideModifier(
-                        offsetX: isHorizontal ? -slideDistance : 0,  // 月份减小：新内容从左侧进入
-                        offsetY: isHorizontal ? 0 : -slideDistance,  // 年份减小：新内容从上方进入
-                        scale: 0.95,
-                        opacity: fadeThreshold
-                    ),
-                    identity: SmoothSlideModifier(offsetX: 0, offsetY: 0, scale: 1.0, opacity: 1.0)
-                ),
-                removal: .modifier(
-                    active: SmoothSlideModifier(
-                        offsetX: isHorizontal ? slideDistance : 0,   // 月份减小：新内容向右退出
-                        offsetY: isHorizontal ? 0 : slideDistance,   // 年份减小：旧内容向下退出
-                        scale: 0.95,
-                        opacity: fadeThreshold
-                    ),
-                    identity: SmoothSlideModifier(offsetX: 0, offsetY: 0, scale: 1.0, opacity: 1.0)
-                )
-            )
-        case .none:
-            // 无方向动画：简单的缩放淡入
-            return .asymmetric(
-                insertion: .modifier(
-                    active: SmoothSlideModifier(offsetX: 0, offsetY: 0, scale: 0.9, opacity: 0.0),
-                    identity: SmoothSlideModifier(offsetX: 0, offsetY: 0, scale: 1.0, opacity: 1.0)
-                ),
-                removal: .modifier(
-                    active: SmoothSlideModifier(offsetX: 0, offsetY: 0, scale: 1.1, opacity: 0.0),
-                    identity: SmoothSlideModifier(offsetX: 0, offsetY: 0, scale: 1.0, opacity: 1.0)
-                )
-            )
-        }
     }
 
     // MARK: - Window Focus Check
@@ -314,7 +214,71 @@ struct CalendarGridView: View {
         return keyWindow.className.contains("NSPopover")
     }
 
+    /// 检查指针是否在日历浮窗范围内
+    private func isPointerInsidePopover() -> Bool {
+        guard let popoverWindow = NSApp.windows.first(where: { $0.className.contains("NSPopover") && $0.isVisible }) else {
+            return false
+        }
+        let mouseLocation = NSEvent.mouseLocation
+        return popoverWindow.frame.contains(mouseLocation)
+    }
+
+    // MARK: - Gesture Navigation
+
+    private func resetGestureState() {
+        scrollDeltaX = 0
+        scrollDeltaY = 0
+        lastDeltaX = 0
+        lastDeltaY = 0
+        gestureAxis = nil
+        isNavigating = false
+    }
+
+    private func triggerNavigation(axis: GestureAxis, sign: CGFloat) {
+        isNavigating = true
+        let monthOffset = axis == .horizontal ? (sign < 0 ? 1 : -1) : 0
+        let yearOffset = axis == .vertical ? (sign < 0 ? -1 : 1) : 0
+        let targetDate = viewModel.previewDate(monthOffset: monthOffset, yearOffset: yearOffset)
+        viewModel.applyGestureNavigation(to: targetDate, previewDates: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            self.resetGestureState()
+        }
+    }
+
+
+
+    private func format(_ size: CGSize) -> String {
+        String(format: "{%.1f, %.1f}", size.width, size.height)
+    }
+
     // MARK: - Week Header
+
+    @ViewBuilder
+    private func calendarBody(dates: [CalendarDate]) -> some View {
+        VStack(spacing: 0) {
+            // 星期标题行
+            weekdayHeaderRow
+                .padding(.bottom, 8)
+
+            // 日期网格（带优化转场动画）
+            LazyVGrid(columns: columns, spacing: 6) {
+                ForEach(dates) { date in
+                    CalendarDayCell(
+                        date: date,
+                        isSelected: viewModel.isSelected(date),
+                        themeColors: themeColors,
+                        calendarSize: calendarSize,
+                        onTap: {
+                            viewModel.selectDate(date)
+                            // 所有日期均可点击，显示事件详情（即使没有事件）
+                            onDateTap?(date)
+                        }
+                    )
+                    .frame(height: calendarSize.cellSize)
+                }
+            }
+        }
+    }
 
     private var weekdayHeaderRow: some View {
         LazyVGrid(columns: columns, spacing: 6) {
@@ -341,11 +305,12 @@ struct SmoothSlideModifier: ViewModifier {
             .scaleEffect(scale)
             .offset(x: offsetX, y: offsetY)
             .opacity(opacity)
-            .animation(.easeInOut(duration: 0.35), value: offsetX)
-            .animation(.easeInOut(duration: 0.35), value: offsetY)
-            .animation(.easeInOut(duration: 0.25), value: scale)
-            .animation(.easeInOut(duration: 0.2), value: opacity)
     }
+}
+
+private enum GestureAxis {
+    case horizontal
+    case vertical
 }
 
 #Preview {

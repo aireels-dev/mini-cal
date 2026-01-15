@@ -155,10 +155,20 @@ class CalendarViewModel: ObservableObject {
             let dates = await calendarService.generateMonth(for: currentMonth, secondaryCalendar: secondaryCalendar)
             let monthText = calendarService.monthYearText(for: currentMonth)
 
+            if Task.isCancelled {
+                complete()
+                return
+            }
+
             // 先赋值 calendarDates，然后再加载事件
             // 修复竞态条件：loadAndPopulateEvents() 需要 calendarDates 不为空
             calendarDates = dates
             monthYearText = monthText
+
+            if Task.isCancelled {
+                complete()
+                return
+            }
 
             // 现在可以安全地加载和填充事件
             await loadAndPopulateEvents()
@@ -178,6 +188,10 @@ class CalendarViewModel: ObservableObject {
     private func loadAndPopulateEvents() async {
         let performanceStart = Date()
 
+        if Task.isCancelled {
+            return
+        }
+
         // 使用实际显示的日期范围（包括非当月日期）
         guard let startDate = calendarDates.first?.gregorianDate,
               let endDate = calendarDates.last?.gregorianDate else {
@@ -191,6 +205,10 @@ class CalendarViewModel: ObservableObject {
             // 使用 UnifiedEventService 获取所有事件（系统+外部订阅+本地）
             // 重要：包括非当月日期的事件
             let fetchedEvents = try await unifiedEventService.getEvents(in: DateRange(startDate: startDate, endDate: endDate))
+
+            if Task.isCancelled {
+                return
+            }
 
             await MainActor.run {
                 events = fetchedEvents
@@ -231,11 +249,54 @@ class CalendarViewModel: ObservableObject {
 
     // MARK: - Navigation
 
+    /// 计算预览目标月份/年份日期
+    func previewDate(monthOffset: Int, yearOffset: Int) -> Date {
+        var date = currentMonth
+
+        if monthOffset > 0 {
+            date = calendarService.nextMonth(from: date)
+        } else if monthOffset < 0 {
+            date = calendarService.previousMonth(from: date)
+        }
+
+        if yearOffset != 0 {
+            let calendar = Calendar.current
+            date = calendar.date(byAdding: .year, value: yearOffset, to: date) ?? date
+        }
+
+        return date
+    }
+
+    /// 手势导航专用：不触发方向动效，避免二次转场
+    func applyGestureNavigation(to date: Date, previewDates: [CalendarDate]?) {
+        navigationDirection = .none
+        navigationType = .none
+        currentNavigationType = .none
+        currentNavigationDirection = .none
+
+        loadTask?.cancel()
+        loadTask = nil
+
+        currentMonth = date
+        monthYearText = calendarService.monthYearText(for: date)
+
+        if let previewDates {
+            calendarDates = previewDates
+            lastLoadTime = Date()
+            lastLoadedMonth = date
+            isLoadingEvents = false
+            return
+        }
+
+        loadCurrentMonth()
+    }
+
     func goToPreviousMonth() {
         navigationDirection = .backward
         navigationType = .month
         currentNavigationType = .month      // 立即设置，确保动效计算时使用正确值
         currentNavigationDirection = .backward // 立即设置，确保动效方向正确
+        viewId = UUID().uuidString
         Logger.measureTime(operation: "Navigate to previous month", category: Logger.performance) {
             currentMonth = calendarService.previousMonth(from: currentMonth)
         }
@@ -247,6 +308,7 @@ class CalendarViewModel: ObservableObject {
         navigationType = .month
         currentNavigationType = .month       // 立即设置，确保动效计算时使用正确值
         currentNavigationDirection = .forward  // 立即设置，确保动效方向正确
+        viewId = UUID().uuidString
         Logger.measureTime(operation: "Navigate to next month", category: Logger.performance) {
             currentMonth = calendarService.nextMonth(from: currentMonth)
         }
@@ -259,6 +321,7 @@ class CalendarViewModel: ObservableObject {
         navigationType = .none
         currentNavigationType = .none
         currentNavigationDirection = .none
+        viewId = UUID().uuidString
 
         currentMonth = calendarService.today()
         selectedDate = currentMonth
@@ -270,6 +333,7 @@ class CalendarViewModel: ObservableObject {
         navigationType = .year
         currentNavigationType = .year       // 立即设置，确保动效计算时使用正确值
         currentNavigationDirection = .backward // 立即设置，确保动效方向正确
+        viewId = UUID().uuidString
         Logger.measureTime(operation: "Navigate to previous year", category: Logger.performance) {
             let calendar = Calendar.current
             currentMonth = calendar.date(byAdding: .year, value: -1, to: currentMonth) ?? currentMonth
@@ -282,6 +346,7 @@ class CalendarViewModel: ObservableObject {
         navigationType = .year
         currentNavigationType = .year        // 立即设置，确保动效计算时使用正确值
         currentNavigationDirection = .forward  // 立即设置，确保动效方向正确
+        viewId = UUID().uuidString
         Logger.measureTime(operation: "Navigate to next year", category: Logger.performance) {
             let calendar = Calendar.current
             currentMonth = calendar.date(byAdding: .year, value: 1, to: currentMonth) ?? currentMonth
