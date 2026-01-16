@@ -196,6 +196,8 @@ class EventKitService: ObservableObject {
             return .public
         case .unavailable:
             return .confidential
+        case .notSupported:
+            return .private
         @unknown default:
             // 未来可能的新状态（如 macOS 14+ 的 declined）
             return .private

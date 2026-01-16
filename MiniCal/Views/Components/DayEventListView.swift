@@ -304,13 +304,22 @@ struct DayEventListView: View {
                         .font(.system(size: calendarSize.eventListSubtitleFontSize, weight: .medium))
                         .foregroundColor(themeColors.secondaryTextColor)
 
-                    TextEditor(text: $newEventNotes)
-                        .font(.system(size: calendarSize.eventListTitleFontSize))
-                        .frame(height: 60)
-                        .padding(4)
-                        .background(themeColors.backgroundColor.opacity(0.3))
-                        .cornerRadius(6)
-                        .scrollContentBackground(.hidden)
+                    if #available(macOS 13.0, *) {
+                        TextEditor(text: $newEventNotes)
+                            .font(.system(size: calendarSize.eventListTitleFontSize))
+                            .frame(height: 60)
+                            .padding(4)
+                            .background(themeColors.backgroundColor.opacity(0.3))
+                            .cornerRadius(6)
+                            .scrollContentBackground(.hidden)
+                    } else {
+                        TextEditor(text: $newEventNotes)
+                            .font(.system(size: calendarSize.eventListTitleFontSize))
+                            .frame(height: 60)
+                            .padding(4)
+                            .background(themeColors.backgroundColor.opacity(0.3))
+                            .cornerRadius(6)
+                    }
                 }
             }
             .padding(16)

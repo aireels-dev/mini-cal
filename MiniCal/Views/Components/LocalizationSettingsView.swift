@@ -23,6 +23,15 @@ struct LocalizationSettingsView: View {
     }
 
     var body: some View {
+        if #available(macOS 13.0, *) {
+            formContent
+                .formStyle(.grouped)
+        } else {
+            formContent
+        }
+    }
+
+    private var formContent: some View {
         Form {
             Section(header: Text("Interface Language")) {
                 Picker("Interface Language", selection: $selectedInterfaceLocale) {
@@ -36,7 +45,7 @@ struct LocalizationSettingsView: View {
                         Text(locale.displayName).tag(locale as SupportedLocale?)
                     }
                 }
-                .onChange(of: selectedInterfaceLocale) { _, newValue in
+                .onChange(of: selectedInterfaceLocale) { _ in
                     updateLocalization()
                 }
 
@@ -59,7 +68,7 @@ struct LocalizationSettingsView: View {
 
             Section(header: Text("Calendar Language")) {
                 Toggle("Use separate language for calendar", isOn: $useIndependentCalendarLocale)
-                    .onChange(of: useIndependentCalendarLocale) { _, newValue in
+                    .onChange(of: useIndependentCalendarLocale) { newValue in
                         if !newValue {
                             selectedCalendarLocale = nil
                         } else {
@@ -77,7 +86,7 @@ struct LocalizationSettingsView: View {
                             Text(locale.displayName).tag(locale)
                         }
                     }
-                    .onChange(of: selectedCalendarLocale) { _, _ in
+                    .onChange(of: selectedCalendarLocale) { _ in
                         updateLocalization()
                     }
 
@@ -126,7 +135,6 @@ struct LocalizationSettingsView: View {
                 }
             }
         }
-        .formStyle(.grouped)
     }
 
     private func updateLocalization() {

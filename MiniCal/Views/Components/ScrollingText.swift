@@ -42,12 +42,12 @@ struct ScrollingText: View {
                                 updateTextWidth(textGeometry.size.width)
                                 triggerAutoScrollIfNeeded()
                             }
-                            .onChange(of: text) { _, _ in
+                            .onChange(of: text) { _ in
                                 updateTextWidth(textGeometry.size.width)
                                 resetScroll()
                                 triggerAutoScrollIfNeeded()
                             }
-                            .onChange(of: textGeometry.size.width) { _, newValue in
+                            .onChange(of: textGeometry.size.width) { newValue in
                                 updateTextWidth(newValue)
                                 triggerAutoScrollIfNeeded()
                             }
@@ -63,7 +63,7 @@ struct ScrollingText: View {
                     containerWidth = geometry.size.width
                     triggerAutoScrollIfNeeded()
                 }
-                .onChange(of: geometry.size.width) { _, newValue in
+                .onChange(of: geometry.size.width) { newValue in
                     containerWidth = newValue
                     triggerAutoScrollIfNeeded()
                 }
@@ -75,7 +75,7 @@ struct ScrollingText: View {
                         stopScrolling()
                     }
                 }
-                .onChange(of: autoScrollKey) { _, _ in
+                .onChange(of: autoScrollKey) { _ in
                     guard !isHovered else { return }
                     scheduleAutoScroll(containerWidth: containerWidth)
                 }

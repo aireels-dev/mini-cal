@@ -14,12 +14,22 @@ enum EventColor: String, Codable, CaseIterable {
         case .green: return .green
         case .gray: return .gray
         case .pink: return .pink
-        case .teal: return .teal
-        case .indigo: return .indigo
-        case .mint: return .mint
-        case .cyan: return .cyan
+        case .teal:
+            if #available(macOS 12.0, *) { return .teal }
+            return .blue
+        case .indigo:
+            if #available(macOS 12.0, *) { return .indigo }
+            return .purple
+        case .mint:
+            if #available(macOS 12.0, *) { return .mint }
+            return .green
+        case .cyan:
+            if #available(macOS 12.0, *) { return .cyan }
+            return .blue
         case .yellow: return .yellow
-        case .brown: return .brown
+        case .brown:
+            if #available(macOS 12.0, *) { return .brown }
+            return .orange
         }
     }
 
@@ -32,12 +42,22 @@ enum EventColor: String, Codable, CaseIterable {
         case .green: return .systemGreen
         case .gray: return .systemGray
         case .pink: return .systemPink
-        case .teal: return .systemTeal
-        case .indigo: return .systemIndigo
-        case .mint: return .systemMint
-        case .cyan: return .systemCyan
+        case .teal:
+            if #available(macOS 12.0, *) { return .systemTeal }
+            return .systemBlue
+        case .indigo:
+            if #available(macOS 12.0, *) { return .systemIndigo }
+            return .systemPurple
+        case .mint:
+            if #available(macOS 12.0, *) { return .systemMint }
+            return .systemGreen
+        case .cyan:
+            if #available(macOS 12.0, *) { return .systemCyan }
+            return .systemBlue
         case .yellow: return .systemYellow
-        case .brown: return .systemBrown
+        case .brown:
+            if #available(macOS 12.0, *) { return .systemBrown }
+            return .systemOrange
         }
     }
 

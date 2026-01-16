@@ -11,6 +11,31 @@ struct SubscriptionManagerView: View {
     let themeColors: ThemeColors
 
     var body: some View {
+        if #available(macOS 12.0, *) {
+            contentView
+                .alert("subscription.add_failed", isPresented: showSubscriptionError) {
+                    Button("common.ok", role: .cancel) {
+                        subscriptionError = nil
+                    }
+                } message: {
+                    if let error = subscriptionError {
+                        Text(error.localizedDescription)
+                    }
+                }
+        } else {
+            contentView
+                .alert(isPresented: showSubscriptionError) {
+                    let title = Text("subscription.add_failed".localized())
+                    let message = Text(subscriptionError?.localizedDescription ?? "")
+                    let dismiss = Alert.Button.cancel(Text("common.ok".localized())) {
+                        subscriptionError = nil
+                    }
+                    return Alert(title: title, message: message, dismissButton: dismiss)
+                }
+        }
+    }
+
+    private var contentView: some View {
         VStack(spacing: 0) {
             // 头部
             headerView
@@ -41,18 +66,20 @@ struct SubscriptionManagerView: View {
                 }
             )
         }
-        .alert("添加订阅失败", isPresented: .constant(subscriptionError != nil)) {
-            Button("确定") {
-                subscriptionError = nil
-            }
-        } message: {
-            if let error = subscriptionError {
-                Text(error.localizedDescription)
-            }
-        }
         .onAppear {
             viewModel.loadSubscriptions()
         }
+    }
+
+    private var showSubscriptionError: Binding<Bool> {
+        Binding(
+            get: { subscriptionError != nil },
+            set: { newValue in
+                if !newValue {
+                    subscriptionError = nil
+                }
+            }
+        )
     }
 
     // MARK: - Header View
@@ -262,8 +289,6 @@ struct URLInputView: View {
     let onAdd: () -> Void
     let onCancel: () -> Void
 
-    @FocusState private var isURLFieldFocused: Bool
-
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
@@ -282,14 +307,12 @@ struct URLInputView: View {
                         .font(.headline)
                         .foregroundColor(.primary)
 
-                    TextField("https://calendar.example.com/calendar.ics", text: $url)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .focused($isURLFieldFocused)
-                        .onSubmit {
-                            if !url.isEmpty {
-                                onAdd()
-                            }
+                    TextField("https://calendar.example.com/calendar.ics", text: $url, onCommit: {
+                        if !url.isEmpty {
+                            onAdd()
                         }
+                    })
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
 
                     Text("subscription.protocol_hint")
                         .font(.caption)
@@ -344,10 +367,13 @@ struct URLInputView: View {
                 }
             }
         }
-        .onAppear {
-            isURLFieldFocused = true
-        }
-        .overlay {
+        .overlay(loadingOverlay)
+    }
+}
+
+private extension URLInputView {
+    var loadingOverlay: some View {
+        Group {
             if isLoading {
                 ProgressView()
                     .scaleEffect(1.2)

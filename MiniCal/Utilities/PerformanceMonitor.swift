@@ -81,9 +81,9 @@ class PerformanceMonitor {
         // 捕获需要的值，避免在 Task.detached 中强捕获 self
         let threshold = self.thresholds[name] ?? 0.5
 
-        // 使用 Task.detached 避免阻塞主流程
+        // 使用 Task 避免阻塞主流程，同时保持主执行器隔离
         // 使用 [weak self] 避免强引用循环
-        Task.detached { [weak self] in
+        Task { [weak self] in
             guard let self = self else { return }
 
             // 后台记录指标

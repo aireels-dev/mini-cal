@@ -256,9 +256,17 @@ struct EventCreationView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("common.note")
                         .font(.headline)
-                    TextField("输入备注（可选）", text: $eventNotes, axis: .vertical)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .lineLimit(3...6)
+                    if #available(macOS 13.0, *) {
+                        TextField("event.notes_optional", text: $eventNotes, axis: .vertical)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .lineLimit(3...6)
+                    } else {
+                        TextEditor(text: $eventNotes)
+                            .frame(height: 90)
+                            .padding(4)
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(4)
+                    }
                 }
 
                 Spacer()

@@ -20,7 +20,6 @@ struct ExternalSubscriptionCompactRow: View {
     @State private var editTitle: String = ""
     @State private var editColor: EventColor = .blue
     @State private var isEnabled: Bool
-    @FocusState private var isTitleFieldFocused: Bool
 
     init(subscription: CalendarSubscription,
          onToggle: @escaping () -> Void,
@@ -34,6 +33,31 @@ struct ExternalSubscriptionCompactRow: View {
     }
 
     var body: some View {
+        if #available(macOS 12.0, *) {
+            contentView
+                .alert("subscription.confirm_delete_title", isPresented: $showingDeleteConfirmation) {
+                    Button("common.cancel", role: .cancel) {}
+                    Button("common.delete", role: .destructive) {
+                        onDelete()
+                    }
+                } message: {
+                    Text(String(format: NSLocalizedString("subscription.confirm_delete_message", comment: ""), subscription.title))
+                }
+        } else {
+            contentView
+                .alert(isPresented: $showingDeleteConfirmation) {
+                    let title = Text("subscription.confirm_delete_title".localized())
+                    let message = Text(String(format: NSLocalizedString("subscription.confirm_delete_message", comment: ""), subscription.title))
+                    let cancel = Alert.Button.cancel(Text("common.cancel".localized()))
+                    let confirm = Alert.Button.destructive(Text("common.delete".localized())) {
+                        onDelete()
+                    }
+                    return Alert(title: title, message: message, primaryButton: confirm, secondaryButton: cancel)
+                }
+        }
+    }
+
+    private var contentView: some View {
         VStack(spacing: 0) {
             if isEditingColor {
                 // 颜色编辑模式
@@ -56,14 +80,6 @@ struct ExternalSubscriptionCompactRow: View {
                     isHovered = hovering
                 }
             }
-        }
-        .alert("subscription.confirm_delete_title", isPresented: $showingDeleteConfirmation) {
-            Button("common.cancel", role: .cancel) {}
-            Button("common.delete", role: .destructive) {
-                onDelete()
-            }
-        } message: {
-            Text(String(format: NSLocalizedString("subscription.confirm_delete_message", comment: ""), subscription.title))
         }
     }
 
@@ -129,15 +145,22 @@ struct ExternalSubscriptionCompactRow: View {
             }
 
             // 启用/禁用开关
-            Toggle("", isOn: $isEnabled)
-                .toggleStyle(.switch)
-                .tint(Color.accentColor)
-                .labelsHidden()
-                .onChange(of: isEnabled) { oldValue, newValue in
-                    if oldValue != newValue {
+            if #available(macOS 13.0, *) {
+                Toggle("", isOn: $isEnabled)
+                    .toggleStyle(.switch)
+                    .tint(Color.accentColor)
+                    .labelsHidden()
+                    .onChange(of: isEnabled) { _ in
                         onToggle()
                     }
-                }
+            } else {
+                Toggle("", isOn: $isEnabled)
+                    .toggleStyle(.switch)
+                    .labelsHidden()
+                    .onChange(of: isEnabled) { _ in
+                        onToggle()
+                    }
+            }
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 8)
@@ -156,7 +179,6 @@ struct ExternalSubscriptionCompactRow: View {
 
                 TextField("订阅名称", text: $editTitle)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .focused($isTitleFieldFocused)
                     .font(.system(size: 13))
             }
 
@@ -379,10 +401,6 @@ struct ExternalSubscriptionCompactRow: View {
         editTitle = subscription.title
         editColor = subscription.color
         isEditing = true
-        // 延迟聚焦，确保 TextField 已经渲染
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            isTitleFieldFocused = true
-        }
     }
 
     private func cancelEditing() {

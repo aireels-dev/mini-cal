@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import AppKit
 
 /// 首次启动向导视图
 struct OnboardingWizardView: View {
     // MARK: - Environment
 
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) private var presentationMode
 
     // MARK: - State
 
@@ -56,6 +57,32 @@ struct OnboardingWizardView: View {
     // MARK: - Body
 
     var body: some View {
+        if #available(macOS 12.0, *) {
+            contentView
+                .alert("recommendation.security_alert.title".localized(), isPresented: $showingSecurityAlert) {
+                    securityAlertButtons
+                } message: {
+                    securityAlertMessage
+                }
+        } else {
+            contentView
+                .alert(isPresented: $showingSecurityAlert) {
+                    let title = Text("recommendation.security_alert.title".localized())
+                    let message = Text(securityAlertMessageText)
+                    let cancel = Alert.Button.cancel(Text("recommendation.security_alert.cancel".localized())) {
+                        pendingSubscription = nil
+                    }
+                    let confirm = Alert.Button.default(Text("recommendation.security_alert.confirm".localized())) {
+                        if let subscription = pendingSubscription {
+                            confirmSubscription(subscription)
+                        }
+                    }
+                    return Alert(title: title, message: message, primaryButton: confirm, secondaryButton: cancel)
+                }
+        }
+    }
+
+    private var contentView: some View {
         VStack(spacing: 0) {
             // 顶部进度指示器
             progressIndicator
@@ -88,12 +115,7 @@ struct OnboardingWizardView: View {
                 .padding(.vertical, 16)  // 上下对称的间距
         }
         .frame(width: 660, height: 580)  // 减小 15% (原 700x650)
-        .background(Color(nsColor: .windowBackgroundColor))
-        .alert("recommendation.security_alert.title".localized(), isPresented: $showingSecurityAlert) {
-            securityAlertButtons
-        } message: {
-            securityAlertMessage
-        }
+        .background(windowBackgroundColor)
         .onAppear {
             // 每次显示时重置到第一页
             currentStep = .welcome
@@ -327,10 +349,7 @@ struct OnboardingWizardView: View {
         VStack(spacing: 24) {
             // 表头：图标和标题横向排列（整体居中）
             HStack(spacing: 16) {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 48))
-                    .foregroundColor(.green)
-                    .symbolRenderingMode(.hierarchical)
+                completionIcon
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text("onboarding.complete.title".localized())
@@ -364,7 +383,7 @@ struct OnboardingWizardView: View {
         .padding(24)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(nsColor: .controlBackgroundColor))
+                .fill(controlBackgroundColor)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12)
@@ -479,7 +498,7 @@ struct OnboardingWizardView: View {
             .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 120, alignment: .topLeading)
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Color(nsColor: .controlBackgroundColor).opacity(0.5))
+                    .fill(controlBackgroundColor.opacity(0.5))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
@@ -536,7 +555,7 @@ struct OnboardingWizardView: View {
             .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 120, alignment: .topLeading)
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Color(nsColor: .controlBackgroundColor).opacity(0.5))
+                    .fill(controlBackgroundColor.opacity(0.5))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
@@ -574,17 +593,43 @@ struct OnboardingWizardView: View {
     /// 优势行
     private func benefitRow(icon: String, text: String) -> some View {
         HStack(alignment: .top, spacing: 10) {
-            Image(systemName: icon)
-                .font(.system(size: 13, weight: .medium))
-                .foregroundColor(.accentColor)
-                .frame(width: 18, alignment: .center)
-                .symbolRenderingMode(.hierarchical)
+            benefitIcon(systemName: icon)
 
             Text(text)
                 .font(.system(size: 12))
                 .foregroundColor(.primary)
                 .fixedSize(horizontal: false, vertical: true)
                 .lineSpacing(1)
+        }
+    }
+
+    @ViewBuilder
+    private var completionIcon: some View {
+        if #available(macOS 12.0, *) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 48))
+                .foregroundColor(.green)
+                .symbolRenderingMode(.hierarchical)
+        } else {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 48))
+                .foregroundColor(.green)
+        }
+    }
+
+    @ViewBuilder
+    private func benefitIcon(systemName: String) -> some View {
+        if #available(macOS 12.0, *) {
+            Image(systemName: systemName)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.accentColor)
+                .frame(width: 18, alignment: .center)
+                .symbolRenderingMode(.hierarchical)
+        } else {
+            Image(systemName: systemName)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.accentColor)
+                .frame(width: 18, alignment: .center)
         }
     }
 
@@ -632,7 +677,7 @@ struct OnboardingWizardView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color(nsColor: .controlBackgroundColor).opacity(0.5))
+                .fill(controlBackgroundColor.opacity(0.5))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 10)
@@ -736,18 +781,26 @@ struct OnboardingWizardView: View {
             }
 
             // 下一步/开始使用按钮
-            Button(nextButtonTitle) {
-                nextStep()
+            if #available(macOS 12.0, *) {
+                Button(nextButtonTitle) {
+                    nextStep()
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(!canProceed)
+            } else {
+                Button(nextButtonTitle) {
+                    nextStep()
+                }
+                .buttonStyle(.bordered)
+                .disabled(!canProceed)
             }
-            .buttonStyle(.borderedProminent)
-            .disabled(!canProceed)
         }
     }
 
     /// 安全提示按钮
     @ViewBuilder
     private var securityAlertButtons: some View {
-        Button("recommendation.security_alert.cancel".localized(), role: .cancel) {
+        Button("recommendation.security_alert.cancel".localized()) {
             pendingSubscription = nil
         }
 
@@ -770,6 +823,30 @@ struct OnboardingWizardView: View {
                     .foregroundColor(.secondary)
             }
         }
+    }
+
+    private var securityAlertMessageText: String {
+        guard let subscription = pendingSubscription else {
+            return "recommendation.security_alert.message".localized(with: AppBrand.displayName)
+        }
+        return """
+        \( "recommendation.security_alert.message".localized(with: AppBrand.displayName) )
+        URL: \(subscription.url)
+        """
+    }
+
+    private var windowBackgroundColor: Color {
+        if #available(macOS 12.0, *) {
+            return Color(nsColor: .windowBackgroundColor)
+        }
+        return Color(NSColor.windowBackgroundColor)
+    }
+
+    private var controlBackgroundColor: Color {
+        if #available(macOS 12.0, *) {
+            return Color(nsColor: .controlBackgroundColor)
+        }
+        return Color(NSColor.controlBackgroundColor)
     }
 
     // MARK: - Computed Properties
@@ -845,7 +922,7 @@ struct OnboardingWizardView: View {
     /// 跳过引导
     private func skipOnboarding() {
         recommendationService.completeOnboarding()
-        dismiss()
+        presentationMode.wrappedValue.dismiss()
     }
 
     /// 完成引导
@@ -858,7 +935,7 @@ struct OnboardingWizardView: View {
 
         // 标记引导完成
         recommendationService.completeOnboarding()
-        dismiss()
+        presentationMode.wrappedValue.dismiss()
     }
 
     /// 处理推荐选择

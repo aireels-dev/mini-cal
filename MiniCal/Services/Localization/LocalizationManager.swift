@@ -16,7 +16,6 @@ class LocalizationManager: ObservableObject {
 
     /// 缓存：避免重复查询
     private var stringCache: [CacheKey: String] = [:]
-    private let cacheQueue = DispatchQueue(label: "com.minical.localization.cache")
 
     private init() {
         // 从 UserDefaults 加载或使用默认值
@@ -177,25 +176,15 @@ class LocalizationManager: ObservableObject {
     // MARK: - Cache Management
 
     private func getCached(_ key: CacheKey) -> String? {
-        return cacheQueue.sync {
-            stringCache[key]
-        }
+        return stringCache[key]
     }
 
     private func cache(_ value: String, for key: CacheKey) {
-        cacheQueue.async { [weak self] in
-            // 抑制 Swift 6 Main Actor 警告 - 已确保线程安全
-            // CacheKey 是 @unchecked Sendable，所有操作在串行队列上执行
-            self?.stringCache[key] = value
-        }
+        stringCache[key] = value
     }
 
     private func clearCache() {
-        cacheQueue.async { [weak self] in
-            // 抑制 Swift 6 Main Actor 警告 - 已确保线程安全
-            // CacheKey 是 @unchecked Sendable，所有操作在串行队列上执行
-            self?.stringCache.removeAll()
-        }
+        stringCache.removeAll()
     }
 
     // MARK: - Cache Key

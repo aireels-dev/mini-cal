@@ -12,7 +12,6 @@ import EventKit
 struct SettingsView: View {
     @ObservedObject private var settingsManager = SettingsManager.shared
     @ObservedObject var calendarViewModel: CalendarViewModel
-    @Environment(\.dismiss) private var dismiss
     @State private var selectedTab: SettingsTab = .menuBar
 
     init(calendarViewModel: CalendarViewModel? = nil) {
@@ -101,10 +100,10 @@ struct MenuBarSettingsView: View {
     var body: some View {
         Form {
             // 应用设置
-            Section("settings.app.section") {
+            section("settings.app.section") {
                 // 全局快捷键
                 Toggle("settings.app.global_hotkey", isOn: $localSettings.globalHotkeyEnabled)
-                    .onChange(of: localSettings.globalHotkeyEnabled) { _, newValue in
+                    .onChange(of: localSettings.globalHotkeyEnabled) { newValue in
                         var updated = settingsManager.currentSettings
                         updated.globalHotkeyEnabled = newValue
                         updated.lastUpdated = Date()
@@ -117,7 +116,7 @@ struct MenuBarSettingsView: View {
 
                 // 开机自启动
                 Toggle("settings.app.launch_at_login", isOn: $localSettings.launchAtLogin)
-                    .onChange(of: localSettings.launchAtLogin) { _, newValue in
+                    .onChange(of: localSettings.launchAtLogin) { newValue in
                         var updated = settingsManager.currentSettings
                         updated.launchAtLogin = newValue
                         updated.lastUpdated = Date()
@@ -135,7 +134,7 @@ struct MenuBarSettingsView: View {
             }
 
             // 菜单栏显示
-            Section("settings.menu_bar.display") {
+            section("settings.menu_bar.display") {
                 // 实时预览
                 VStack(alignment: .leading, spacing: 4) {
                     Text("event.live_preview")
@@ -158,7 +157,7 @@ struct MenuBarSettingsView: View {
                         Text(format.displayName).tag(format)
                     }
                 }
-                .onChange(of: localSettings.menuBarFormat) { _, newValue in
+                .onChange(of: localSettings.menuBarFormat) { newValue in
                     // 切换到自定义格式时自动进入编辑态
                     if newValue == .custom {
                         isEditingCustomFormat = true
@@ -184,21 +183,21 @@ struct MenuBarSettingsView: View {
                 Toggle("settings.menu_bar.24hour", isOn: $localSettings.show24Hour)
                     .disabled(isCustomFormat)
                     .foregroundColor(isCustomFormat ? .secondary : .primary)
-                    .onChange(of: localSettings.show24Hour) { _, newValue in
+                    .onChange(of: localSettings.show24Hour) { newValue in
                         settingsManager.updateShow24Hour(newValue)
                     }
 
                 Toggle("settings.menu_bar.show_weekday", isOn: $localSettings.showWeekday)
                     .disabled(isCustomFormat)
                     .foregroundColor(isCustomFormat ? .secondary : .primary)
-                    .onChange(of: localSettings.showWeekday) { _, newValue in
+                    .onChange(of: localSettings.showWeekday) { newValue in
                         settingsManager.updateShowWeekday(newValue)
                     }
 
                 Toggle("settings.menu_bar.show_seconds", isOn: $localSettings.showSeconds)
                     .disabled(isCustomFormat)
                     .foregroundColor(isCustomFormat ? .secondary : .primary)
-                    .onChange(of: localSettings.showSeconds) { _, newValue in
+                    .onChange(of: localSettings.showSeconds) { newValue in
                         var updated = settingsManager.currentSettings
                         updated.showSeconds = newValue
                         updated.lastUpdated = Date()
@@ -207,9 +206,9 @@ struct MenuBarSettingsView: View {
             }
 
             // 日历交互
-            Section("settings.calendar.interaction") {
+            section("settings.calendar.interaction") {
                 Toggle("settings.calendar.hover_enable", isOn: $localSettings.hoverToShowEnabled)
-                    .onChange(of: localSettings.hoverToShowEnabled) { _, newValue in
+                    .onChange(of: localSettings.hoverToShowEnabled) { newValue in
                         settingsManager.updateHoverSettings(enabled: newValue, delay: localSettings.hoverDelay)
                     }
 
@@ -222,7 +221,7 @@ struct MenuBarSettingsView: View {
                         ) {
                             Text("event.hover_delay")
                         }
-                        .onChange(of: localSettings.hoverDelay) { _, newValue in
+                        .onChange(of: localSettings.hoverDelay) { newValue in
                             settingsManager.updateHoverSettings(enabled: localSettings.hoverToShowEnabled, delay: newValue)
                         }
                         Text(String(format: NSLocalizedString("settings.calendar.hover_delay_seconds", comment: ""), localSettings.hoverDelay))
@@ -233,7 +232,7 @@ struct MenuBarSettingsView: View {
             }
 
             // 每周起始日
-            Section("settings.week_start.section".localized()) {
+            section("settings.week_start.section".localized()) {
                 Picker(selection: $localSettings.weekStartDay) {
                     ForEach(WeekStartDay.allCases, id: \.self) { weekStart in
                         VStack(alignment: .leading) {
@@ -248,7 +247,7 @@ struct MenuBarSettingsView: View {
                 } label: {
                     Text("settings.week_start.label".localized())
                 }
-                .onChange(of: localSettings.weekStartDay) { _, newValue in
+                .onChange(of: localSettings.weekStartDay) { newValue in
                     settingsManager.updateWeekStartDay(newValue)
                 }
 
@@ -257,11 +256,11 @@ struct MenuBarSettingsView: View {
                     .foregroundColor(.secondary)
             }
         }
-        .formStyle(.grouped)
+        .groupedFormStyleIfAvailable()
         .onAppear {
             localSettings = settingsManager.currentSettings
         }
-        .onChange(of: settingsManager.currentSettings) { _, newValue in
+        .onChange(of: settingsManager.currentSettings) { newValue in
             localSettings = newValue
         }
     }
@@ -284,23 +283,17 @@ struct CustomFormatEditor: View {
     @Binding var customFormat: String
     @Binding var isEditing: Bool
     let onFormatChange: (String) -> Void
-    @FocusState private var isFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             if isEditing {
                 // 输入态
-                TextField("settings.format.custom", text: $customFormat)
-                    .textFieldStyle(.roundedBorder)
-                    .focused($isFocused)
-                    .onSubmit {
-                        // 回车键切换到展示态并保存
-                        isEditing = false
-                        onFormatChange(customFormat)
-                    }
-                    .onAppear {
-                        isFocused = true
-                    }
+                TextField("settings.format.custom", text: $customFormat, onCommit: {
+                    // 回车键切换到展示态并保存
+                    isEditing = false
+                    onFormatChange(customFormat)
+                })
+                .textFieldStyle(.roundedBorder)
 
                 // 输入态时显示格式说明
                 FormatGuideView()
@@ -423,16 +416,39 @@ struct CalendarSettingsView: View {
     }
 
     var body: some View {
+        if #available(macOS 12.0, *) {
+            contentView
+                .alert("subscription.add_failed", isPresented: $showingAddError) {
+                    Button("common.ok", role: .cancel) {
+                        showingAddError = false
+                    }
+                } message: {
+                    Text(addErrorMessage)
+                }
+        } else {
+            contentView
+                .alert(isPresented: $showingAddError) {
+                    let title = Text("subscription.add_failed".localized())
+                    let message = Text(addErrorMessage)
+                    let cancel = Alert.Button.cancel(Text("common.ok".localized())) {
+                        showingAddError = false
+                    }
+                    return Alert(title: title, message: message, dismissButton: cancel)
+                }
+        }
+    }
+
+    private var contentView: some View {
         Form {
             // Section 1: 本地历法
-            Section("settings.calendar.secondary") {
+            section("settings.calendar.secondary") {
                 Picker("settings.calendar.type_label", selection: $localSettings.secondaryCalendarType) {
                     Text("settings.calendar.none").tag(nil as CalendarType?)
                     ForEach(CalendarType.allCases.filter { $0 != .gregorian }, id: \.self) { type in
                         Text(type.displayName).tag(type as CalendarType?)
                     }
                 }
-                .onChange(of: localSettings.secondaryCalendarType) { _, newValue in
+                .onChange(of: localSettings.secondaryCalendarType) { newValue in
                     settingsManager.updateSecondaryCalendar(newValue)
                 }
 
@@ -453,26 +469,26 @@ struct CalendarSettingsView: View {
             }
 
             // Section 3: 外部订阅（包含按钮）
-            Section("settings.calendar.external_subscriptions") {
+            section("settings.calendar.external_subscriptions") {
                 externalSubscriptionContent
             }
 
             // Section 4: 本地管理
-            Section("settings.calendar.local_management") {
+            section("settings.calendar.local_management") {
                 localEventGroupContent
             }
         }
-        .formStyle(.grouped)
+        .groupedFormStyleIfAvailable()
         .onAppear {
             localSettings = settingsManager.currentSettings
             subscriptionViewModel.loadSubscriptions()
             loadSystemCalendarEventCounts()
             loadLocalGroupEventCounts()
         }
-        .onChange(of: settingsManager.currentSettings) { _, newValue in
+        .onChange(of: settingsManager.currentSettings) { newValue in
             localSettings = newValue
         }
-        .onChange(of: calendarViewModel.events) { oldValue, newValue in
+        .onChange(of: calendarViewModel.events) { _ in
             // 事件列表变化时重新统计事件数
             loadSystemCalendarEventCounts()
             loadLocalGroupEventCounts()
@@ -518,13 +534,6 @@ struct CalendarSettingsView: View {
                     showingAddSubscription = false
                 }
             )
-        }
-        .alert("subscription.add_failed", isPresented: $showingAddError) {
-            Button("common.ok", role: .cancel) {
-                showingAddError = false
-            }
-        } message: {
-            Text(addErrorMessage)
         }
     }
 
@@ -960,7 +969,6 @@ struct AddLocalGroupSheetView: View {
 
     @State private var groupTitle = ""
     @State private var selectedColor: EventColor = .blue
-    @FocusState private var isTitleFieldFocused: Bool
 
     var body: some View {
         VStack(spacing: 20) {
@@ -974,15 +982,13 @@ struct AddLocalGroupSheetView: View {
                 Text("local_group.name")
                     .font(.headline)
 
-                TextField("local_group.placeholder", text: $groupTitle)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .focused($isTitleFieldFocused)
-                    .onSubmit {
-                        // 回车键提交
-                        if !groupTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                            onAdd(groupTitle, selectedColor)
-                        }
+                TextField("local_group.placeholder", text: $groupTitle, onCommit: {
+                    // 回车键提交
+                    if !groupTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        onAdd(groupTitle, selectedColor)
                     }
+                })
+                .textFieldStyle(RoundedBorderTextFieldStyle())
             }
 
             // 颜色选择
@@ -1031,9 +1037,6 @@ struct AddLocalGroupSheetView: View {
         }
         .padding(24)
         .frame(width: 400)
-        .onAppear {
-            isTitleFieldFocused = true
-        }
     }
 }
 
@@ -1045,7 +1048,6 @@ struct AddSubscriptionSheetView: View {
     let onCancel: () -> Void
 
     @State private var urlString = ""
-    @FocusState private var isURLFieldFocused: Bool
 
     var body: some View {
         ZStack {
@@ -1061,16 +1063,14 @@ struct AddSubscriptionSheetView: View {
                     Text("subscription.url")
                         .font(.headline)
 
-                    TextField("https://calendar.example.com/calendar.ics", text: $urlString)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .focused($isURLFieldFocused)
-                        .disabled(isProcessing)
-                        .onSubmit {
-                            // 回车键提交
-                            if !urlString.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isProcessing {
-                                onAdd(urlString)
-                            }
+                    TextField("https://calendar.example.com/calendar.ics", text: $urlString, onCommit: {
+                        // 回车键提交
+                        if !urlString.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isProcessing {
+                            onAdd(urlString)
                         }
+                    })
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .disabled(isProcessing)
 
                     Text("subscription.protocol_hint")
                         .font(.caption)
@@ -1124,9 +1124,6 @@ struct AddSubscriptionSheetView: View {
             }
         }
         .frame(width: 400)
-        .onAppear {
-            isURLFieldFocused = true
-        }
     }
 }
 
@@ -1201,7 +1198,7 @@ struct AppearanceSettingsView: View {
     var body: some View {
         Form {
             // 语言设置
-            Section("settings.language.section") {
+            section("settings.language.section") {
                 Picker("settings.language.interface", selection: $selectedInterfaceLocale) {
                     // 自动选项（nil 值）
                     Text("settings.language.auto").tag(nil as SupportedLocale?)
@@ -1213,7 +1210,7 @@ struct AppearanceSettingsView: View {
                         Text(locale.displayName).tag(locale as SupportedLocale?)
                     }
                 }
-                .onChange(of: selectedInterfaceLocale) { _, newValue in
+                .onChange(of: selectedInterfaceLocale) { newValue in
                     let newContext = LocalizationContext(
                         interfaceLocale: newValue,
                         calendarLocale: localizationManager.context.calendarLocale
@@ -1241,7 +1238,7 @@ struct AppearanceSettingsView: View {
                     .foregroundColor(.secondary)
             }
 
-            Section("settings.appearance.panel_size") {
+            section("settings.appearance.panel_size") {
                 Picker("settings.appearance.size_level", selection: $localSettings.calendarSize) {
                     ForEach(CalendarSize.allCases, id: \.self) { size in
                         HStack {
@@ -1254,7 +1251,7 @@ struct AppearanceSettingsView: View {
                         .tag(size)
                     }
                 }
-                .onChange(of: localSettings.calendarSize) { _, newValue in
+                .onChange(of: localSettings.calendarSize) { newValue in
                     var updated = settingsManager.currentSettings
                     updated.calendarSize = newValue
                     updated.lastUpdated = Date()
@@ -1279,7 +1276,7 @@ struct AppearanceSettingsView: View {
             }
 
             // 不透明度设置
-            Section("settings.appearance.opacity") {
+            section("settings.appearance.opacity") {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text("settings.appearance.opacity_label")
@@ -1323,7 +1320,7 @@ struct AppearanceSettingsView: View {
             }
 
             // 主题选择（统一控制）
-            Section("settings.appearance.theme") {
+            section("settings.appearance.theme") {
                 VStack(alignment: .leading, spacing: 12) {
                     // 主题模式选择和重置按钮
                     HStack(spacing: 8) {
@@ -1404,7 +1401,7 @@ struct AppearanceSettingsView: View {
                 }
             }
 
-            Section("settings.shortcuts.section") {
+            section("settings.shortcuts.section") {
                 VStack(alignment: .leading, spacing: 8) {
                     // 日期切换（箭头键）
                     Group {
@@ -1484,7 +1481,7 @@ struct AppearanceSettingsView: View {
                 .padding(.vertical, 2)
             }
 
-            Section("settings.notes.section") {
+            section("settings.notes.section") {
                 Text("settings.notes.panel_size")
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -1495,12 +1492,12 @@ struct AppearanceSettingsView: View {
                     .padding(.top, 4)
             }
         }
-        .formStyle(.grouped)
+        .groupedFormStyleIfAvailable()
         .onAppear {
             localSettings = settingsManager.currentSettings
             isSystemDarkMode = NSApp.effectiveAppearance.name == .darkAqua
         }
-        .onChange(of: settingsManager.currentSettings) { _, newValue in
+        .onChange(of: settingsManager.currentSettings) { newValue in
             localSettings = newValue
         }
         .onReceive(NotificationCenter.default.publisher(for: .themeDidChange)) { _ in
@@ -1704,6 +1701,31 @@ struct ThemeSelectionGrid: View {
                 )
             }
         }
+    }
+}
+
+private struct GroupedFormStyleIfAvailable: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(macOS 13.0, *) {
+            content.formStyle(.grouped)
+        } else {
+            content
+        }
+    }
+}
+
+@ViewBuilder
+private func section(_ title: String, @ViewBuilder content: () -> some View) -> some View {
+    if #available(macOS 12.0, *) {
+        Section(title, content: content)
+    } else {
+        Section(header: Text(title), content: content)
+    }
+}
+
+private extension View {
+    func groupedFormStyleIfAvailable() -> some View {
+        modifier(GroupedFormStyleIfAvailable())
     }
 }
 

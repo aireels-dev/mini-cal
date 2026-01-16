@@ -93,15 +93,22 @@ struct SystemCalendarRow: View {
             Spacer()
 
             // 启用/禁用开关
-            Toggle("", isOn: $isEnabled)
-                .toggleStyle(.switch)
-                .tint(.accentColor)
-                .labelsHidden()
-                .onChange(of: isEnabled) { oldValue, newValue in
-                    if oldValue != newValue {
+            if #available(macOS 13.0, *) {
+                Toggle("", isOn: $isEnabled)
+                    .toggleStyle(.switch)
+                    .tint(.accentColor)
+                    .labelsHidden()
+                    .onChange(of: isEnabled) { _ in
                         onToggle()
                     }
-                }
+            } else {
+                Toggle("", isOn: $isEnabled)
+                    .toggleStyle(.switch)
+                    .labelsHidden()
+                    .onChange(of: isEnabled) { _ in
+                        onToggle()
+                    }
+            }
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 8)

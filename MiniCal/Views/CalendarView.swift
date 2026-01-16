@@ -40,6 +40,37 @@ struct CalendarView: View {
     }
 
     var body: some View {
+        if #available(macOS 12.0, *) {
+            contentView
+                .alert("recommendation.security_alert.title".localized(), isPresented: $showingSecurityAlert) {
+                    Button("recommendation.security_alert.cancel".localized(), role: .cancel) {
+                        pendingSubscription = nil
+                    }
+                    Button("recommendation.security_alert.confirm".localized()) {
+                        confirmSubscribe()
+                    }
+                } message: {
+                    if pendingSubscription != nil {
+                        Text(securityAlertMessage)
+                    }
+                }
+        } else {
+            contentView
+                .alert(isPresented: $showingSecurityAlert) {
+                    let title = Text("recommendation.security_alert.title".localized())
+                    let message = Text(securityAlertMessage)
+                    let cancel = Alert.Button.cancel(Text("recommendation.security_alert.cancel".localized())) {
+                        pendingSubscription = nil
+                    }
+                    let confirm = Alert.Button.default(Text("recommendation.security_alert.confirm".localized())) {
+                        confirmSubscribe()
+                    }
+                    return Alert(title: title, message: message, primaryButton: confirm, secondaryButton: cancel)
+                }
+        }
+    }
+
+    private var contentView: some View {
         ZStack {
             // 背景层（应用不透明度）
             ZStack {
@@ -169,18 +200,10 @@ struct CalendarView: View {
             removeResetNotification()
             removeCalendarTypeChangeNotification()
         }
-        .alert("recommendation.security_alert.title".localized(), isPresented: $showingSecurityAlert) {
-            Button("recommendation.security_alert.cancel".localized(), role: .cancel) {
-                pendingSubscription = nil
-            }
-            Button("recommendation.security_alert.confirm".localized()) {
-                confirmSubscribe()
-            }
-        } message: {
-            if let recommendation = pendingSubscription {
-                Text("recommendation.security_alert.message".localized(with: AppBrand.displayName))
-            }
-        }
+    }
+
+    private var securityAlertMessage: String {
+        "recommendation.security_alert.message".localized(with: AppBrand.displayName)
     }
 
     // MARK: - Keyboard Shortcuts Monitor

@@ -21,8 +21,8 @@ class SecondaryCalendarConverter {
     /// - Parameter locale: 系统区域设置
     /// - Returns: 推荐的本地历法类型，如果无匹配则返回 nil
     static func recommendCalendar(for locale: Locale) -> CalendarType? {
-        let regionCode = locale.region?.identifier ?? ""
-        let languageCode = locale.language.languageCode?.identifier ?? ""
+        let regionCode = locale.regionCodeIdentifier
+        let languageCode = locale.languageCodeIdentifier
 
         // 中国大陆、香港、澳门、台湾 -> 农历
         if regionCode == "CN" || regionCode == "HK" || regionCode == "MO" || regionCode == "TW" {

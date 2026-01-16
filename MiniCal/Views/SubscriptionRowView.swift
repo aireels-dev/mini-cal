@@ -12,6 +12,37 @@ struct SubscriptionRowView: View {
     @State private var showingDeleteConfirmation = false
 
     var body: some View {
+        if #available(macOS 12.0, *) {
+            contentView
+                .alert("subscription.confirm_delete_title", isPresented: $showingDeleteConfirmation) {
+                    Button("common.cancel", role: .cancel) {
+                        showingDeleteConfirmation = false
+                    }
+                    Button("common.delete", role: .destructive) {
+                        onDelete()
+                        showingDeleteConfirmation = false
+                    }
+                } message: {
+                    Text(deleteMessage)
+                }
+        } else {
+            contentView
+                .alert(isPresented: $showingDeleteConfirmation) {
+                    let title = Text("subscription.confirm_delete_title".localized())
+                    let message = Text(deleteMessage)
+                    let cancel = Alert.Button.cancel(Text("common.cancel".localized())) {
+                        showingDeleteConfirmation = false
+                    }
+                    let confirm = Alert.Button.destructive(Text("common.delete".localized())) {
+                        onDelete()
+                        showingDeleteConfirmation = false
+                    }
+                    return Alert(title: title, message: message, primaryButton: confirm, secondaryButton: cancel)
+                }
+        }
+    }
+
+    private var contentView: some View {
         VStack(spacing: 0) {
             // 主要内容区域
             HStack(spacing: 16) {
@@ -85,17 +116,13 @@ struct SubscriptionRowView: View {
                 isHovered = hovering
             }
         }
-        .alert("确认删除", isPresented: $showingDeleteConfirmation) {
-            Button("取消", role: .cancel) {
-                showingDeleteConfirmation = false
-            }
-            Button("删除", role: .destructive) {
-                onDelete()
-                showingDeleteConfirmation = false
-            }
-        } message: {
-            Text("确定要删除订阅「\(subscription.title)」吗？此操作无法撤销。")
-        }
+    }
+
+    private var deleteMessage: String {
+        String(
+            format: NSLocalizedString("subscription.confirm_delete_message", comment: ""),
+            subscription.title
+        )
     }
 
     // MARK: - Color Indicator
@@ -177,7 +204,7 @@ struct SubscriptionRowView: View {
             Toggle("", isOn: .constant(subscription.isEnabled))
                 .toggleStyle(SwitchToggleStyle(tint: themeColors.accentColor))
                 .controlSize(.mini)
-                .onChange(of: subscription.isEnabled) { _, _ in
+                .onChange(of: subscription.isEnabled) { _ in
                     onToggle()
                 }
 

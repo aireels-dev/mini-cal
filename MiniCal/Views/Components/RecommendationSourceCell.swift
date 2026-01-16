@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AppKit
 
 /// 推荐订阅源单元格视图
 struct RecommendationSourceCell: View {
@@ -140,7 +141,7 @@ struct RecommendationSourceCell: View {
         .padding(12)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color(nsColor: .controlBackgroundColor))
+                .fill(recommendationBackgroundColor)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(isSelected ? Color.accentColor : Color.gray.opacity(0.2), lineWidth: isSelected ? 2 : 1)
@@ -188,6 +189,13 @@ struct RecommendationSourceCell: View {
         case .community: return .blue
         case .unverified: return .orange
         }
+    }
+
+    private var recommendationBackgroundColor: Color {
+        if #available(macOS 12.0, *) {
+            return Color(nsColor: .controlBackgroundColor)
+        }
+        return Color(NSColor.controlBackgroundColor)
     }
 
     /// 标签视图

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AppKit
 
 /// 日历切换推荐卡片（非阻断式底部弹出）
 struct CalendarSwitchRecommendationCard: View {
@@ -28,6 +29,50 @@ struct CalendarSwitchRecommendationCard: View {
     // MARK: - Body
 
     var body: some View {
+        if #available(macOS 12.0, *) {
+            baseView
+                .alert("recommendation.security_alert.title".localized(), isPresented: $showingSecurityAlert) {
+                    Button("recommendation.security_alert.cancel".localized(), role: .cancel) {
+                        pendingSubscription = nil
+                    }
+
+                    Button("recommendation.security_alert.confirm".localized()) {
+                        if let subscription = pendingSubscription {
+                            onSubscribe(subscription)
+                            pendingSubscription = nil
+                        }
+                    }
+                } message: {
+                    if let subscription = pendingSubscription {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("recommendation.security_alert.message".localized(with: AppBrand.displayName))
+
+                            Text("URL: \(subscription.url)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+        } else {
+            baseView
+                .alert(isPresented: $showingSecurityAlert) {
+                    let title = Text("recommendation.security_alert.title".localized())
+                    let message = Text(alertMessageText())
+                    let cancel = Alert.Button.cancel(Text("recommendation.security_alert.cancel".localized())) {
+                        pendingSubscription = nil
+                    }
+                    let confirm = Alert.Button.default(Text("recommendation.security_alert.confirm".localized())) {
+                        if let subscription = pendingSubscription {
+                            onSubscribe(subscription)
+                            pendingSubscription = nil
+                        }
+                    }
+                    return Alert(title: title, message: message, primaryButton: confirm, secondaryButton: cancel)
+                }
+        }
+    }
+
+    private var baseView: some View {
         VStack(spacing: 0) {
             // 主内容
             HStack(alignment: .top, spacing: 12) {
@@ -127,7 +172,7 @@ struct CalendarSwitchRecommendationCard: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(nsColor: .windowBackgroundColor))
+                .fill(cardBackgroundColor)
                 .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
         )
         .overlay(
@@ -148,28 +193,6 @@ struct CalendarSwitchRecommendationCard: View {
         .onAppear {
             if !isExpanded {
                 scheduleAutoHide()
-            }
-        }
-        .alert("recommendation.security_alert.title".localized(), isPresented: $showingSecurityAlert) {
-            Button("recommendation.security_alert.cancel".localized(), role: .cancel) {
-                pendingSubscription = nil
-            }
-
-            Button("recommendation.security_alert.confirm".localized()) {
-                if let subscription = pendingSubscription {
-                    onSubscribe(subscription)
-                    pendingSubscription = nil
-                }
-            }
-        } message: {
-            if let subscription = pendingSubscription {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("recommendation.security_alert.message".localized(with: AppBrand.displayName))
-
-                    Text("URL: \(subscription.url)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
             }
         }
     }
@@ -200,7 +223,11 @@ struct CalendarSwitchRecommendationCard: View {
         cancelAutoHide()
 
         autoHideTask = Task {
-            try? await Task.sleep(for: .seconds(3))
+            if #available(macOS 13.0, *) {
+                try? await Task.sleep(for: .seconds(3))
+            } else {
+                try? await Task.sleep(nanoseconds: 3_000_000_000)
+            }
 
             if !Task.isCancelled && !hovering && !isExpanded {
                 await MainActor.run {
@@ -214,6 +241,24 @@ struct CalendarSwitchRecommendationCard: View {
     private func cancelAutoHide() {
         autoHideTask?.cancel()
         autoHideTask = nil
+    }
+
+    private var cardBackgroundColor: Color {
+        if #available(macOS 12.0, *) {
+            return Color(nsColor: .windowBackgroundColor)
+        }
+        return Color(NSColor.windowBackgroundColor)
+    }
+
+    private func alertMessageText() -> String {
+        guard let subscription = pendingSubscription else {
+            return "recommendation.security_alert.message".localized(with: AppBrand.displayName)
+        }
+
+        return """
+        \( "recommendation.security_alert.message".localized(with: AppBrand.displayName) )
+        URL: \(subscription.url)
+        """
     }
 }
 

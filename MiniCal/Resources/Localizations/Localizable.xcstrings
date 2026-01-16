@@ -11928,6 +11928,7 @@
       }
     },
     "settings.app.section" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -12467,6 +12468,7 @@
     },
     "settings.appearance.opacity" : {
       "comment" : "Localized string for: 浮窗透明度",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -12621,6 +12623,7 @@
     },
     "settings.appearance.panel_size" : {
       "comment" : "Localized string for: 面板大小",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -12929,6 +12932,7 @@
     },
     "settings.appearance.theme" : {
       "comment" : "Localized string for: 主题",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -13083,6 +13087,7 @@
     },
     "settings.calendar.external_subscriptions" : {
       "comment" : "Localized string for: 外部订阅",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -13388,6 +13393,7 @@
       }
     },
     "settings.calendar.interaction" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -13465,6 +13471,7 @@
     },
     "settings.calendar.local_management" : {
       "comment" : "Localized string for: 本地管理",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -13619,6 +13626,7 @@
     },
     "settings.calendar.secondary" : {
       "comment" : "Localized string for: 本地历法",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -15753,6 +15761,7 @@
     },
     "settings.language.section" : {
       "comment" : "Language settings section title",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -15905,6 +15914,7 @@
       }
     },
     "settings.menu_bar.display" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -16361,6 +16371,7 @@
       }
     },
     "settings.notes.section" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -16893,6 +16904,7 @@
       }
     },
     "settings.shortcuts.section" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -19328,78 +19340,78 @@
       }
     },
     "subscription.protocol_hint" : {
-      "comment" : "Localized string for: 支持 http://、https:// 和 webcal:// 协议",
+      "comment" : "Localized string for: 支持 https:// 和 webcal:// 协议",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "يدعم بروتوكولات http:// و https:// و webcal://"
+            "value" : "يدعم بروتوكولات https:// و webcal://"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supports http://, https://, and webcal:// protocols"
+            "value" : "Supports https:// and webcal:// protocols"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "از پروتکل‌های http://، https:// و webcal:// پشتیبانی می‌کند"
+            "value" : "از پروتکل‌های https:// و webcal:// پشتیبانی می‌کند"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "תומך בפרוטוקולים http://, https:// ו-webcal://"
+            "value" : "תומך בפרוטוקולים https:// ו-webcal://"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "http://、https://、webcal:// プロトコルをサポート"
+            "value" : "https://、webcal:// プロトコルをサポート"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "http://, https://, webcal:// 프로토콜 지원"
+            "value" : "https://, webcal:// 프로토콜 지원"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "รองรับโปรโตคอล http://, https://, และ webcal://"
+            "value" : "รองรับโปรโตคอล https:// และ webcal://"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "http://, https:// ve webcal:// protokollerini destekler"
+            "value" : "https:// ve webcal:// protokollerini destekler"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "http://، https://، اور webcal:// پروٹوکول کو سپورٹ کرتا ہے"
+            "value" : "https:// اور webcal:// پروٹوکول کو سپورٹ کرتا ہے"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hỗ trợ các giao thức http://, https://, và webcal://"
+            "value" : "Hỗ trợ các giao thức https:// và webcal://"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "支持 http://、https:// 和 webcal:// 协议"
+            "value" : "支持 https:// 和 webcal:// 协议"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "支持 http://、https:// 和 webcal:// 協議"
+            "value" : "支持 https:// 和 webcal:// 協議"
           }
         }
       }
@@ -22898,9 +22910,6 @@
     "关闭" : {
 
     },
-    "删除" : {
-
-    },
     "删除事件" : {
 
     },
@@ -22934,20 +22943,84 @@
     "添加订阅" : {
 
     },
-    "添加订阅失败" : {
-
-    },
     "点击编辑颜色" : {
 
     },
-    "确定" : {
-
-    },
     "确定要删除事件「%@」吗？此操作无法撤销。" : {
-
-    },
-    "确定要删除订阅「%@」吗？此操作无法撤销。" : {
-
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هل أنت متأكد أنك تريد حذف الحدث \"%@\"؟ لا يمكن التراجع عن هذا الإجراء."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to delete the event \"%@\"? This action cannot be undone."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "آیا مطمئن هستید که می‌خواهید رویداد «%@» را حذف کنید؟ این عمل قابل بازگشت نیست."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "האם אתה בטוח שברצונך למחוק את האירוע \"%@\"? פעולה זו אינה ניתנת לביטול."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "イベント「%@」を削除してもよろしいですか？この操作は元に戻せません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이벤트 \"%@\"을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "คุณแน่ใจหรือไม่ว่าต้องการลบกิจกรรม \"%@\"? การดำเนินการนี้ไม่สามารถยกเลิกได้"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"%@\" etkinliğini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کیا آپ واقعی ایونٹ \"%@\" کو حذف کرنا چاہتے ہیں؟ یہ عمل واپس نہیں کیا جا سکتا۔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bạn có chắc chắn muốn xóa sự kiện \"%@\" không? Hành động này không thể hoàn tác."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定要删除事件「%@」吗？此操作无法撤销。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確定要刪除事件「%@」嗎？此操作無法撤銷。"
+          }
+        }
+      }
     },
     "确认删除" : {
 
@@ -22968,9 +23041,6 @@
 
     },
     "输入事件标题" : {
-
-    },
-    "输入备注（可选）" : {
 
     },
     "重试" : {

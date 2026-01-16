@@ -35,7 +35,7 @@ struct CalendarGridView: View {
             setupKeyboardMonitor()
             setupScrollMonitor()
         }
-        .onChange(of: viewModel.monthYearText) { _, _ in
+        .onChange(of: viewModel.monthYearText) { _ in
             monthTransitionId = UUID()
         }
         .onDisappear {

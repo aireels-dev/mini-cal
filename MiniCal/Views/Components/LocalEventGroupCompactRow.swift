@@ -20,9 +20,33 @@ struct LocalEventGroupCompactRow: View {
     @State private var isEditingColor = false
     @State private var editTitle: String = ""
     @State private var editColor: EventColor = .blue
-    @FocusState private var isTitleFieldFocused: Bool
 
     var body: some View {
+        if #available(macOS 12.0, *) {
+            contentView
+                .alert("local_group.confirm_delete_title", isPresented: $showingDeleteConfirmation) {
+                    Button("common.cancel", role: .cancel) {}
+                    Button("common.delete", role: .destructive) {
+                        onDelete()
+                    }
+                } message: {
+                    Text(String(format: NSLocalizedString("local_group.confirm_delete_message", comment: ""), group.title))
+                }
+        } else {
+            contentView
+                .alert(isPresented: $showingDeleteConfirmation) {
+                    let title = Text("local_group.confirm_delete_title".localized())
+                    let message = Text(String(format: NSLocalizedString("local_group.confirm_delete_message", comment: ""), group.title))
+                    let cancel = Alert.Button.cancel(Text("common.cancel".localized()))
+                    let confirm = Alert.Button.destructive(Text("common.delete".localized())) {
+                        onDelete()
+                    }
+                    return Alert(title: title, message: message, primaryButton: confirm, secondaryButton: cancel)
+                }
+        }
+    }
+
+    private var contentView: some View {
         VStack(spacing: 0) {
             if isEditingColor {
                 // 颜色编辑模式
@@ -45,14 +69,6 @@ struct LocalEventGroupCompactRow: View {
                     isHovered = hovering
                 }
             }
-        }
-        .alert("local_group.confirm_delete_title", isPresented: $showingDeleteConfirmation) {
-            Button("common.cancel", role: .cancel) {}
-            Button("common.delete", role: .destructive) {
-                onDelete()
-            }
-        } message: {
-            Text(String(format: NSLocalizedString("local_group.confirm_delete_message", comment: ""), group.title))
         }
     }
 
@@ -147,7 +163,6 @@ struct LocalEventGroupCompactRow: View {
 
                 TextField("组名称", text: $editTitle)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .focused($isTitleFieldFocused)
                     .font(.system(size: 13))
             }
 
@@ -299,10 +314,6 @@ struct LocalEventGroupCompactRow: View {
         editTitle = group.title
         editColor = group.color
         isEditing = true
-        // 延迟聚焦，确保 TextField 已经渲染
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            isTitleFieldFocused = true
-        }
     }
 
     private func cancelEditing() {

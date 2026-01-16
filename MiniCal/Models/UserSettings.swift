@@ -76,8 +76,8 @@ struct UserSettings: Codable, Equatable {
     /// 使用 SecondaryCalendarConverter 的推荐逻辑
     private static func detectDefaultCalendar() -> CalendarType? {
         let locale = Locale.current
-        let regionCode = locale.region?.identifier ?? ""
-        let languageCode = locale.language.languageCode?.identifier ?? ""
+        let regionCode = locale.regionCodeIdentifier
+        let languageCode = locale.languageCodeIdentifier
 
         Logger.info("Detecting default calendar - Region: \(regionCode), Language: \(languageCode)", category: Logger.settings)
 

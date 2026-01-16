@@ -244,6 +244,37 @@ struct EventDetailModalView: View {
     @State private var showingDeleteAlert = false
 
     var body: some View {
+        if #available(macOS 12.0, *) {
+            baseView
+                .alert("确认删除", isPresented: $showingDeleteAlert) {
+                    Button("common.cancel", role: .cancel) {}
+                    Button("common.delete", role: .destructive) {
+                        Task {
+                            try await viewModel.deleteEvent(event)
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                    }
+                } message: {
+                    Text(deleteAlertMessage)
+                }
+        } else {
+            baseView
+                .alert(isPresented: $showingDeleteAlert) {
+                    let title = Text("确认删除".localized())
+                    let message = Text(deleteAlertMessage)
+                    let cancel = Alert.Button.cancel(Text("common.cancel".localized()))
+                    let confirm = Alert.Button.destructive(Text("common.delete".localized())) {
+                        Task {
+                            try await viewModel.deleteEvent(event)
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                    }
+                    return Alert(title: title, message: message, primaryButton: confirm, secondaryButton: cancel)
+                }
+        }
+    }
+
+    private var baseView: some View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
@@ -332,17 +363,13 @@ struct EventDetailModalView: View {
                 }
             }
         }
-        .alert("确认删除", isPresented: $showingDeleteAlert) {
-            Button("取消", role: .cancel) {}
-            Button("删除", role: .destructive) {
-                Task {
-                    try await viewModel.deleteEvent(event)
-                    presentationMode.wrappedValue.dismiss()
-                }
-            }
-        } message: {
-            Text("确定要删除事件「\(event.title)」吗？此操作无法撤销。")
-        }
+    }
+
+    private var deleteAlertMessage: String {
+        String(
+            format: NSLocalizedString("确定要删除事件「%@」吗？此操作无法撤销。", comment: ""),
+            event.title
+        )
     }
 
     private var eventTimeDescription: String {

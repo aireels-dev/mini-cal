@@ -79,8 +79,8 @@ enum SupportedLocale: String, CaseIterable, Codable {
 
     /// 从系统 Locale 推荐语言环境
     static func recommend(from systemLocale: Locale = .current) -> SupportedLocale {
-        let languageCode = systemLocale.language.languageCode?.identifier ?? ""
-        let regionCode = systemLocale.region?.identifier ?? ""
+        let languageCode = systemLocale.languageCodeIdentifier
+        let regionCode = systemLocale.regionCodeIdentifier
 
         // 优先匹配语言代码
         if let match = SupportedLocale.allCases.first(where: { $0.rawValue.hasPrefix(languageCode) }) {

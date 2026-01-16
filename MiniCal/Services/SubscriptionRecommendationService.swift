@@ -272,10 +272,13 @@ class SubscriptionRecommendationService: ObservableObject {
     /// 获取系统地区代码
     private func getSystemRegion() -> String {
         // 优先使用语言代码
-        if let languageCode = Locale.current.language.languageCode?.identifier {
+        let languageCode = Locale.current.languageCodeIdentifier
+        let scriptCode = Locale.current.scriptCodeIdentifier
+
+        if !languageCode.isEmpty {
             // 处理中文（区分简繁体）
             if languageCode == "zh" {
-                if let script = Locale.current.language.script?.identifier, script == "Hant" {
+                if scriptCode == "Hant" {
                     return "zh-Hant"
                 }
                 return "zh-Hans"
@@ -284,7 +287,8 @@ class SubscriptionRecommendationService: ObservableObject {
         }
 
         // 回退到地区代码
-        return Locale.current.region?.identifier ?? "en"
+        let regionCode = Locale.current.regionCodeIdentifier
+        return regionCode.isEmpty ? "en" : regionCode
     }
 
     /// 保存用户偏好到 UserDefaults

@@ -68,11 +68,21 @@ struct RecommendedSubscription: Codable, Identifiable, Hashable {
 
         /// 根据当前系统语言获取本地化文本
         func localized() -> String {
-            let languageCode = Locale.current.language.languageCode?.identifier ?? "en"
+            let languageCode: String
+            let scriptCode: String?
+
+            if #available(macOS 13.0, *) {
+                let language = Locale.current.language
+                languageCode = language.languageCode?.identifier ?? "en"
+                scriptCode = language.script?.identifier
+            } else {
+                languageCode = Locale.current.languageCode ?? "en"
+                scriptCode = Locale.current.scriptCode
+            }
 
             switch languageCode {
             case "zh":
-                if Locale.current.language.script?.identifier == "Hant" {
+                if scriptCode == "Hant" {
                     return zhHant ?? zhHans ?? en
                 }
                 return zhHans ?? en

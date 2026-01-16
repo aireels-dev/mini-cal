@@ -201,7 +201,10 @@ struct CalendarDayCell: View {
 
         case .hebrew:
             // 犹太节日用靛蓝色
-            return Color.indigo.opacity(0.85)
+            if #available(macOS 12.0, *) {
+                return Color.indigo.opacity(0.85)
+            }
+            return Color.purple.opacity(0.85)
 
         default:
             // 其他节日用橙色
