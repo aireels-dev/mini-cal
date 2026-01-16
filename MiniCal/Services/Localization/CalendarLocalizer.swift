@@ -149,12 +149,25 @@ class CalendarLocalizer {
         style: MonthNameStyle,
         locale: SupportedLocale
     ) -> String {
-        return getMonthNameFromSystem(
-            month: month,
-            calendarIdentifier: .chinese,
-            style: style,
-            locale: locale
-        )
+        let key = "chinese_month_\(month)"
+        let localized = localizationManager.localized(key, table: "CalendarNames", locale: locale)
+        if localized != key {
+            return localized
+        }
+
+        if isCJKLocale(locale) {
+            let systemName = getMonthNameFromSystem(
+                month: month,
+                calendarIdentifier: .chinese,
+                style: style,
+                locale: locale
+            )
+            if !systemName.isEmpty {
+            return systemName
+            }
+        }
+
+        return englishMonthName(month)
     }
 
     /// 格式化农历日期
@@ -236,6 +249,15 @@ class CalendarLocalizer {
             let key = "zodiac_animal_vietnamese_\(index)"
             return localizationManager.localized(key, table: "CalendarNames", locale: locale)
         }
+    }
+
+    private func englishMonthName(_ month: Int) -> String {
+        let names = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ]
+        guard (1...12).contains(month) else { return "\(month)" }
+        return names[month - 1]
     }
 
     // MARK: - Private Helpers - Islamic

@@ -12,6 +12,7 @@ struct CalendarDayCell: View {
     let isSelected: Bool
     let themeColors: ThemeColors
     let calendarSize: CalendarSize
+    let autoScrollKey: AnyHashable?
     let onTap: () -> Void
 
     @State private var isHovered = false
@@ -44,7 +45,8 @@ struct CalendarDayCell: View {
                                 festivalID: secondaryDate.solarFestivalID,
                                 calendarType: .gregorian
                             ),
-                            maxWidth: availableTextWidth
+                            maxWidth: availableTextWidth,
+                            autoScrollKey: autoScrollKey
                         )
                         .frame(height: calendarSize.secondaryFontSize - 0.5)
                     } else if let festival = secondaryDate.festival {
@@ -57,7 +59,8 @@ struct CalendarDayCell: View {
                                 festivalID: secondaryDate.festivalID,
                                 calendarType: secondaryDate.calendarType
                             ),
-                            maxWidth: availableTextWidth
+                            maxWidth: availableTextWidth,
+                            autoScrollKey: autoScrollKey
                         )
                         .frame(height: calendarSize.secondaryFontSize - 0.5)
                     } else {
@@ -66,7 +69,8 @@ struct CalendarDayCell: View {
                             text: secondaryDate.displayText,
                             font: .system(size: calendarSize.secondaryFontSize - 0.5, weight: .light),
                             foregroundColor: themeColors.secondaryTextColor.opacity(0.6),
-                            maxWidth: availableTextWidth
+                            maxWidth: availableTextWidth,
+                            autoScrollKey: autoScrollKey
                         )
                         .frame(height: calendarSize.secondaryFontSize - 0.5)
                     }
@@ -214,6 +218,7 @@ struct CalendarDayCell: View {
         isSelected: false,
         themeColors: .light,
         calendarSize: .standard,
+        autoScrollKey: nil,
         onTap: {}
     )
     .frame(width: 40, height: 40)

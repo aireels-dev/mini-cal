@@ -161,17 +161,17 @@ class FestivalLocalizer {
 
         switch calendarType {
         case .chinese:
-            fileName = "Chinese_Festivals_\(locale.rawValue).json"
+            fileName = "Chinese_Festivals_\(locale.rawValue)_lang.json"
         case .islamic:
-            fileName = "Islamic_Festivals_\(locale.rawValue).json"
+            fileName = "Islamic_Festivals_\(locale.rawValue)_lang.json"
         case .hebrew:
-            fileName = "Hebrew_Holidays_\(locale.rawValue).json"
+            fileName = "Hebrew_Holidays_\(locale.rawValue)_lang.json"
         case .persian:
-            fileName = "Persian_Festivals_\(locale.rawValue).json"
+            fileName = "Persian_Festivals_\(locale.rawValue)_lang.json"
         case .japanese:
-            fileName = "Japanese_Festivals_\(locale.rawValue).json"
+            fileName = "Japanese_Festivals_\(locale.rawValue)_lang.json"
         case .buddhist:
-            fileName = "Buddhist_Festivals_\(locale.rawValue).json"
+            fileName = "Buddhist_Festivals_\(locale.rawValue)_lang.json"
         case .gregorian:
             return nil  // 公历节日由系统处理
         }

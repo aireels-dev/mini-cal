@@ -553,7 +553,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "1st Month"
+            "value": "January"
           }
         },
         "ko": {
@@ -588,7 +588,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "2nd Month"
+            "value": "February"
           }
         },
         "ko": {
@@ -623,7 +623,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "3rd Month"
+            "value": "March"
           }
         },
         "ko": {
@@ -658,7 +658,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "4th Month"
+            "value": "April"
           }
         },
         "ko": {
@@ -693,7 +693,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "5th Month"
+            "value": "May"
           }
         },
         "ko": {
@@ -728,7 +728,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "6th Month"
+            "value": "June"
           }
         },
         "ko": {
@@ -763,7 +763,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "7th Month"
+            "value": "July"
           }
         },
         "ko": {
@@ -798,7 +798,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "8th Month"
+            "value": "August"
           }
         },
         "ko": {
@@ -833,7 +833,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "9th Month"
+            "value": "September"
           }
         },
         "ko": {
@@ -868,7 +868,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "10th Month"
+            "value": "October"
           }
         },
         "ko": {
@@ -903,7 +903,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "11th Month"
+            "value": "November"
           }
         },
         "ko": {
@@ -938,7 +938,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "12th Month"
+            "value": "December"
           }
         },
         "ko": {

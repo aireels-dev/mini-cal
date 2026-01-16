@@ -22,14 +22,21 @@ struct CalendarGridView: View {
     @State private var lastDeltaX: CGFloat = 0
     @State private var lastDeltaY: CGFloat = 0
     @State private var isNavigating = false
+    @State private var monthTransitionId = UUID()
     
     var body: some View {
         calendarBody(dates: viewModel.calendarDates)
+            .id(monthTransitionId)
+            .transition(.opacity)
+            .animation(.easeInOut(duration: 0.18), value: monthTransitionId)
         .clipped()
         .padding(.horizontal, 12)
         .onAppear {
             setupKeyboardMonitor()
             setupScrollMonitor()
+        }
+        .onChange(of: viewModel.monthYearText) { _, _ in
+            monthTransitionId = UUID()
         }
         .onDisappear {
             removeKeyboardMonitor()
@@ -268,6 +275,7 @@ struct CalendarGridView: View {
                         isSelected: viewModel.isSelected(date),
                         themeColors: themeColors,
                         calendarSize: calendarSize,
+                        autoScrollKey: viewModel.monthYearText,
                         onTap: {
                             viewModel.selectDate(date)
                             // 所有日期均可点击，显示事件详情（即使没有事件）
