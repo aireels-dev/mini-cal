@@ -5,9 +5,9 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>CFBundleName</key>
-	<string>UniCal</string>
+	<string>MioCal</string>
 	<key>CFBundleDisplayName</key>
-	<string>UniCal</string>
+	<string>MioCal</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleVersion</key>
@@ -19,12 +19,12 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>11.0</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>UniCal needs to access your calendar to display meetings and events.</string>
+	<string>MioCal needs to access your calendar to display meetings and events.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>UniCal needs full access to your calendar to sync and manage events, and subscribe to external calendars.</string>
+	<string>MioCal needs full access to your calendar to sync and manage events, and subscribe to external calendars.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>UniCal needs your location to calculate sunrise and sunset times, Islamic prayer times, and Hebrew Shabbat times.</string>
+	<string>MioCal needs your location to calculate sunrise and sunset times, Islamic prayer times, and Hebrew Shabbat times.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>UniCal uses your location to provide accurate astronomical information (sunrise and sunset times, moon phases) and religious times (prayer times, Shabbat).</string>
+	<string>MioCal uses your location to provide accurate astronomical information (sunrise and sunset times, moon phases) and religious times (prayer times, Shabbat).</string>
 </dict>
 </plist>

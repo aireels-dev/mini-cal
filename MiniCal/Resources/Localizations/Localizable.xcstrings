@@ -123,73 +123,73 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "UniCal"
+            "value" : "MioCal"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "UniCal"
+            "value" : "MioCal"
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "UniCal"
+            "value" : "MioCal"
           }
         },
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "UniCal"
+            "value" : "MioCal"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "UniCal"
+            "value" : "MioCal"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "UniCal"
+            "value" : "MioCal"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "UniCal"
+            "value" : "MioCal"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "UniCal"
+            "value" : "MioCal"
           }
         },
         "ur" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "UniCal"
+            "value" : "MioCal"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "UniCal"
+            "value" : "MioCal"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "闪历"
+            "value" : "妙历"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "閃歷"
+            "value" : "妙曆"
           }
         }
       }
@@ -11928,7 +11928,6 @@
       }
     },
     "settings.app.section" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -12468,7 +12467,6 @@
     },
     "settings.appearance.opacity" : {
       "comment" : "Localized string for: 浮窗透明度",
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -12623,7 +12621,6 @@
     },
     "settings.appearance.panel_size" : {
       "comment" : "Localized string for: 面板大小",
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -12932,7 +12929,6 @@
     },
     "settings.appearance.theme" : {
       "comment" : "Localized string for: 主题",
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -13087,7 +13083,6 @@
     },
     "settings.calendar.external_subscriptions" : {
       "comment" : "Localized string for: 外部订阅",
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -13393,7 +13388,6 @@
       }
     },
     "settings.calendar.interaction" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -13471,7 +13465,6 @@
     },
     "settings.calendar.local_management" : {
       "comment" : "Localized string for: 本地管理",
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -13626,7 +13619,6 @@
     },
     "settings.calendar.secondary" : {
       "comment" : "Localized string for: 本地历法",
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -15761,7 +15753,6 @@
     },
     "settings.language.section" : {
       "comment" : "Language settings section title",
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -15914,7 +15905,6 @@
       }
     },
     "settings.menu_bar.display" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -16371,7 +16361,6 @@
       }
     },
     "settings.notes.section" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -16904,7 +16893,6 @@
       }
     },
     "settings.shortcuts.section" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -17690,7 +17678,6 @@
       }
     },
     "settings.week_start.section" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

@@ -5,9 +5,9 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>CFBundleName</key>
-	<string>UniCal</string>
+	<string>MioCal</string>
 	<key>CFBundleDisplayName</key>
-	<string>UniCal</string>
+	<string>MioCal</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleVersion</key>
@@ -19,12 +19,12 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>11.0</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>UniCal toplantıları ve etkinlikleri göstermek için takviminize erişmesi gerekiyor.</string>
+	<string>MioCal toplantıları ve etkinlikleri göstermek için takviminize erişmesi gerekiyor.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>UniCal etkinlikleri senkronize etmek ve yönetmek ile dış takvimlere abone olmak için takviminize tam erişim gerektirir.</string>
+	<string>MioCal etkinlikleri senkronize etmek ve yönetmek ile dış takvimlere abone olmak için takviminize tam erişim gerektirir.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>UniCal gün doğumu ve batımı zamanlarını, İslami namaz vakitlerini ve İbranice Şabat zamanlarını hesaplamak için konumunuza ihtiyaç duyar.</string>
+	<string>MioCal gün doğumu ve batımı zamanlarını, İslami namaz vakitlerini ve İbranice Şabat zamanlarını hesaplamak için konumunuza ihtiyaç duyar.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>UniCal doğru astronomi bilgileri (gün doğumu ve batımı zamanları, ay evreleri) ve dini zamanlar (namaz vakitleri, Şabat) sağlamak için konumunuzu kullanır.</string>
+	<string>MioCal doğru astronomi bilgileri (gün doğumu ve batımı zamanları, ay evreleri) ve dini zamanlar (namaz vakitleri, Şabat) sağlamak için konumunuzu kullanır.</string>
 </dict>
 </plist>

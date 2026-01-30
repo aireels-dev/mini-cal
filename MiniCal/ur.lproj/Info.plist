@@ -5,9 +5,9 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>CFBundleName</key>
-	<string>UniCal</string>
+	<string>MioCal</string>
 	<key>CFBundleDisplayName</key>
-	<string>UniCal</string>
+	<string>MioCal</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleVersion</key>
@@ -19,12 +19,12 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>11.0</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>UniCal کو میٹنگز اور ایونٹس دکھانے کے لیے آپ کے کیلنڈر تک رسائی کی ضرورت ہے۔</string>
+	<string>MioCal کو میٹنگز اور ایونٹس دکھانے کے لیے آپ کے کیلنڈر تک رسائی کی ضرورت ہے۔</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>UniCal کو ایونٹس کو ہم وقت سازی اور منظم کرنے اور بیرونی کیلنڈرز کو سبسکرائب کرنے کے لیے آپ کے کیلنڈر تک مکمل رسائی کی ضرورت ہے۔</string>
+	<string>MioCal کو ایونٹس کو ہم وقت سازی اور منظم کرنے اور بیرونی کیلنڈرز کو سبسکرائب کرنے کے لیے آپ کے کیلنڈر تک مکمل رسائی کی ضرورت ہے۔</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>UniCal کو طلوع و غروب آفتاب کے اوقات، اسلامی نماز کے اوقات، اور عبرانی سبت کے اوقات کا حساب لگانے کے لیے آپ کے مقام کی ضرورت ہے۔</string>
+	<string>MioCal کو طلوع و غروب آفتاب کے اوقات، اسلامی نماز کے اوقات، اور عبرانی سبت کے اوقات کا حساب لگانے کے لیے آپ کے مقام کی ضرورت ہے۔</string>
 	<key>NSLocationUsageDescription</key>
-	<string>UniCal درست فلکیاتی معلومات (طلوع و غروب آفتاب کے اوقات، چاند کی کلائیں) اور مذہبی اوقات (نماز کے اوقات، سبت) فراہم کرنے کے لیے آپ کے مقام کا استعمال کرتا ہے۔</string>
+	<string>MioCal درست فلکیاتی معلومات (طلوع و غروب آفتاب کے اوقات، چاند کی کلائیں) اور مذہبی اوقات (نماز کے اوقات، سبت) فراہم کرنے کے لیے آپ کے مقام کا استعمال کرتا ہے۔</string>
 </dict>
 </plist>

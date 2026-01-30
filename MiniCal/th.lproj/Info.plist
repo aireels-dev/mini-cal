@@ -5,9 +5,9 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>CFBundleName</key>
-	<string>UniCal</string>
+	<string>MioCal</string>
 	<key>CFBundleDisplayName</key>
-	<string>UniCal</string>
+	<string>MioCal</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleVersion</key>
@@ -19,12 +19,12 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>11.0</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>UniCal ต้องการเข้าถึงปฏิทินของคุณเพื่อแสดงการประชุมและกิจกรรม</string>
+	<string>MioCal ต้องการเข้าถึงปฏิทินของคุณเพื่อแสดงการประชุมและกิจกรรม</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>UniCal ต้องการสิทธิ์เข้าถึงปฏิทินแบบเต็มเพื่อซิงค์และจัดการกิจกรรม และสมัครสมาชิกปฏิทินภายนอก</string>
+	<string>MioCal ต้องการสิทธิ์เข้าถึงปฏิทินแบบเต็มเพื่อซิงค์และจัดการกิจกรรม และสมัครสมาชิกปฏิทินภายนอก</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>UniCal ต้องการตำแหน่งของคุณเพื่อคำนวณเวลาพระอาทิตย์ขึ้นและตก เวลาละหมาดอิสลาม และเวลาวันสะบาโตฮีบรู</string>
+	<string>MioCal ต้องการตำแหน่งของคุณเพื่อคำนวณเวลาพระอาทิตย์ขึ้นและตก เวลาละหมาดอิสลาม และเวลาวันสะบาโตฮีบรู</string>
 	<key>NSLocationUsageDescription</key>
-	<string>UniCal ใช้ตำแหน่งของคุณเพื่อให้ข้อมูลทางดาราศาสตร์ที่แม่นยำ (เวลาพระอาทิตย์ขึ้นและตก ระยะของดวงจันทร์) และเวลาทางศาสนา (เวลาละหมาด วันสะบาโต)</string>
+	<string>MioCal ใช้ตำแหน่งของคุณเพื่อให้ข้อมูลทางดาราศาสตร์ที่แม่นยำ (เวลาพระอาทิตย์ขึ้นและตก ระยะของดวงจันทร์) และเวลาทางศาสนา (เวลาละหมาด วันสะบาโต)</string>
 </dict>
 </plist>

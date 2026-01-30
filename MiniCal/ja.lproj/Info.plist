@@ -5,9 +5,9 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>CFBundleName</key>
-	<string>UniCal</string>
+	<string>MioCal</string>
 	<key>CFBundleDisplayName</key>
-	<string>UniCal</string>
+	<string>MioCal</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleVersion</key>
@@ -19,12 +19,12 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>11.0</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>UniCalは会議やイベントを表示するためにカレンダーへのアクセスが必要です。</string>
+	<string>MioCalは会議やイベントを表示するためにカレンダーへのアクセスが必要です。</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>UniCalはイベントの同期と管理、外部カレンダーへの登録のためにカレンダーへのフルアクセスが必要です。</string>
+	<string>MioCalはイベントの同期と管理、外部カレンダーへの登録のためにカレンダーへのフルアクセスが必要です。</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>UniCalは日の出・日の入り時刻、イスラム教の礼拝時刻、ヘブライ暦の安息日時刻を計算するために位置情報が必要です。</string>
+	<string>MioCalは日の出・日の入り時刻、イスラム教の礼拝時刻、ヘブライ暦の安息日時刻を計算するために位置情報が必要です。</string>
 	<key>NSLocationUsageDescription</key>
-	<string>UniCalは正確な天文情報（日の出・日の入り時刻、月相）と宗教的時刻（礼拝時刻、安息日）を提供するために位置情報を使用します。</string>
+	<string>MioCalは正確な天文情報（日の出・日の入り時刻、月相）と宗教的時刻（礼拝時刻、安息日）を提供するために位置情報を使用します。</string>
 </dict>
 </plist>

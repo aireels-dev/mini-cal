@@ -94,6 +94,13 @@ find ~/Library/Developer/Xcode/DerivedData -name "MiniCal.app" -type d
 - **Debug**: 包含调试符号,日志级别debug
 - **Release**: 优化性能,日志级别warning
 
+## 自动化构建流程
+
+已提供最小可用的自动化构建脚本与说明文档：
+
+- 脚本：`scripts/ci/run-build.sh`
+- 文档：`docs/automation-build.md`
+
 ## 注意事项
 
 ⚠️ **不要手动修改DerivedData**: Xcode自动管理构建输出,手动修改可能导致编译问题

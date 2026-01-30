@@ -232,7 +232,7 @@ struct MenuBarSettingsView: View {
             }
 
             // 每周起始日
-            section("settings.week_start.section".localized()) {
+            section("settings.week_start.section") {
                 Picker(selection: $localSettings.weekStartDay) {
                     ForEach(WeekStartDay.allCases, id: \.self) { weekStart in
                         VStack(alignment: .leading) {
@@ -1715,7 +1715,7 @@ private struct GroupedFormStyleIfAvailable: ViewModifier {
 }
 
 @ViewBuilder
-private func section(_ title: String, @ViewBuilder content: () -> some View) -> some View {
+private func section(_ title: LocalizedStringKey, @ViewBuilder content: () -> some View) -> some View {
     if #available(macOS 12.0, *) {
         Section(title, content: content)
     } else {
