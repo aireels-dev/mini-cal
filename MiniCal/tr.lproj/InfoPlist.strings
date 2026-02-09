@@ -1,0 +1,6 @@
+"CFBundleDisplayName" = "MioCal";
+"CFBundleName" = "MioCal";
+"NSCalendarsUsageDescription" = "MioCal toplantıları ve etkinlikleri göstermek için takviminize erişmesi gerekiyor.";
+"NSCalendarsFullAccessUsageDescription" = "MioCal etkinlikleri senkronize etmek ve yönetmek ile dış takvimlere abone olmak için takviminize tam erişim gerektirir.";
+"NSLocationWhenInUseUsageDescription" = "MioCal gün doğumu ve batımı zamanlarını, İslami namaz vakitlerini ve İbranice Şabat zamanlarını hesaplamak için konumunuza ihtiyaç duyar.";
+"NSLocationUsageDescription" = "MioCal doğru astronomi bilgileri (gün doğumu ve batımı zamanları, ay evreleri) ve dini zamanlar (namaz vakitleri, Şabat) sağlamak için konumunuzu kullanır.";

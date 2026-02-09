@@ -1,0 +1,6 @@
+"CFBundleDisplayName" = "妙曆";
+"CFBundleName" = "妙曆";
+"NSCalendarsUsageDescription" = "妙曆需要存取您的行事曆以顯示會議和活動。";
+"NSCalendarsFullAccessUsageDescription" = "妙曆需要完全存取您的行事曆以同步和管理活動、訂閱外部行事曆。";
+"NSLocationWhenInUseUsageDescription" = "妙曆需要您的位置資訊來計算日出日落時間、伊斯蘭禮拜時間和希伯來安息日時間。";
+"NSLocationUsageDescription" = "妙曆使用您的位置資訊來提供準確的天文資訊（日出日落時間、月相）和宗教時間（禮拜時間、安息日）。";

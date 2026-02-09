@@ -1,0 +1,6 @@
+"CFBundleDisplayName" = "MioCal";
+"CFBundleName" = "MioCal";
+"NSCalendarsUsageDescription" = "MioCal کو میٹنگز اور ایونٹس دکھانے کے لیے آپ کے کیلنڈر تک رسائی کی ضرورت ہے۔";
+"NSCalendarsFullAccessUsageDescription" = "MioCal کو ایونٹس کو ہم وقت سازی اور منظم کرنے اور بیرونی کیلنڈرز کو سبسکرائب کرنے کے لیے آپ کے کیلنڈر تک مکمل رسائی کی ضرورت ہے۔";
+"NSLocationWhenInUseUsageDescription" = "MioCal کو طلوع و غروب آفتاب کے اوقات، اسلامی نماز کے اوقات، اور عبرانی سبت کے اوقات کا حساب لگانے کے لیے آپ کے مقام کی ضرورت ہے۔";
+"NSLocationUsageDescription" = "MioCal درست فلکیاتی معلومات (طلوع و غروب آفتاب کے اوقات، چاند کی کلائیں) اور مذہبی اوقات (نماز کے اوقات، سبت) فراہم کرنے کے لیے آپ کے مقام کا استعمال کرتا ہے۔";

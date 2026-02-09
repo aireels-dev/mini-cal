@@ -66,12 +66,14 @@ class ThemeManager: ObservableObject {
 
     /// 系统是否处于深色模式
     private var isSystemDarkMode: Bool {
-        NSApp.effectiveAppearance.name == .darkAqua
+        // NSApp 在启动早期可能为 nil（尤其在 AppDelegate 初始化阶段）
+        return NSApp?.effectiveAppearance.name == .darkAqua
     }
 
     // MARK: - Private Properties
 
     private var appearanceObserver: NSKeyValueObservation?
+    private var launchObserver: NSObjectProtocol?
     private let settingsManager = SettingsManager.shared
     private var cancellables = Set<AnyCancellable>()
 
@@ -225,7 +227,23 @@ class ThemeManager: ObservableObject {
     func startObservingSystemAppearance() {
         guard appearanceObserver == nil else { return }
 
-        appearanceObserver = NSApp.observe(
+        // 应用尚未完成启动时，NSApp 可能为 nil，先延迟到 didFinishLaunching 后再观察
+        guard let app = NSApp else {
+            if launchObserver == nil {
+                launchObserver = NotificationCenter.default.addObserver(
+                    forName: NSApplication.didFinishLaunchingNotification,
+                    object: nil,
+                    queue: .main
+                ) { [weak self] _ in
+                    guard let self = self else { return }
+                    self.launchObserver = nil
+                    self.startObservingSystemAppearance()
+                }
+            }
+            return
+        }
+
+        appearanceObserver = app.observe(
             \.effectiveAppearance,
             options: [.new]
         ) { [weak self] _, _ in
@@ -242,6 +260,10 @@ class ThemeManager: ObservableObject {
     func stopObservingSystemAppearance() {
         appearanceObserver?.invalidate()
         appearanceObserver = nil
+        if let observer = launchObserver {
+            NotificationCenter.default.removeObserver(observer)
+            launchObserver = nil
+        }
         Logger.debug("Stopped observing system appearance", category: Logger.theme)
     }
 

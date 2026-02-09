@@ -1,0 +1,6 @@
+"CFBundleDisplayName" = "MioCal";
+"CFBundleName" = "MioCal";
+"NSCalendarsUsageDescription" = "MioCal은 회의 및 이벤트를 표시하기 위해 캘린더에 액세스해야 합니다.";
+"NSCalendarsFullAccessUsageDescription" = "MioCal은 이벤트 동기화 및 관리, 외부 캘린더 구독을 위해 캘린더에 대한 전체 액세스 권한이 필요합니다.";
+"NSLocationWhenInUseUsageDescription" = "MioCal은 일출 및 일몰 시간, 이슬람 기도 시간, 히브리 안식일 시간을 계산하기 위해 위치 정보가 필요합니다.";
+"NSLocationUsageDescription" = "MioCal은 정확한 천문 정보(일출 및 일몰 시간, 월상)와 종교적 시간(기도 시간, 안식일)을 제공하기 위해 위치 정보를 사용합니다.";

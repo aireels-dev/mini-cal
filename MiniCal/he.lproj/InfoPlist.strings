@@ -1,0 +1,6 @@
+"CFBundleDisplayName" = "MioCal";
+"CFBundleName" = "MioCal";
+"NSCalendarsUsageDescription" = "MioCal זקוק לגישה ליומן שלך כדי להציג פגישות ואירועים.";
+"NSCalendarsFullAccessUsageDescription" = "MioCal זקוק לגישה מלאה ליומן שלך כדי לסנכרן ולנהל אירועים ולהירשם ליומנים חיצוניים.";
+"NSLocationWhenInUseUsageDescription" = "MioCal זקוק למיקום שלך כדי לחשב זמני זריחה ושקיעה, זמני תפילה אסלאמיים וזמני שבת עבריים.";
+"NSLocationUsageDescription" = "MioCal משתמש במיקום שלך כדי לספק מידע אסטרונומי מדויק (זמני זריחה ושקיעה, שלבי הירח) וזמנים דתיים (זמני תפילה, שבת).";

@@ -1,0 +1,6 @@
+"CFBundleDisplayName" = "MioCal";
+"CFBundleName" = "MioCal";
+"NSCalendarsUsageDescription" = "MioCal برای نمایش جلسات و رویدادها نیاز به دسترسی به تقویم شما دارد.";
+"NSCalendarsFullAccessUsageDescription" = "MioCal برای همگام‌سازی و مدیریت رویدادها و اشتراک در تقویم‌های خارجی به دسترسی کامل به تقویم شما نیاز دارد.";
+"NSLocationWhenInUseUsageDescription" = "MioCal برای محاسبه زمان طلوع و غروب خورشید، اوقات نماز اسلامی و زمان‌های شبات عبری به مکان شما نیاز دارد.";
+"NSLocationUsageDescription" = "MioCal از مکان شما برای ارائه اطلاعات نجومی دقیق (زمان طلوع و غروب خورشید، فازهای ماه) و زمان‌های مذهبی (اوقات نماز، شبات) استفاده می‌کند.";

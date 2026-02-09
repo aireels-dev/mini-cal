@@ -203,10 +203,8 @@ class CalendarSubscriptionService: CalendarSubscriptionServiceProtocol {
                             return taggedEvent
                         }
 
-                        // 持久化事件到外部事件存储
-                        await MainActor.run {
-                            self.externalEventStorage.saveEvents(taggedEvents, for: subscription.id)
-                        }
+                        // 持久化事件到外部事件存储（actor 负责序列化访问）
+                        await self.externalEventStorage.saveEvents(taggedEvents, for: subscription.id)
 
                         let duration = Date().timeIntervalSince(startTime)
                         let result = SyncResult(

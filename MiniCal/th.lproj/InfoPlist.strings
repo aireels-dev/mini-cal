@@ -1,0 +1,6 @@
+"CFBundleDisplayName" = "MioCal";
+"CFBundleName" = "MioCal";
+"NSCalendarsUsageDescription" = "MioCal ต้องการเข้าถึงปฏิทินของคุณเพื่อแสดงการประชุมและกิจกรรม";
+"NSCalendarsFullAccessUsageDescription" = "MioCal ต้องการสิทธิ์เข้าถึงปฏิทินแบบเต็มเพื่อซิงค์และจัดการกิจกรรม และสมัครสมาชิกปฏิทินภายนอก";
+"NSLocationWhenInUseUsageDescription" = "MioCal ต้องการตำแหน่งของคุณเพื่อคำนวณเวลาพระอาทิตย์ขึ้นและตก เวลาละหมาดอิสลาม และเวลาวันสะบาโตฮีบรู";
+"NSLocationUsageDescription" = "MioCal ใช้ตำแหน่งของคุณเพื่อให้ข้อมูลทางดาราศาสตร์ที่แม่นยำ (เวลาพระอาทิตย์ขึ้นและตก ระยะของดวงจันทร์) และเวลาทางศาสนา (เวลาละหมาด วันสะบาโต)";

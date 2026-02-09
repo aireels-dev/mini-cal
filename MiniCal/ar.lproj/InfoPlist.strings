@@ -1,0 +1,6 @@
+"CFBundleDisplayName" = "MioCal";
+"CFBundleName" = "MioCal";
+"NSCalendarsUsageDescription" = "يحتاج MioCal إلى الوصول إلى التقويم الخاص بك لعرض الاجتماعات والأحداث.";
+"NSCalendarsFullAccessUsageDescription" = "يحتاج MioCal إلى وصول كامل إلى التقويم الخاص بك لمزامنة الأحداث وإدارتها والاشتراك في التقويمات الخارجية.";
+"NSLocationWhenInUseUsageDescription" = "يحتاج MioCal إلى موقعك لحساب أوقات شروق الشمس وغروبها وأوقات الصلاة الإسلامية وأوقات السبت العبرية.";
+"NSLocationUsageDescription" = "يستخدم MioCal موقعك لتوفير معلومات فلكية دقيقة (أوقات شروق الشمس وغروبها، أطوار القمر) والأوقات الدينية (أوقات الصلاة، السبت).";

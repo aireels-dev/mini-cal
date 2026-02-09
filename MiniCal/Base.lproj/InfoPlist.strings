@@ -1,0 +1,6 @@
+"CFBundleDisplayName" = "MioCal";
+"CFBundleName" = "MioCal";
+"NSCalendarsUsageDescription" = "MioCal needs to access your calendar to display meetings and events.";
+"NSCalendarsFullAccessUsageDescription" = "MioCal needs full access to your calendar to sync and manage events, and subscribe to external calendars.";
+"NSLocationWhenInUseUsageDescription" = "MioCal needs your location to calculate sunrise and sunset times, Islamic prayer times, and Hebrew Shabbat times.";
+"NSLocationUsageDescription" = "MioCal uses your location to provide accurate astronomical information (sunrise and sunset times, moon phases) and religious times (prayer times, Shabbat).";

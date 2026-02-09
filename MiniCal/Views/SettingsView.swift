@@ -1186,7 +1186,7 @@ struct AppearanceSettingsView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject private var localizationManager = LocalizationManager.shared
     @State private var localSettings: UserSettings
-    @State private var isSystemDarkMode: Bool = NSApp.effectiveAppearance.name == .darkAqua
+    @State private var isSystemDarkMode: Bool = (NSApp?.effectiveAppearance.name == .darkAqua)
     @State private var selectedInterfaceLocale: SupportedLocale?
 
     init(settingsManager: SettingsManager) {
@@ -1495,7 +1495,7 @@ struct AppearanceSettingsView: View {
         .groupedFormStyleIfAvailable()
         .onAppear {
             localSettings = settingsManager.currentSettings
-            isSystemDarkMode = NSApp.effectiveAppearance.name == .darkAqua
+            isSystemDarkMode = (NSApp?.effectiveAppearance.name == .darkAqua)
         }
         .onChange(of: settingsManager.currentSettings) { newValue in
             localSettings = newValue
@@ -1503,7 +1503,7 @@ struct AppearanceSettingsView: View {
         .onReceive(NotificationCenter.default.publisher(for: .themeDidChange)) { _ in
             // 监听主题变化，更新系统外观状态
             DispatchQueue.main.async {
-                isSystemDarkMode = NSApp.effectiveAppearance.name == .darkAqua
+                isSystemDarkMode = (NSApp?.effectiveAppearance.name == .darkAqua)
             }
         }
     }

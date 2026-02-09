@@ -18,10 +18,10 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		834383B32EAF9ED8008424E2 /* Exceptions for "MiniCal" folder in "MiniCal" target */ = {
+		834383B42EAF9ED8008424E2 /* Exceptions for "MiniCal" folder in "MiniCal" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"/Localized: Info.plist",
+				Info.plist,
 			);
 			target = 834383AF2EAF9ED8008424E1 /* MiniCal */;
 		};
@@ -31,7 +31,7 @@
 		834383B22EAF9ED8008424E1 /* MiniCal */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				834383B32EAF9ED8008424E2 /* Exceptions for "MiniCal" folder in "MiniCal" target */,
+				834383B42EAF9ED8008424E2 /* Exceptions for "MiniCal" folder in "MiniCal" target */,
 			);
 			path = MiniCal;
 			sourceTree = "<group>";
@@ -305,6 +305,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = MiniCal/MiniCal.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -318,7 +319,7 @@
 				ENABLE_RESOURCE_ACCESS_LOCATION = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = MiniCal/Base.lproj/Info.plist;
+				INFOPLIST_FILE = MiniCal/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -347,6 +348,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = MiniCal/MiniCal.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -360,7 +362,7 @@
 				ENABLE_RESOURCE_ACCESS_LOCATION = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = MiniCal/Base.lproj/Info.plist;
+				INFOPLIST_FILE = MiniCal/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (

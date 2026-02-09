@@ -123,7 +123,8 @@ class UnifiedEventService: ObservableObject {
 // MARK: - External Event Storage
 
 /// 外部订阅事件存储服务（持久化外部订阅的事件）
-class ExternalEventStorage: ObservableObject {
+/// 说明：该存储会被多个异步任务并发读写，使用 actor 保证线程安全，避免数据竞争导致的崩溃。
+actor ExternalEventStorage {
     static let shared = ExternalEventStorage()
 
     private let userDefaults = UserDefaults.standard
@@ -133,7 +134,18 @@ class ExternalEventStorage: ObservableObject {
     // MARK: - Init
 
     init() {
-        loadCachedEvents()
+        // 在初始化阶段直接加载缓存，避免在 actor 的非隔离初始化中调用隔离方法
+        if let data = userDefaults.data(forKey: eventsKey) {
+            do {
+                cachedEvents = try JSONDecoder().decode([CalendarEvent].self, from: data)
+                Logger.debug("Loaded \(cachedEvents.count) cached external events", category: Logger.calendar)
+            } catch {
+                Logger.error("Failed to load cached events: \(error)", category: Logger.calendar)
+                cachedEvents = []
+            }
+        } else {
+            cachedEvents = []
+        }
     }
 
     // MARK: - Public Methods
@@ -179,21 +191,6 @@ class ExternalEventStorage: ObservableObject {
     }
 
     // MARK: - Private Methods
-
-    private func loadCachedEvents() {
-        guard let data = userDefaults.data(forKey: eventsKey) else {
-            cachedEvents = []
-            return
-        }
-
-        do {
-            cachedEvents = try JSONDecoder().decode([CalendarEvent].self, from: data)
-            Logger.debug("Loaded \(cachedEvents.count) cached external events", category: Logger.calendar)
-        } catch {
-            Logger.error("Failed to load cached events: \(error)", category: Logger.calendar)
-            cachedEvents = []
-        }
-    }
 
     private func persistEvents() {
         do {

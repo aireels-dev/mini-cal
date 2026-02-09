@@ -1,4 +1,4 @@
-# MiniCal 宣传推广方案
+# MioCal 宣传推广方案
 
 **文档版本**: 1.0
 **最后更新**: 2025-12-05
@@ -31,7 +31,7 @@
 
 **痛点解决**:
 - ❌ 传统日历 App: 打开 → 等待加载 → 查看 → 关闭（5 秒+）
-- ✅ MiniCal: 点击菜单栏 → 立即显示（0.3 秒）
+- ✅ MioCal: 点击菜单栏 → 立即显示（0.3 秒）
 
 **核心特性**:
 - 🖱️ **鼠标悬停自动展开**: 鼠标移到图标，日历自动弹出
@@ -66,7 +66,7 @@
 - 120Hz ProMotion 丝滑动画（M1+ 芯片优化）
 
 **对比优势**:
-| 设计风格 | MiniCal | Fantastical | BusyCal |
+| 设计风格 | MioCal | Fantastical | BusyCal |
 |---------|---------|-------------|---------|
 | 设计语言 | ✅ Liquid Glass (2024) | ⚠️ iOS 14 风格 | ❌ 传统拟物 |
 | 毛玻璃效果 | ✅ 原生动态 | ⚠️ 静态模糊 | ❌ 无 |
@@ -74,7 +74,7 @@
 | 动画流畅度 | ✅ 120fps | ⚠️ 60fps | ❌ 无动画 |
 
 **宣传语**:
-> "当其他日历应用还停留在 2020 年的设计时，MiniCal 已经拥抱了 Apple 2024 年的设计未来。"
+> "当其他日历应用还停留在 2020 年的设计时，MioCal 已经拥抱了 Apple 2024 年的设计未来。"
 
 ---
 
@@ -133,8 +133,8 @@
 
 **对比数据**:
 ```
-上手难度: MiniCal ⭐ (0 分钟) vs Fantastical ⭐⭐⭐ (10 分钟)
-定制深度: MiniCal ⭐⭐⭐⭐⭐ vs Apple 日历 ⭐⭐
+上手难度: MioCal ⭐ (0 分钟) vs Fantastical ⭐⭐⭐ (10 分钟)
+定制深度: MioCal ⭐⭐⭐⭐⭐ vs Apple 日历 ⭐⭐
 ```
 
 ---
@@ -161,12 +161,12 @@
 
 **菜单栏优化建议**:
 - 💡 隐藏系统日期，释放菜单栏空间
-- 🖱️ 拖拽 MiniCal 到理想位置
+- 🖱️ 拖拽 MioCal 到理想位置
 - 🎯 两步图文教程，简单易懂
 - 🔗 一键跳转系统设置（macOS 版本兼容）
 
 **用户场景**:
-> "刚移民美国，不知道哪里订阅中国节假日。MiniCal 引导向导直接推荐了官方认证的订阅源，太贴心了！"
+> "刚移民美国，不知道哪里订阅中国节假日。MioCal 引导向导直接推荐了官方认证的订阅源，太贴心了！"
 > — 李明，旧金山
 
 > "切换到伊斯兰历后，自动弹出礼拜时间推荐，这个功能太智能了！"
@@ -195,7 +195,7 @@
 6. **🕌 宗教日历**: 礼拜时间、宗教节日
 
 **用户故事**:
-> "作为湖人队球迷，我订阅了 NBA 官方日历。每次比赛前 1 小时，MiniCal 会自动提醒我。再也不会错过精彩比赛！"
+> "作为湖人队球迷，我订阅了 NBA 官方日历。每次比赛前 1 小时，MioCal 会自动提醒我。再也不会错过精彩比赛！"
 
 ---
 
@@ -203,13 +203,13 @@
 
 ### 一句话定位
 
-> **"MiniCal = Fantastical 的性能 + BusyCal 的灵活性 + 独有的多文化支持"**
+> **"MioCal = Fantastical 的性能 + BusyCal 的灵活性 + 独有的多文化支持"**
 
 ### 核心差异化
 
 **与主要竞品对比**:
 
-| 特性 | MiniCal | Fantastical | BusyCal | Calendars 5 |
+| 特性 | MioCal | Fantastical | BusyCal | Calendars 5 |
 |------|---------|-------------|---------|-------------|
 | **多日历系统** | ✅ 7 种 | ❌ 仅公历 | ❌ 仅公历 | ❌ 仅公历 |
 | **天文计算** | ✅ 专业级 | ⚠️ 基础 | ❌ 无 | ❌ 无 |
@@ -336,13 +336,13 @@
 
 ### 中文简体 (zh-Hans)
 
-**应用名称**: MiniCal - 菜单栏日历
+**应用名称**: 妙历 - 菜单栏日历
 
-**副标题**: 全球日历·液态玻璃设计
+**副标题**: 轻巧日历·一眼速览
 
 **宣传文本**:
 ```
-全新 Liquid Glass 设计！支持农历、伊斯兰历等 7 种日历系统，13 种语言全覆盖。菜单栏常驻，一键查看，极致便捷。订阅 NBA 赛程、追剧日历，精彩不错过。
+小而美的菜单栏日历：点击或悬停秒开，一眼看清今日与日程。轻量常驻、不打扰。
 ```
 
 **关键词**:
@@ -352,11 +352,11 @@
 
 **应用描述**:
 ```
-# MiniCal - 重新定义 macOS 日历体验
+# 妙历 - 重新定义 macOS 日历体验
 
 菜单栏上的液态玻璃日历，7 种日历系统，13 种语言，极致便捷。
 
-## 🌟 为什么选择 MiniCal？
+## 🌟 为什么选择妙历？
 
 ### 📍 菜单栏常驻，随时可达
 • 点击图标，0.3 秒即开
@@ -364,7 +364,7 @@
 • 全局快捷键，任何应用下秒开
 • 不占 Dock，不遮挡屏幕
 
-每天查看日历 20 次？MiniCal 让每次从 5 秒缩短到 0.3 秒，一年为你节省 8 小时。
+每天查看日历 20 次？妙历让每次从 5 秒缩短到 0.3 秒，一年为你节省 8 小时。
 
 ### ✨ Liquid Glass 设计美学
 • 流体玻璃材质，跟随系统主题
@@ -458,20 +458,20 @@
 
 ---
 
-**MiniCal - 你的全球时间管家，菜单栏上的液态玻璃日历。**
+**妙历 - 你的全球时间管家，菜单栏上的液态玻璃日历。**
 ```
 
 ---
 
 ### 英文 (en)
 
-**App Name**: MiniCal - Menu Bar Calendar
+**App Name**: MioCal - Menu Bar Calendar
 
-**Subtitle**: Global Calendars in Liquid Glass
+**Subtitle**: Lightweight Menu Bar Calendar
 
 **Promotional Text**:
 ```
-New Liquid Glass design! 7 calendar systems, 13 languages. Menu bar resident, one-click access. Subscribe NBA, TV shows. Never miss a moment.
+Tiny and fast: open from the menu bar with a click or hover. See your day at a glance, anywhere, anytime.
 ```
 
 **Keywords**:
@@ -481,11 +481,11 @@ calendar,lunar,menubar,liquid glass,multilingual,islamic,hebrew,subscribe,theme,
 
 **Description**:
 ```
-# MiniCal - Redefining macOS Calendar Experience
+# MioCal - Redefining macOS Calendar Experience
 
 The Liquid Glass calendar on your menu bar. 7 calendar systems, 13 languages, ultimate convenience.
 
-## 🌟 Why MiniCal?
+## 🌟 Why MioCal?
 
 ### 📍 Always at Hand
 • Click icon, opens in 0.3s
@@ -493,7 +493,7 @@ The Liquid Glass calendar on your menu bar. 7 calendar systems, 13 languages, ul
 • Global hotkey (⌥⌘C)
 • No Dock space, no screen clutter
 
-Check calendar 20 times a day? MiniCal saves you 8 hours per year.
+Check calendar 20 times a day? MioCal saves you 8 hours per year.
 
 ### ✨ Liquid Glass Aesthetics
 • Fluid glass material, adapts to system theme
@@ -587,20 +587,20 @@ Your calendar, your control.
 
 ---
 
-**MiniCal - Your global time manager, the Liquid Glass calendar on your menu bar.**
+**MioCal - Your global time manager, the Liquid Glass calendar on your menu bar.**
 ```
 
 ---
 
 ### 中文繁体 (zh-Hant)
 
-**應用程式名稱**: MiniCal - 選單列行事曆
+**應用程式名稱**: 妙曆 - 選單列行事曆
 
-**副標題**: 全球行事曆·液態玻璃設計
+**副標題**: 輕巧行事曆·一眼速覽
 
 **宣傳文字**:
 ```
-全新 Liquid Glass 設計！支援農曆、伊斯蘭曆等 7 種曆法系統，13 種語言全覆蓋。選單列常駐，一鍵查看，極致便捷。訂閱 NBA 賽程、追劇行事曆，精彩不錯過。
+小而美的選單列行事曆：點擊或懸停秒開，一眼看清今日與行程。輕量常駐、不打擾。
 ```
 
 **關鍵字**:
@@ -610,11 +610,11 @@ Your calendar, your control.
 
 **應用程式描述**:
 ```
-# MiniCal - 重新定義 macOS 行事曆體驗
+# 妙曆 - 重新定義 macOS 行事曆體驗
 
 選單列上的液態玻璃行事曆，7 種曆法系統，13 種語言，極致便捷。
 
-## 🌟 為什麼選擇 MiniCal？
+## 🌟 為什麼選擇妙曆？
 
 ### 📍 選單列常駐，隨時可達
 • 點擊圖示，0.3 秒即開
@@ -622,7 +622,7 @@ Your calendar, your control.
 • 全域快捷鍵，任何應用程式下秒開
 • 不佔 Dock，不遮擋螢幕
 
-每天查看行事曆 20 次？MiniCal 讓每次從 5 秒縮短到 0.3 秒，一年為你節省 8 小時。
+每天查看行事曆 20 次？妙曆讓每次從 5 秒縮短到 0.3 秒，一年為你節省 8 小時。
 
 ### ✨ Liquid Glass 設計美學
 • 流體玻璃材質，跟隨系統主題
@@ -659,20 +659,20 @@ Your calendar, your control.
 
 ---
 
-**MiniCal - 你的全球時間管家，選單列上的液態玻璃行事曆。**
+**妙曆 - 你的全球時間管家，選單列上的液態玻璃行事曆。**
 ```
 
 ---
 
 ### 日本語 (ja)
 
-**アプリ名**: MiniCal - メニューバーカレンダー
+**アプリ名**: MioCal - メニューバーカレンダー
 
-**サブタイトル**: 世界のカレンダー・Liquid Glass
+**サブタイトル**: 軽量メニューバーカレンダー
 
 **プロモーションテキスト**:
 ```
-新しいLiquid Glassデザイン！7つの暦システム、13言語対応。メニューバー常駐、ワンクリックアクセス。NBAスケジュール、ドラマカレンダーを購読。
+小さく速いメニューバーカレンダー。クリック/ホバーで即表示、予定を一目で確認。常駐で邪魔しません。
 ```
 
 **キーワード**:
@@ -682,11 +682,11 @@ Your calendar, your control.
 
 **説明**:
 ```
-# MiniCal - macOS カレンダー体験を再定義
+# MioCal - macOS カレンダー体験を再定義
 
 メニューバー上のLiquid Glassカレンダー。7つの暦システム、13言語、究極の利便性。
 
-## 🌟 なぜMiniCal？
+## 🌟 なぜMioCal？
 
 ### 📍 メニューバー常駐、いつでも手元に
 • クリックで0.3秒で起動
@@ -694,7 +694,7 @@ Your calendar, your control.
 • グローバルホットキー（⌥⌘C）
 • Dockを占有せず、画面を邪魔しない
 
-1日20回カレンダーを確認？MiniCalなら年間8時間節約できます。
+1日20回カレンダーを確認？MioCalなら年間8時間節約できます。
 
 ### ✨ Liquid Glass デザイン美学
 • 流体ガラス素材、システムテーマに追従
@@ -731,20 +731,20 @@ macOS Liquid Glassデザイン言語を採用した初のカレンダーアプ�
 
 ---
 
-**MiniCal - あなたのグローバルタイムマネージャー、メニューバー上のLiquid Glassカレンダー。**
+**MioCal - あなたのグローバルタイムマネージャー、メニューバー上のLiquid Glassカレンダー。**
 ```
 
 ---
 
 ### 한국어 (ko)
 
-**앱 이름**: MiniCal - 메뉴막대 캘린더
+**앱 이름**: MioCal - 메뉴막대 캘린더
 
-**부제**: 글로벌 캘린더 · Liquid Glass
+**부제**: 가벼운 메뉴막대 캘린더
 
 **프로모션 텍스트**:
 ```
-새로운 Liquid Glass 디자인! 7가지 달력 시스템, 13개 언어 지원. 메뉴막대 상주, 원클릭 액세스. NBA 일정, 드라마 캘린더 구독 가능.
+작고 빠른 메뉴막대 캘린더. 클릭/호버로 즉시 열고, 오늘 일정 한눈에 확인. 상주하지만 방해하지 않음.
 ```
 
 **키워드**:
@@ -754,11 +754,11 @@ macOS Liquid Glassデザイン言語を採用した初のカレンダーアプ�
 
 **설명**:
 ```
-# MiniCal - macOS 캘린더 경험 재정의
+# MioCal - macOS 캘린더 경험 재정의
 
 메뉴막대의 Liquid Glass 캘린더. 7가지 달력 시스템, 13개 언어, 궁극의 편의성.
 
-## 🌟 왜 MiniCal인가?
+## 🌟 왜 MioCal인가?
 
 ### 📍 메뉴막대 상주, 언제나 손쉽게
 • 클릭하면 0.3초에 실행
@@ -766,7 +766,7 @@ macOS Liquid Glassデザイン言語を採用した初のカレンダーアプ�
 • 글로벌 단축키 (⌥⌘C)
 • Dock 공간 차지 없음, 화면 방해 없음
 
-하루 20번 캘린더 확인? MiniCal은 연간 8시간을 절약해 줍니다.
+하루 20번 캘린더 확인? MioCal은 연간 8시간을 절약해 줍니다.
 
 ### ✨ Liquid Glass 디자인 미학
 • 유체 유리 재질, 시스템 테마 추종
@@ -803,20 +803,20 @@ macOS Liquid Glass 디자인 언어를 채택한 최초의 캘린더 앱 - 도�
 
 ---
 
-**MiniCal - 글로벌 시간 관리자, 메뉴막대의 Liquid Glass 캘린더.**
+**MioCal - 글로벌 시간 관리자, 메뉴막대의 Liquid Glass 캘린더.**
 ```
 
 ---
 
 ### العربية (ar) - RTL
 
-**اسم التطبيق**: MiniCal - تقويم شريط القوائم
+**اسم التطبيق**: MioCal - تقويم شريط القوائم
 
-**العنوان الفرعي**: تقويمات عالمية · تصميم Liquid Glass
+**العنوان الفرعي**: تقويم خفيف في شريط القوائم
 
 **النص الترويجي**:
 ```
-تصميم Liquid Glass الجديد! 7 أنظمة تقويم، 13 لغة. مقيم في شريط القوائم، وصول بنقرة واحدة. اشترك في جدول NBA، تقويم المسلسلات.
+تقويم صغير وسريع في شريط القوائم. بنقرة أو تمرير يفتح فورًا لرؤية يومك بنظرة واحدة. دائم الحضور دون إزعاج.
 ```
 
 **الكلمات المفتاحية**:
@@ -826,11 +826,11 @@ macOS Liquid Glass 디자인 언어를 채택한 최초의 캘린더 앱 - 도�
 
 **الوصف**:
 ```
-# MiniCal - إعادة تعريف تجربة تقويم macOS
+# MioCal - إعادة تعريف تجربة تقويم macOS
 
 تقويم Liquid Glass على شريط القوائم. 7 أنظمة تقويم، 13 لغة، راحة قصوى.
 
-## 🌟 لماذا MiniCal؟
+## 🌟 لماذا MioCal؟
 
 ### 📍 دائمًا في متناول اليد
 • نقرة واحدة، يفتح في 0.3 ثانية
@@ -838,7 +838,7 @@ macOS Liquid Glass 디자인 언어를 채택한 최초의 캘린더 앱 - 도�
 • اختصار عالمي (⌥⌘C)
 • لا يشغل مساحة Dock، لا يعيق الشاشة
 
-تتحقق من التقويم 20 مرة يوميًا؟ MiniCal يوفر لك 8 ساعات سنويًا.
+تتحقق من التقويم 20 مرة يوميًا؟ MioCal يوفر لك 8 ساعات سنويًا.
 
 ### ✨ جماليات تصميم Liquid Glass
 • مادة زجاج سائل، تتكيف مع سمة النظام
@@ -875,20 +875,20 @@ macOS Liquid Glass 디자인 언어를 채택한 최초의 캘린더 앱 - 도�
 
 ---
 
-**MiniCal - مدير الوقت العالمي الخاص بك، تقويم Liquid Glass على شريط القوائم.**
+**MioCal - مدير الوقت العالمي الخاص بك، تقويم Liquid Glass على شريط القوائم.**
 ```
 
 ---
 
 ### فارسی (fa) - RTL
 
-**نام برنامه**: MiniCal - تقویم نوار منو
+**نام برنامه**: MioCal - تقویم نوار منو
 
-**زیرعنوان**: تقویم‌های جهانی · طراحی Liquid Glass
+**زیرعنوان**: تقویم سبک در نوار منو
 
 **متن تبلیغاتی**:
 ```
-طراحی جدید Liquid Glass! 7 سیستم تقویم، 13 زبان. مقیم نوار منو، دسترسی با یک کلیک. اشتراک برنامه NBA، تقویم سریال‌ها.
+تقویمی کوچک و سریع در نوار منو. با کلیک یا شناور فوراً باز می‌شود و روزتان را یک‌جا نشان می‌دهد. همیشه حاضر بدون مزاحمت.
 ```
 
 **کلمات کلیدی**:
@@ -898,11 +898,11 @@ macOS Liquid Glass 디자인 언어를 채택한 최초의 캘린더 앱 - 도�
 
 **توضیحات**:
 ```
-# MiniCal - تعریف مجدد تجربه تقویم macOS
+# MioCal - تعریف مجدد تجربه تقویم macOS
 
 تقویم Liquid Glass روی نوار منو. 7 سیستم تقویم، 13 زبان، راحتی نهایی.
 
-## 🌟 چرا MiniCal؟
+## 🌟 چرا MioCal؟
 
 ### 📍 همیشه در دسترس
 • یک کلیک، باز می‌شود در 0.3 ثانیه
@@ -910,7 +910,7 @@ macOS Liquid Glass 디자인 언어를 채택한 최초의 캘린더 앱 - 도�
 • کلید میانبر جهانی (⌥⌘C)
 • بدون اشغال فضای Dock، بدون مزاحمت صفحه
 
-20 بار در روز تقویم را بررسی می‌کنید؟ MiniCal سالانه 8 ساعت برای شما صرفه‌جویی می‌کند.
+20 بار در روز تقویم را بررسی می‌کنید؟ MioCal سالانه 8 ساعت برای شما صرفه‌جویی می‌کند.
 
 ### ✨ زیبایی‌شناسی طراحی Liquid Glass
 • ماده شیشه مایع، سازگار با تم سیستم
@@ -947,20 +947,20 @@ macOS Liquid Glass 디자인 언어를 채택한 최초의 캘린더 앱 - 도�
 
 ---
 
-**MiniCal - مدیر زمان جهانی شما، تقویم Liquid Glass روی نوار منو.**
+**MioCal - مدیر زمان جهانی شما، تقویم Liquid Glass روی نوار منو.**
 ```
 
 ---
 
 ### עברית (he) - RTL
 
-**שם האפליקציה**: MiniCal - לוח שנה בשורת התפריטים
+**שם האפליקציה**: MioCal - לוח שנה בשורת התפריטים
 
-**כותרת משנה**: לוחות שנה עולמיים · עיצוב Liquid Glass
+**כותרת משנה**: לוח שנה קל בשורת התפריטים
 
 **טקסט פרסומי**:
 ```
-עיצוב Liquid Glass חדש! 7 מערכות לוח שנה, 13 שפות. תושב שורת תפריטים, גישה בקליק אחד. הירשם ל-NBA, לוח שנה של סדרות.
+לוח שנה קטן ומהיר בשורת התפריטים. בלחיצה או ריחוף נפתח מיד ותצוגת היום במבט אחד. תמיד זמין בלי להפריע.
 ```
 
 **מילות מפתח**:
@@ -970,11 +970,11 @@ macOS Liquid Glass 디자인 언어를 채택한 최초의 캘린더 앱 - 도�
 
 **תיאור**:
 ```
-# MiniCal - הגדרה מחדש של חוויית לוח השנה ב-macOS
+# MioCal - הגדרה מחדש של חוויית לוח השנה ב-macOS
 
 לוח השנה Liquid Glass בשורת התפריטים שלך. 7 מערכות לוח שנה, 13 שפות, נוחות מרבית.
 
-## 🌟 למה MiniCal?
+## 🌟 למה MioCal?
 
 ### 📍 תמיד בהישג יד
 • קליק אחד, נפתח ב-0.3 שניות
@@ -982,7 +982,7 @@ macOS Liquid Glass 디자인 언어를 채택한 최초의 캘린더 앱 - 도�
 • קיצור דרך גלובלי (⌥⌘C)
 • לא תופס מקום ב-Dock, לא חוסם מסך
 
-בודק לוח שנה 20 פעם ביום? MiniCal חוסך לך 8 שעות בשנה.
+בודק לוח שנה 20 פעם ביום? MioCal חוסך לך 8 שעות בשנה.
 
 ### ✨ אסתטיקת עיצוב Liquid Glass
 • חומר זכוכית נוזלית, מסתגל לנושא המערכת
@@ -1019,20 +1019,20 @@ macOS Liquid Glass 디자인 언어를 채택한 최초의 캘린더 앱 - 도�
 
 ---
 
-**MiniCal - מנהל הזמן העולמי שלך, לוח השנה Liquid Glass בשורת התפריטים.**
+**MioCal - מנהל הזמן העולמי שלך, לוח השנה Liquid Glass בשורת התפריטים.**
 ```
 
 ---
 
 ### اردو (ur) - RTL
 
-**ایپ کا نام**: MiniCal - مینو بار کیلنڈر
+**ایپ کا نام**: MioCal - مینو بار کیلنڈر
 
-**ذیلی عنوان**: عالمی کیلنڈر · Liquid Glass ڈیزائن
+**ذیلی عنوان**: ہلکا مینو بار کیلنڈر
 
 **پروموشنل متن**:
 ```
-نیا Liquid Glass ڈیزائن! 7 کیلنڈر سسٹم، 13 زبانیں۔ مینو بار میں مقیم، ایک کلک میں رسائی۔ NBA شیڈول، ڈرامہ کیلنڈر سبسکرائب کریں۔
+چھوٹا اور تیز مینو بار کیلنڈر۔ کلک یا ہور پر فوراً کھلتا ہے، دن کا شیڈول ایک نظر میں۔ ہمیشہ موجود مگر غیر مخل۔
 ```
 
 **مطلوبہ الفاظ**:
@@ -1042,11 +1042,11 @@ macOS Liquid Glass 디자인 언어를 채택한 최초의 캘린더 앱 - 도�
 
 **تفصیل**:
 ```
-# MiniCal - macOS کیلنڈر کے تجربے کی نئی تعریف
+# MioCal - macOS کیلنڈر کے تجربے کی نئی تعریف
 
 آپ کے مینو بار پر Liquid Glass کیلنڈر۔ 7 کیلنڈر سسٹم، 13 زبانیں، انتہائی سہولت۔
 
-## 🌟 MiniCal کیوں؟
+## 🌟 MioCal کیوں؟
 
 ### 📍 ہمیشہ ہاتھ میں
 • ایک کلک، 0.3 سیکنڈ میں کھلتا ہے
@@ -1054,7 +1054,7 @@ macOS Liquid Glass 디자인 언어를 채택한 최초의 캘린더 앱 - 도�
 • عالمی شارٹ کٹ (⌥⌘C)
 • Dock کی جگہ نہیں لیتا، اسکرین میں رکاوٹ نہیں
 
-دن میں 20 بار کیلنڈر چیک کرتے ہیں؟ MiniCal سالانہ 8 گھنٹے بچاتا ہے۔
+دن میں 20 بار کیلنڈر چیک کرتے ہیں؟ MioCal سالانہ 8 گھنٹے بچاتا ہے۔
 
 ### ✨ Liquid Glass ڈیزائن جمالیات
 • سیال شیشے کا مواد، سسٹم تھیم کے مطابق ڈھلتا ہے
@@ -1091,20 +1091,20 @@ macOS Liquid Glass ڈیزائن زبان کے ساتھ پہلی کیلنڈر ا�
 
 ---
 
-**MiniCal - آپ کا عالمی وقت منیجر، مینو بار پر Liquid Glass کیلنڈر۔**
+**MioCal - آپ کا عالمی وقت منیجر، مینو بار پر Liquid Glass کیلنڈر۔**
 ```
 
 ---
 
 ### ไทย (th)
 
-**ชื่อแอป**: MiniCal - ปฏิทินแถบเมนู
+**ชื่อแอป**: MioCal - ปฏิทินแถบเมนู
 
-**คำบรรยายย่อย**: ปฏิทินทั่วโลก · Liquid Glass
+**คำบรรยายย่อย**: ปฏิทินแถบเมนูที่เบาและเร็ว
 
 **ข้อความส่งเสริมการขาย**:
 ```
-ดีไซน์ Liquid Glass ใหม่! 7 ระบบปฏิทิน 13 ภาษา อยู่ในแถบเมนู เข้าถึงได้คลิกเดียว สมัครสมาชิก NBA ปฏิทินซีรีส์
+ปฏิทินเล็กและเร็วบนแถบเมนู คลิกหรือโฮเวอร์แล้วเปิดทันที เห็นตารางวันนี้ได้ในพริบตา อยู่ประจำแต่ไม่รบกวน
 ```
 
 **คำหลัก**:
@@ -1114,11 +1114,11 @@ macOS Liquid Glass ڈیزائن زبان کے ساتھ پہلی کیلنڈر ا�
 
 **คำอธิบาย**:
 ```
-# MiniCal - นิยามใหม่ประสบการณ์ปฏิทิน macOS
+# MioCal - นิยามใหม่ประสบการณ์ปฏิทิน macOS
 
 ปฏิทิน Liquid Glass บนแถบเมนูของคุณ 7 ระบบปฏิทิน 13 ภาษา ความสะดวกสุดขีด
 
-## 🌟 ทำไมต้อง MiniCal?
+## 🌟 ทำไมต้อง MioCal?
 
 ### 📍 พร้อมใช้งานตลอดเวลา
 • คลิกเดียว เปิดใน 0.3 วินาที
@@ -1126,7 +1126,7 @@ macOS Liquid Glass ڈیزائن زبان کے ساتھ پہلی کیلنڈر ا�
 • แป้นพิมพ์ลัดส่วนกลาง (⌥⌘C)
 • ไม่ใช้พื้นที่ Dock ไม่บดบังหน้าจอ
 
-ตรวจสอบปฏิทินวันละ 20 ครั้ง? MiniCal ประหยัดเวลาให้คุณ 8 ชั่วโมงต่อปี
+ตรวจสอบปฏิทินวันละ 20 ครั้ง? MioCal ประหยัดเวลาให้คุณ 8 ชั่วโมงต่อปี
 
 ### ✨ สุนทรียศาสตร์ดีไซน์ Liquid Glass
 • วัสดุแก้วเหลว ปรับตามธีมระบบ
@@ -1163,20 +1163,20 @@ macOS Liquid Glass ڈیزائن زبان کے ساتھ پہلی کیلنڈر ا�
 
 ---
 
-**MiniCal - ผู้จัดการเวลาทั่วโลกของคุณ ปฏิทิน Liquid Glass บนแถบเมนู**
+**MioCal - ผู้จัดการเวลาทั่วโลกของคุณ ปฏิทิน Liquid Glass บนแถบเมนู**
 ```
 
 ---
 
 ### Türkçe (tr)
 
-**Uygulama Adı**: MiniCal - Menü Çubuğu Takvimi
+**Uygulama Adı**: MioCal - Menü Çubuğu Takvimi
 
-**Alt Başlık**: Küresel Takvimler · Liquid Glass
+**Alt Başlık**: Hafif Menü Çubuğu Takvimi
 
 **Tanıtım Metni**:
 ```
-Yeni Liquid Glass tasarım! 7 takvim sistemi, 13 dil. Menü çubuğunda sabit, tek tıkla erişim. NBA programı, dizi takvimi aboneliği.
+Küçük ve hızlı menü çubuğu takvimi. Tıkla ya da üzerine gel, anında açılır; gününü bir bakışta gör. Sürekli görünür, asla rahatsız etmez.
 ```
 
 **Anahtar Kelimeler**:
@@ -1186,11 +1186,11 @@ takvim,ay takvimi,menü çubuğu,Liquid Glass,çok dilli,İslami,İbranice,abone
 
 **Açıklama**:
 ```
-# MiniCal - macOS Takvim Deneyimini Yeniden Tanımlıyor
+# MioCal - macOS Takvim Deneyimini Yeniden Tanımlıyor
 
 Menü çubuğunuzdaki Liquid Glass takvim. 7 takvim sistemi, 13 dil, nihai kolaylık.
 
-## 🌟 Neden MiniCal?
+## 🌟 Neden MioCal?
 
 ### 📍 Her Zaman Elinizin Altında
 • Tek tıkla, 0.3 saniyede açılır
@@ -1198,7 +1198,7 @@ Menü çubuğunuzdaki Liquid Glass takvim. 7 takvim sistemi, 13 dil, nihai kolay
 • Global kısayol (⌥⌘C)
 • Dock alanı kaplamaz, ekranı engellemez
 
-Günde 20 kez takvim kontrol ediyor musunuz? MiniCal yılda 8 saat tasarruf ettirir.
+Günde 20 kez takvim kontrol ediyor musunuz? MioCal yılda 8 saat tasarruf ettirir.
 
 ### ✨ Liquid Glass Tasarım Estetiği
 • Sıvı cam malzeme, sistem temasına uyum sağlar
@@ -1235,20 +1235,20 @@ macOS Liquid Glass tasarım dilini benimseyen ilk takvim uygulaması - sadece bi
 
 ---
 
-**MiniCal - Küresel zaman yöneticiniz, menü çubuğundaki Liquid Glass takvim.**
+**MioCal - Küresel zaman yöneticiniz, menü çubuğundaki Liquid Glass takvim.**
 ```
 
 ---
 
 ### Tiếng Việt (vi)
 
-**Tên Ứng Dụng**: MiniCal - Lịch Thanh Menu
+**Tên Ứng Dụng**: MioCal - Lịch Thanh Menu
 
-**Phụ Đề**: Lịch Toàn Cầu · Thiết Kế Liquid Glass
+**Phụ Đề**: Lịch thanh menu nhẹ và nhanh
 
 **Văn Bản Quảng Cáo**:
 ```
-Thiết kế Liquid Glass mới! 7 hệ thống lịch, 13 ngôn ngữ. Thường trú thanh menu, truy cập một cú nhấp. Đăng ký lịch NBA, phim truyền hình.
+Lịch nhỏ gọn, mở ngay từ thanh menu. Bấm hoặc rê chuột để xem lịch trong chớp mắt; luôn sẵn sàng mà không gây phiền.
 ```
 
 **Từ Khóa**:
@@ -1258,11 +1258,11 @@ lịch,âm lịch,thanh menu,Liquid Glass,đa ngôn ngữ,Hồi giáo,Do Thái,�
 
 **Mô Tả**:
 ```
-# MiniCal - Định Nghĩa Lại Trải Nghiệm Lịch macOS
+# MioCal - Định Nghĩa Lại Trải Nghiệm Lịch macOS
 
 Lịch Liquid Glass trên thanh menu của bạn. 7 hệ thống lịch, 13 ngôn ngữ, tiện lợi tối đa.
 
-## 🌟 Tại Sao Chọn MiniCal?
+## 🌟 Tại Sao Chọn MioCal?
 
 ### 📍 Luôn Trong Tầm Tay
 • Một cú nhấp, mở trong 0.3 giây
@@ -1270,7 +1270,7 @@ Lịch Liquid Glass trên thanh menu của bạn. 7 hệ thống lịch, 13 ngô
 • Phím tắt toàn cục (⌥⌘C)
 • Không chiếm chỗ Dock, không che màn hình
 
-Kiểm tra lịch 20 lần mỗi ngày? MiniCal tiết kiệm 8 giờ mỗi năm cho bạn.
+Kiểm tra lịch 20 lần mỗi ngày? MioCal tiết kiệm 8 giờ mỗi năm cho bạn.
 
 ### ✨ Thẩm Mỹ Thiết Kế Liquid Glass
 • Chất liệu thủy tinh lỏng, thích ứng với chủ đề hệ thống
@@ -1307,7 +1307,7 @@ Kiểm tra lịch 20 lần mỗi ngày? MiniCal tiết kiệm 8 giờ mỗi năm
 
 ---
 
-**MiniCal - Người quản lý thời gian toàn cầu của bạn, lịch Liquid Glass trên thanh menu.**
+**MioCal - Người quản lý thời gian toàn cầu của bạn, lịch Liquid Glass trên thanh menu.**
 ```
 
 ---
@@ -1323,7 +1323,7 @@ Kiểm tra lịch 20 lần mỗi ngày? MiniCal tiết kiệm 8 giờ mỗi năm
 - 预期: 1000+ upvotes, 500+ 安装量
 
 **Hacker News 讨论**
-- 策略: "Show HN: MiniCal - The Liquid Glass Calendar for macOS"
+- 策略: "Show HN: MioCal - The Liquid Glass Calendar for macOS"
 - 重点: 技术架构、性能优化、开源透明
 - 预期: 200+ points, 100+ comments
 
@@ -1421,8 +1421,8 @@ Kiểm tra lịch 20 lần mỗi ngày? MiniCal tiết kiệm 8 giờ mỗi năm
    - 事件管理界面
 
 4. **对比图** (5 张)
-   - MiniCal vs Fantastical 界面对比
-   - MiniCal vs BusyCal 性能对比
+   - MioCal vs Fantastical 界面对比
+   - MioCal vs BusyCal 性能对比
    - Liquid Glass vs 传统设计对比
 
 5. **动图 GIF** (10 个)
@@ -1465,7 +1465,7 @@ Kiểm tra lịch 20 lần mỗi ngày? MiniCal tiết kiệm 8 giờ mỗi năm
 
 ## 🏆 竞品对比表（详细版）
 
-| 维度 | MiniCal | Fantastical | BusyCal | Calendars 5 | Apple 日历 |
+| 维度 | MioCal | Fantastical | BusyCal | Calendars 5 | Apple 日历 |
 |------|---------|-------------|---------|-------------|-----------|
 | **设计** |
 | 设计语言 | Liquid Glass (2024) | iOS 14 风格 | 传统拟物 | Material Design | 原生 macOS |
@@ -1531,7 +1531,7 @@ Kiểm tra lịch 20 lần mỗi ngày? MiniCal tiết kiệm 8 giờ mỗi năm
 - Fantastical: $56.99/年 → **5 年花费 $284.95**
 - BusyCal: $49.99 买断
 - Calendars 5: $39.99/年 → **5 年花费 $199.95**
-- **MiniCal: $19.99 买断 → 5 年花费 $19.99**
+- **MioCal: $19.99 买断 → 5 年花费 $19.99**
 
 **价值主张**:
 > "花费不到 Fantastical 一年订阅费的 1/3，终身拥有更多功能。"
@@ -1588,7 +1588,7 @@ Kiểm tra lịch 20 lần mỗi ngày? MiniCal tiết kiệm 8 giờ mỗi năm
 - **官网**: https://minical.app
 - **邮箱**: support@minical.app
 - **GitHub**: https://github.com/aireels-dev/mini-cal
-- **Twitter**: @MiniCalApp
+- **Twitter**: @MioCalApp
 - **Discord**: https://discord.gg/minical
 
 ### 新闻媒体联系

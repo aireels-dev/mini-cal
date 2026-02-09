@@ -1,0 +1,6 @@
+"CFBundleDisplayName" = "MioCal";
+"CFBundleName" = "MioCal";
+"NSCalendarsUsageDescription" = "MioCal cần truy cập lịch của bạn để hiển thị cuộc họp và sự kiện.";
+"NSCalendarsFullAccessUsageDescription" = "MioCal cần quyền truy cập đầy đủ vào lịch của bạn để đồng bộ và quản lý sự kiện, đăng ký lịch bên ngoài.";
+"NSLocationWhenInUseUsageDescription" = "MioCal cần vị trí của bạn để tính thời gian mặt trời mọc và lặn, thời gian cầu nguyện Hồi giáo và thời gian Sa-bat Do Thái.";
+"NSLocationUsageDescription" = "MioCal sử dụng vị trí của bạn để cung cấp thông tin thiên văn chính xác (thời gian mặt trời mọc và lặn, pha mặt trăng) và thời gian tôn giáo (thời gian cầu nguyện, Sa-bat).";
