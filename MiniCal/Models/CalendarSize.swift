@@ -49,6 +49,20 @@ enum CalendarSize: String, CaseIterable, Codable {
         width - 20  // 左右各留 10pt 边距
     }
 
+    /// 头部高度（包含原先的上下内边距）
+    var headerHeight: CGFloat {
+        switch self {
+        case .compact:
+            return 48
+        case .standard:
+            return 52
+        case .large:
+            return 56
+        case .xlarge:
+            return 60
+        }
+    }
+
     /// 单个日期单元格尺寸（每档递增 8px）
     var cellSize: CGFloat {
         switch self {

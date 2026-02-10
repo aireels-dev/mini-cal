@@ -93,9 +93,9 @@ struct CalendarView: View {
                 // 日历头部（通过颜色和间距区分层级）
                 CalendarHeaderView(
                     viewModel: viewModel,
-                    themeColors: effectiveColors
+                    themeColors: effectiveColors,
+                    calendarSize: calendarSize
                 )
-                .padding(.bottom, 12)
 
                 // 日历网格
                 CalendarGridView(

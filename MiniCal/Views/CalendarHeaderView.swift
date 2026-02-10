@@ -10,6 +10,7 @@ import SwiftUI
 struct CalendarHeaderView: View {
     @ObservedObject var viewModel: CalendarViewModel
     let themeColors: ThemeColors
+    let calendarSize: CalendarSize
     @State private var hoveredButton: NavButton?
 
     enum NavButton {
@@ -107,16 +108,16 @@ struct CalendarHeaderView: View {
                 }
             }
         }
+        .frame(height: calendarSize.headerHeight, alignment: .center)
         .padding(.horizontal, 16)
-        .padding(.top, 12)
-        .padding(.bottom, 4)
     }
 }
 
 #Preview {
     CalendarHeaderView(
         viewModel: CalendarViewModel(),
-        themeColors: .light
+        themeColors: .light,
+        calendarSize: .standard
     )
     .background(ThemeColors.light.backgroundColor)
 }
